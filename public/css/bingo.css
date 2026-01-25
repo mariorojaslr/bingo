@@ -1,0 +1,341 @@
+/* =========================================================
+   ESTILOS GENERALES BINGO
+   Archivo: public/css/bingo.css
+   Uso: Visor web + impresión PDF
+   ========================================================= */
+
+
+/* Fuente base */
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f7f7f7;
+}
+
+
+/* Contenedor general de un cartón */
+
+.carton {
+    border: 2px solid #000;
+    padding: 10px;
+    margin: 15px auto;
+    width: fit-content;
+    background-color: #fff;
+}
+
+
+/* Título del cartón: "N° 123" */
+
+.carton-titulo {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 6px;
+    text-align: left;
+}
+
+
+/* Tabla del cartón (3x9) */
+
+.carton-table {
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+
+/* Cada celda del cartón */
+
+.carton-table td {
+    border: 1px solid #000;
+    width: 16mm;
+    /* Proporción real para A4 */
+    height: 12mm;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 14px;
+    /* Número más grande */
+    font-weight: bold;
+    padding: 0;
+}
+
+
+/* Números dentro de la celda */
+
+.carton-numero {
+    display: block;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 12mm;
+}
+
+
+/* Celdas vacías (con símbolo) */
+
+.carton-vacio {
+    background-color: #f0f0f0;
+}
+
+
+/* Imagen del trébol o símbolo */
+
+.carton-simbolo {
+    width: 8mm;
+    /* Aproximadamente 30% más chico que la celda */
+    height: 8mm;
+    display: block;
+    margin: auto;
+    opacity: 0.85;
+}
+
+
+/* Microdatos debajo del cartón (letra muy chica) */
+
+.carton-microdatos {
+    font-size: 7px;
+    color: #555;
+    margin-top: 2mm;
+    text-align: left;
+}
+
+
+/* =========================================================
+   GRILLA RESPONSIVE PARA VISOR INTERNO
+   ========================================================= */
+
+.carton-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 15px;
+    padding: 10px;
+}
+
+
+/* 6 cartones por página */
+
+.grid-6 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+
+/* 9 cartones por página */
+
+.grid-9 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+
+/* En pantallas chicas se apilan */
+
+@media (max-width: 768px) {
+    .grid-6,
+    .grid-9 {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+
+/* =========================================================
+   ESTILOS PARA PDF (DomPDF)
+   ========================================================= */
+
+@page {
+    size: A4 portrait;
+    margin: 15mm;
+}
+
+
+/* Cada hoja del PDF */
+
+.pdf-hoja {
+    page-break-after: always;
+}
+
+
+/* Encabezado del PDF */
+
+.pdf-encabezado {
+    border-bottom: 2px solid #000;
+    margin-bottom: 5mm;
+    padding-bottom: 2mm;
+}
+
+.pdf-titulo {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.pdf-subtitulo {
+    font-size: 11px;
+}
+
+
+/* Pie del PDF */
+
+.pdf-pie {
+    border-top: 2px solid #000;
+    font-size: 9px;
+    margin-top: 5mm;
+    padding-top: 2mm;
+}
+
+
+/* Numeración de hoja */
+
+.pdf-hoja-num {
+    text-align: right;
+    font-size: 8px;
+    margin-top: 2mm;
+}
+
+
+/* QR de cada cartón (muy pequeño) */
+
+.qr-carton {
+    width: 12mm;
+    height: 12mm;
+}
+
+
+/* QR institucional */
+
+.qr-evento {
+    width: 25mm;
+    height: 25mm;
+}
+
+
+/* QR sponsor */
+
+.qr-sponsor {
+    width: 30mm;
+    height: 30mm;
+}
+
+
+/* ===== Panel de Administración ===== */
+
+.admin-body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+}
+
+.admin-container {
+    display: flex;
+    height: 100vh;
+}
+
+.admin-sidebar {
+    width: 220px;
+    background-color: #1f2937;
+    color: #fff;
+    padding: 20px;
+}
+
+.admin-logo {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.admin-menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+.admin-menu li {
+    margin-bottom: 10px;
+}
+
+.admin-menu a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.admin-menu a:hover {
+    background-color: #374151;
+}
+
+.admin-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-header {
+    background-color: #fff;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-page {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+
+/* ===== Formulario de Impresión ===== */
+
+.form-impresion {
+    max-width: 400px;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.form-grupo {
+    margin-bottom: 15px;
+}
+
+.form-grupo label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-grupo input {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+}
+
+.btn-generar {
+    background-color: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.btn-generar:hover {
+    background-color: #1d4ed8;
+}
+
+.nota {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #555;
+}
+
+
+/* === Corrección de ancho de columnas del cartón (visor) === */
+
+.carton-tabla {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.carton-tabla col {
+    width: 11.11%;
+}
+
+.carton-tabla td {
+    min-width: 40px;
+}
