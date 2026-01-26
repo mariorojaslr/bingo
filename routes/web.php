@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\JugadaController;
 use App\Http\Controllers\Admin\VisorController;
 use App\Http\Controllers\Admin\LoteController;
 use App\Http\Controllers\Admin\OrganizadorController;
+use App\Http\Controllers\Admin\InstitucionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,9 +31,13 @@ Route::prefix('admin')->group(function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
-    // Organizadores (corregido parámetro)
+    // Organizadores (parámetro corregido)
     Route::resource('organizadores', OrganizadorController::class)
         ->parameters(['organizadores' => 'organizador']);
+
+    // Instituciones (parámetro corregido)
+    Route::resource('instituciones', InstitucionController::class)
+        ->parameters(['instituciones' => 'institucion']);
 
     // Cartones
     Route::get('/cartones/generar', function () {

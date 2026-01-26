@@ -14,7 +14,6 @@ class Institucion extends Model
     protected $fillable = [
         'nombre',
         'tipo',
-        'logo',
         'email',
         'telefono',
         'direccion',
@@ -23,11 +22,13 @@ class Institucion extends Model
         'pais',
         'texto_encabezado',
         'texto_pie',
-        'activa'
+        'logo',
+        'activo',
+        'user_id'
     ];
 
-    public function jugadas()
-    {
-        return $this->hasMany(Jugada::class);
-    }
+
+    protected $casts = [
+        'activo' => 'boolean',
+    ];
 }

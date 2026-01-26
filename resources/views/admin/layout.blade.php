@@ -55,17 +55,17 @@
                 </a>
             </li>
 
-            <!-- ORGANIZADORES ACTIVO Y FUNCIONAL -->
             <li class="nav-item submenu">
                 <a class="nav-link" href="{{ route('organizadores.index') }}">
                     🏢 Organizadores
                 </a>
             </li>
 
+            <!-- 🔥 INSTITUCIONES ACTIVADO (sin romper nada) -->
             <li class="nav-item submenu">
-                <span class="nav-link text-muted">
-                    🏟 Instituciones (próximamente)
-                </span>
+                <a class="nav-link" href="{{ route('instituciones.index') }}">
+                    🏟 Instituciones
+                </a>
             </li>
 
             <div class="section-title">Impresión</div>
