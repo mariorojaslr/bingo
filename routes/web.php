@@ -5,6 +5,7 @@ use App\Http\Controllers\CartonController;
 use App\Http\Controllers\Admin\JugadaController;
 use App\Http\Controllers\Admin\VisorController;
 use App\Http\Controllers\Admin\LoteController;
+use App\Http\Controllers\Admin\OrganizadorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,25 +21,20 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 | Panel de Administración
 |--------------------------------------------------------------------------
-| Acceso por /admin/...
 */
 
 Route::prefix('admin')->group(function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | Dashboard
-    |--------------------------------------------------------------------------
-    */
+    // Dashboard
     Route::get('/', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Módulo: Cartones
-    |--------------------------------------------------------------------------
-    */
+    // Organizadores (corregido parámetro)
+    Route::resource('organizadores', OrganizadorController::class)
+        ->parameters(['organizadores' => 'organizador']);
+
+    // Cartones
     Route::get('/cartones/generar', function () {
         return view('admin.cartones.generar');
     })->name('admin.cartones.generar');
@@ -49,11 +45,7 @@ Route::prefix('admin')->group(function () {
     Route::get('/cartones', [CartonController::class, 'listado'])
         ->name('admin.cartones.listado');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Módulo: Impresión
-    |--------------------------------------------------------------------------
-    */
+    // Impresión
     Route::get('/impresion', function () {
         return view('admin.impresion.formulario');
     })->name('admin.impresion.formulario');
@@ -64,55 +56,32 @@ Route::prefix('admin')->group(function () {
     Route::post('/impresion/generar-pdf', [CartonController::class, 'generarLotePDF'])
         ->name('admin.impresion.generar');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Módulo: Jugadas
-    |--------------------------------------------------------------------------
-    */
-
-    // Listado
+    // Jugadas
     Route::get('/jugadas', [JugadaController::class, 'index'])
         ->name('admin.jugadas.index');
 
-    // Crear jugada
     Route::get('/jugadas/crear', [JugadaController::class, 'create'])
         ->name('admin.jugadas.create');
 
     Route::post('/jugadas', [JugadaController::class, 'store'])
         ->name('admin.jugadas.store');
 
-    // Ver jugada
     Route::get('/jugadas/{jugada}', [JugadaController::class, 'show'])
         ->name('admin.jugadas.show');
 
-    // Visor global de cartones por jugada
     Route::get('/jugadas/{jugada}/cartones', [JugadaController::class, 'cartones'])
         ->name('admin.jugadas.cartones');
 
-    // Crear pedido de lote
     Route::post('/jugadas/{jugada}/lotes', [JugadaController::class, 'crearLote'])
         ->name('admin.jugadas.lotes.crear');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Flujo de Lotes: Pedido → Generado → Materializado → Visor
-    |--------------------------------------------------------------------------
-    */
-
-    // Paso 1: Pedido → Generado
+    // Lotes
     Route::post('/lotes/{lote}/generar', [LoteController::class, 'generar'])
         ->name('admin.lotes.generar');
 
-    // Paso 2: Generado → Materializado (crear cartones físicos)
     Route::post('/lotes/{lote}/materializar', [LoteController::class, 'materializar'])
         ->name('admin.lotes.materializar');
 
-    // Paso 3: Visor por lote (solo materializados)
     Route::get('/visor/lote/{lote}', [VisorController::class, 'verLote'])
         ->name('admin.visor.lote');
-
-    Route::post('/admin/lotes/{lote}/materializar', [LoteController::class, 'materializar'])
-        ->name('admin.lotes.materializar');
-
-
 });

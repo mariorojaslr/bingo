@@ -12,11 +12,12 @@ class Organizador extends Model
     protected $table = 'organizadores';
 
     protected $fillable = [
+        'user_id',
         'tipo',
         'razon_social',
         'nombre_fantasia',
         'cuit',
-        'email',
+        'email_contacto',
         'telefono',
         'direccion',
         'activo'
