@@ -90,3 +90,6 @@ Route::prefix('admin')->group(function () {
     Route::get('/visor/lote/{lote}', [VisorController::class, 'verLote'])
         ->name('admin.visor.lote');
 });
+
+      Route::put('instituciones/{institucion}/toggle', [InstitucionController::class, 'toggle'])
+        ->name('instituciones.toggle');

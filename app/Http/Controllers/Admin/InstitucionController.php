@@ -36,7 +36,7 @@ class InstitucionController extends Controller
         ]);
 
         $data = $request->all();
-        $data['activa'] = $request->has('activa') ? 1 : 0;
+        $data['activo'] = $request->input('activo', 0);
 
         if ($request->hasFile('logo')) {
             $data['logo'] = $request->file('logo')->store('instituciones', 'public');
@@ -69,7 +69,7 @@ class InstitucionController extends Controller
         ]);
 
         $data = $request->all();
-        $data['activa'] = $request->has('activa') ? 1 : 0;
+        $data['activo'] = $request->input('activo', 0);
 
         if ($request->hasFile('logo')) {
             if ($institucion->logo) {
@@ -84,11 +84,22 @@ class InstitucionController extends Controller
             ->with('success', 'Institución actualizada correctamente.');
     }
 
+    // Borrado lógico clásico
     public function destroy(Institucion $institucion)
     {
-        $institucion->update(['activa' => 0]);
+        $institucion->update(['activo' => 0]);
 
         return redirect()->route('instituciones.index')
             ->with('success', 'Institución desactivada correctamente.');
+    }
+
+    // Cambio de estado desde el tacho (toggle)
+    public function toggle(Institucion $institucion)
+    {
+        $institucion->activo = !$institucion->activo;
+        $institucion->save();
+
+        return redirect()->route('instituciones.index')
+            ->with('success', 'Estado de la institución actualizado correctamente.');
     }
 }

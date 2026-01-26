@@ -37,10 +37,11 @@
                             <td>{{ $institucion->id }}</td>
                             <td>{{ $institucion->nombre }}</td>
                             <td>{{ $institucion->tipo }}</td>
-                            <td>{{ $institucion->email_contacto }}</td>
+                            <td>{{ $institucion->email }}</td>
                             <td>{{ $institucion->telefono }}</td>
                             <td>{{ $institucion->ciudad }}</td>
                             <td>{{ $institucion->provincia }}</td>
+
                             <td>
                                 @if($institucion->activo)
                                     <span class="badge bg-success">Activa</span>
@@ -48,16 +49,17 @@
                                     <span class="badge bg-secondary">Inactiva</span>
                                 @endif
                             </td>
+
                             <td>
                                 <a href="{{ route('instituciones.edit', $institucion->id) }}" class="btn btn-sm btn-warning">
                                     <i class="bi bi-pencil"></i>
                                 </a>
 
-                                <form action="{{ route('instituciones.destroy', $institucion->id) }}" method="POST" class="d-inline"
-                                      onsubmit="return confirm('¿Seguro que querés desactivar esta institución?')">
+                                <form action="{{ route('instituciones.toggle', $institucion->id) }}" method="POST" class="d-inline"
+                                      onsubmit="return confirm('¿Cambiar estado de esta institución?')">
                                     @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-sm btn-danger">
+                                    @method('PUT')
+                                    <button type="submit" class="btn btn-sm btn-danger">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>

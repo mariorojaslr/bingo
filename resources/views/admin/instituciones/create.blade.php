@@ -27,11 +27,11 @@
                     <input type="text" name="tipo" class="form-control">
                 </div>
 
-                <div class="col-md-6 mb-3">
+               <div class="col-md-6 mb-3">
                     <label class="form-label">Email</label>
-                    <input type="email" name="Mail" class="form-control">
-                </div>
+                    <input type="email" name="email" class="form-control">
 
+                </div>
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Teléfono</label>
