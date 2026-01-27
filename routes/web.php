@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\VisorController;
 use App\Http\Controllers\Admin\LoteController;
 use App\Http\Controllers\Admin\OrganizadorController;
 use App\Http\Controllers\Admin\InstitucionController;
+use App\Http\Controllers\Admin\SorteoController;
+use App\Http\Controllers\Admin\MonitorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,20 +28,16 @@ Route::get('/', function () {
 
 Route::prefix('admin')->group(function () {
 
-    // Dashboard
     Route::get('/', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
-    // Organizadores (parámetro corregido)
     Route::resource('organizadores', OrganizadorController::class)
         ->parameters(['organizadores' => 'organizador']);
 
-    // Instituciones (parámetro corregido)
     Route::resource('instituciones', InstitucionController::class)
         ->parameters(['instituciones' => 'institucion']);
 
-    // Cartones
     Route::get('/cartones/generar', function () {
         return view('admin.cartones.generar');
     })->name('admin.cartones.generar');
@@ -50,7 +48,6 @@ Route::prefix('admin')->group(function () {
     Route::get('/cartones', [CartonController::class, 'listado'])
         ->name('admin.cartones.listado');
 
-    // Impresión
     Route::get('/impresion', function () {
         return view('admin.impresion.formulario');
     })->name('admin.impresion.formulario');
@@ -61,7 +58,6 @@ Route::prefix('admin')->group(function () {
     Route::post('/impresion/generar-pdf', [CartonController::class, 'generarLotePDF'])
         ->name('admin.impresion.generar');
 
-    // Jugadas
     Route::get('/jugadas', [JugadaController::class, 'index'])
         ->name('admin.jugadas.index');
 
@@ -80,7 +76,6 @@ Route::prefix('admin')->group(function () {
     Route::post('/jugadas/{jugada}/lotes', [JugadaController::class, 'crearLote'])
         ->name('admin.jugadas.lotes.crear');
 
-    // Lotes
     Route::post('/lotes/{lote}/generar', [LoteController::class, 'generar'])
         ->name('admin.lotes.generar');
 
@@ -91,5 +86,29 @@ Route::prefix('admin')->group(function () {
         ->name('admin.visor.lote');
 });
 
-      Route::put('instituciones/{institucion}/toggle', [InstitucionController::class, 'toggle'])
-        ->name('instituciones.toggle');
+Route::put('instituciones/{institucion}/toggle', [InstitucionController::class, 'toggle'])
+    ->name('instituciones.toggle');
+
+/*
+|--------------------------------------------------------------------------
+| Sorteador y Monitor (públicos por jugada)
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/sorteador/jugada/{jugada}', [SorteoController::class, 'ver'])
+    ->name('sorteador.jugada');
+
+Route::get('/monitor/jugada/{jugada}', [MonitorController::class, 'ver'])
+    ->name('monitor.jugada');
+
+
+Route::get('/monitor/jugada/{jugada}', [MonitorController::class, 'ver'])
+    ->name('monitor.jugada');
+
+Route::get('/sorteador/jugada/{jugada}', [SorteoController::class, 'ver'])
+    ->name('sorteador.jugada');
+
+Route::post('/sorteador/jugada/{jugada}/extraer', [SorteoController::class, 'extraer'])
+    ->name('sorteador.extraer');
+
+Route::get('/api/monitor/jugada/{jugada}', [\App\Http\Controllers\Admin\MonitorController::class, 'estado']);
