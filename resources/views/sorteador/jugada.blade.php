@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Sorteador – {{ $jugada->nombre_jugada }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -37,6 +36,15 @@
             text-align: center;
             margin: 4px;
         }
+
+        .estado {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .aviso-linea { background:#dc2626; padding:8px; }
+        .aviso-bingo { background:#f59e0b; padding:8px; color:#000; }
     </style>
 </head>
 <body>
@@ -45,7 +53,10 @@
 
     <h2>🎱 Sorteador</h2>
     <h4>{{ $jugada->nombre_jugada }}</h4>
-    <p>{{ $jugada->institucion->nombre }} — {{ $jugada->organizador->nombre_fantasia }}</p>
+
+    <div class="estado">
+        ESTADO: {{ strtoupper(str_replace('_',' ', $sorteo->estado)) }}
+    </div>
 
     <div class="d-flex justify-content-center my-4">
         <div class="bola">
@@ -53,12 +64,25 @@
         </div>
     </div>
 
-    <form method="POST" action="{{ route('sorteador.extraer', $jugada->id) }}">
-        @csrf
-        <button class="btn btn-success btn-lg">
-            🎯 Sacar bolilla
-        </button>
-    </form>
+    @if($sorteo->estado == 'en_curso')
+        <form method="POST" action="{{ route('sorteador.extraer', $jugada->id) }}">
+            @csrf
+            <button class="btn btn-success btn-lg">🎯 Sacar bolilla</button>
+        </form>
+    @else
+        <form method="POST" action="{{ route('sorteador.continuar', $jugada->id) }}">
+            @csrf
+            <button class="btn btn-primary btn-lg mt-2">▶ CONTINUAR JUEGO</button>
+        </form>
+    @endif
+
+    @if($sorteo->estado == 'pausa_linea')
+        <div class="aviso-linea mt-3">🟥 LÍNEA COMPLETADA – Validar y pagar</div>
+    @endif
+
+    @if($sorteo->estado == 'pausa_bingo')
+        <div class="aviso-bingo mt-3">🟨 BINGO COMPLETADO – Validar ganador</div>
+    @endif
 
     <h5 class="mt-4">Bolillas salidas: {{ count($bolillas) }}</h5>
 
@@ -69,6 +93,5 @@
     </div>
 
 </div>
-
 </body>
 </html>

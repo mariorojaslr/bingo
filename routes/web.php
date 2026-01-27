@@ -112,3 +112,9 @@ Route::post('/sorteador/jugada/{jugada}/extraer', [SorteoController::class, 'ext
     ->name('sorteador.extraer');
 
 Route::get('/api/monitor/jugada/{jugada}', [\App\Http\Controllers\Admin\MonitorController::class, 'estado']);
+
+Route::post('sorteador/jugada/{jugada}/continuar', [SorteoController::class, 'continuar'])
+     ->name('sorteador.continuar');
+
+Route::post('sorteador/jugada/{jugada}/continuar', [App\Http\Controllers\Admin\SorteoController::class, 'continuar'])
+     ->name('sorteador.continuar');

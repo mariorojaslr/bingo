@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Jugada;
 use App\Models\Sorteo;
+use App\Services\DetectorBingoService;
 use Illuminate\Http\Request;
 
 class MonitorController extends Controller
@@ -26,9 +27,17 @@ class MonitorController extends Controller
     {
         $sorteo = Sorteo::where('jugada_id', $jugadaId)->first();
 
+        $resultado = DetectorBingoService::detectar(
+            $jugadaId,
+            $sorteo?->bolillas_sacadas ?? []
+        );
+
         return response()->json([
             'bolillas' => $sorteo?->bolillas_sacadas ?? [],
             'ultima'   => $sorteo?->bolilla_actual,
+            'linea'    => $resultado['linea'],
+            'bingo'    => $resultado['bingo'],
+            'estado'   => $sorteo?->estado,
         ]);
     }
 }
