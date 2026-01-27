@@ -33,7 +33,12 @@ class LoteController extends Controller
 
         $jugada   = $lote->jugada;
         $cantidad = $lote->cantidad_cartones;
-        $porHoja  = $jugada->cartones_por_hoja;
+        $porHoja  = (int) $jugada->cartones_por_hoja;
+
+        // Protección lógica (nunca menos de 1, nunca mayor que la cantidad total)
+        if ($porHoja < 1 || $porHoja > $cantidad) {
+            return back()->with('error', 'Cantidad de cartones por hoja inválida.');
+        }
 
         DB::transaction(function () use ($lote, $jugada, $cantidad, $porHoja) {
 
@@ -52,18 +57,18 @@ class LoteController extends Controller
             $i = 1;
             foreach ($cartones as $carton) {
                 JugadaCarton::create([
-                    'jugada_id'       => $jugada->id,
-                    'carton_id'       => $carton->id,
-                    'lote_impresion'  => $lote->codigo_lote,   // ✔ AHORA SÍ
-                    'numero_hoja'     => ceil($i / $porHoja),
-                    'posicion_en_hoja'=> (($i - 1) % $porHoja) + 1,
-                    'estado'          => 'impreso'
+                    'jugada_id'        => $jugada->id,
+                    'carton_id'        => $carton->id,
+                    'lote_impresion'   => $lote->codigo_lote,
+                    'numero_hoja'      => ceil($i / $porHoja),
+                    'posicion_en_hoja' => (($i - 1) % $porHoja) + 1,
+                    'estado'           => 'impreso'
                 ]);
                 $i++;
             }
 
             $lote->update([
-                'estado' => 'materializado',
+                'estado'          => 'en_impresion',
                 'fecha_impresion' => now()
             ]);
         });

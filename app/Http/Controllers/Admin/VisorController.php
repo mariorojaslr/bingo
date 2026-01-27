@@ -13,10 +13,11 @@ class VisorController extends Controller
     {
         $lote = LoteImpresion::with(['jugada.organizador','jugada.institucion'])->findOrFail($loteId);
 
-        if ($lote->estado !== 'materializado') {
+        // Estado técnico correcto
+        if ($lote->estado !== 'en_impresion') {
             return redirect()
                 ->route('admin.jugadas.show', $lote->jugada_id)
-                ->with('error', 'Este lote aún no fue materializado.');
+                ->with('error', 'Este lote aún no está en impresión.');
         }
 
         $columnas = (int) $request->get('columnas', 3);
@@ -32,7 +33,8 @@ class VisorController extends Controller
         if ($request->filled('ir_a_carton')) {
             $numero = $request->ir_a_carton;
             $posicion = (clone $query)->whereHas('carton', function($q) use ($numero) {
-                $q->where('numero_carton', $numero)->orWhere('id', $numero);
+                $q->where('numero_carton', $numero)
+                  ->orWhere('id', $numero);
             })->count();
 
             $pagina = max(1, ceil($posicion / $porPagina));

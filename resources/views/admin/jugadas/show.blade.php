@@ -64,7 +64,7 @@
                     @foreach($lotes as $lote)
                         <tr>
                             <td>{{ $lote->codigo_lote }}</td>
-                            <td>{{ \Carbon\Carbon::parse($lote->created_at)->format('d/m/Y H:i') }}</td>
+                            <td>{{ $lote->created_at->format('d/m/Y H:i') }}</td>
                             <td>{{ $lote->cantidad_cartones }}</td>
                             <td>{{ $lote->cantidad_hojas }}</td>
                             <td>${{ number_format($lote->total_general,2) }}</td>
@@ -75,26 +75,19 @@
                             </td>
                             <td class="text-center">
 
-                                {{-- ESTADO: PEDIDO → Generar --}}
                                 @if($lote->estado === 'pedido')
                                     <form action="{{ route('admin.lotes.generar', $lote->id) }}" method="POST" class="d-inline">
                                         @csrf
-                                        <button class="btn btn-sm btn-warning">
-                                            ⚙ Generar
-                                        </button>
+                                        <button class="btn btn-sm btn-warning">⚙ Generar</button>
                                     </form>
 
-                                {{-- ESTADO: GENERADO → Materializar --}}
                                 @elseif($lote->estado === 'generado')
                                     <form action="{{ route('admin.lotes.materializar', $lote->id) }}" method="POST" class="d-inline">
                                         @csrf
-                                        <button class="btn btn-sm btn-success">
-                                            🏭 Materializar
-                                        </button>
+                                        <button class="btn btn-sm btn-success">🏭 Materializar</button>
                                     </form>
 
-                                {{-- ESTADO: MATERIALIZADO → Ver --}}
-                                @elseif($lote->estado === 'materializado')
+                                @elseif($lote->estado === 'en_impresion')
                                     <a href="{{ route('admin.visor.lote', $lote->id) }}"
                                        class="btn btn-sm btn-primary" target="_blank">
                                         👁 Ver Cartones
@@ -169,7 +162,7 @@
     </div>
 </div>
 
-{{-- ================= SCRIPT CÁLCULO ================= --}}
+{{-- ================= SCRIPT PROFESIONAL ================= --}}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -182,21 +175,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const totalImpresionSpan = document.getElementById('total_impresion');
     const totalGeneralInput = document.getElementById('total_general');
+    const modal = document.getElementById('modalNuevoLote');
 
-    function recalcular() {
+    function recalcularTotales() {
         let cartones = parseInt(cartonesInput.value) || 0;
         let hojas = parseInt(hojasInput.value) || 0;
         let costoUnitario = parseFloat(costoUnitarioInput.value) || 0;
-
-        if (cartones > 0 && hojas === 0) {
-            hojas = Math.ceil(cartones / cartonesPorHoja);
-            hojasInput.value = hojas;
-        }
-
-        if (hojas > 0 && cartones === 0) {
-            cartones = hojas * cartonesPorHoja;
-            cartonesInput.value = cartones;
-        }
 
         let totalImpresion = hojas * precioHoja;
         let totalGeneracion = cartones * costoUnitario;
@@ -206,11 +190,33 @@ document.addEventListener('DOMContentLoaded', function () {
         totalGeneralInput.value = '$ ' + totalGeneral.toFixed(2);
     }
 
-    cartonesInput.addEventListener('input', recalcular);
-    hojasInput.addEventListener('input', recalcular);
-    costoUnitarioInput.addEventListener('input', recalcular);
+    function desdeCartones() {
+        let cartones = parseInt(cartonesInput.value) || 0;
+        let hojas = Math.ceil(cartones / cartonesPorHoja);
+        hojasInput.value = cartones > 0 ? hojas : '';
+        recalcularTotales();
+    }
+
+    function desdeHojas() {
+        let hojas = parseInt(hojasInput.value) || 0;
+        let cartones = hojas * cartonesPorHoja;
+        cartonesInput.value = hojas > 0 ? cartones : '';
+        recalcularTotales();
+    }
+
+    cartonesInput.addEventListener('input', desdeCartones);
+    hojasInput.addEventListener('input', desdeHojas);
+    costoUnitarioInput.addEventListener('input', recalcularTotales);
+
+    modal.addEventListener('show.bs.modal', function () {
+        cartonesInput.value = '';
+        hojasInput.value = '';
+        costoUnitarioInput.value = 0;
+        totalImpresionSpan.innerText = '0.00';
+        totalGeneralInput.value = '$ 0.00';
+    });
+
 });
 </script>
 
 @endsection
-
