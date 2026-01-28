@@ -19,9 +19,7 @@
             transition: width 0.3s;
         }
 
-        .sidebar.collapsed {
-            width: 70px;
-        }
+        .sidebar.collapsed { width: 70px; }
 
         .sidebar a, .sidebar span {
             color: #e5e7eb;
@@ -43,9 +41,7 @@
             padding-left: 10px;
         }
 
-        .sidebar.collapsed .section-title {
-            display: none;
-        }
+        .sidebar.collapsed .section-title { display: none; }
 
         .sidebar .submenu { padding-left: 20px; font-size: 0.9rem; }
 
@@ -54,9 +50,7 @@
             text-align: center;
         }
 
-        .sidebar.collapsed .nav-link span.text {
-            display: none;
-        }
+        .sidebar.collapsed .nav-link span.text { display: none; }
 
         .content {
             margin-left: 260px;
@@ -64,9 +58,7 @@
             transition: margin-left 0.3s;
         }
 
-        .content.collapsed {
-            margin-left: 70px;
-        }
+        .content.collapsed { margin-left: 70px; }
 
         .toggle-btn {
             position: fixed;
@@ -135,6 +127,29 @@
                 </a>
             </li>
 
+            <!-- ===================== -->
+            <!-- PRUEBAS INTERNAS -->
+            <!-- ===================== -->
+            <div class="section-title">Pruebas Internas</div>
+
+            <li class="nav-item submenu">
+                <a class="nav-link" href="{{ route('admin.pruebas.index') }}">
+                    🧪 <span class="text">Panel de Pruebas</span>
+                </a>
+            </li>
+
+            <li class="nav-item submenu">
+                <a class="nav-link" href="{{ route('admin.pruebas.jugadas') }}">
+                    🎯 <span class="text">Jugadas de Prueba</span>
+                </a>
+            </li>
+
+            <li class="nav-item submenu">
+                <a class="nav-link" href="{{ route('admin.pruebas.participantes') }}">
+                    👥 <span class="text">Participantes</span>
+                </a>
+            </li>
+
             <hr class="text-secondary">
 
             <li class="nav-item">
@@ -160,7 +175,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const content = document.getElementById('mainContent');
     const toggleBtn = document.getElementById('toggleSidebar');
 
-    // Restaurar estado
     if (localStorage.getItem('sidebar-collapsed') === 'true') {
         sidebar.classList.add('collapsed');
         content.classList.add('collapsed');
@@ -169,7 +183,6 @@ document.addEventListener('DOMContentLoaded', function () {
     toggleBtn.addEventListener('click', function () {
         sidebar.classList.toggle('collapsed');
         content.classList.toggle('collapsed');
-
         localStorage.setItem('sidebar-collapsed', sidebar.classList.contains('collapsed'));
     });
 });
