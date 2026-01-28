@@ -20,22 +20,30 @@ class OrganizadorController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'tipo' => 'required',
-            'razon_social' => 'required',
-            'email_contacto' => 'nullable|email',
-        ]);
+{
+    $request->validate([
+        'tipo' => 'required|string',
+        'razon_social' => 'required|string',
+        'nombre_fantasia' => 'required|string',
+        'cuit' => 'required|string',
+        'email_contacto' => 'required|email',
+        'telefono' => 'required|string',
+        'direccion' => 'required|string',
+        'activo' => 'required|boolean',
+    ]);
 
-        $data = $request->all();
-        $data['user_id'] = auth()->id() ?? 1; // usuario creador (provisorio hasta multiusuario)
+    $data = $request->all();
 
-        Organizador::create($data);
+    // Usuario creador (por ahora fijo hasta tener login completo)
+    $data['user_id'] = \App\Models\User::first()->id;
 
-        return redirect()
-            ->route('organizadores.index')
-            ->with('success', 'Organizador creado correctamente.');
-    }
+    Organizador::create($data);
+
+    return redirect()
+        ->route('organizadores.index')
+        ->with('success', 'Organizador creado correctamente.');
+}
+
 
     public function edit(Organizador $organizador)
     {

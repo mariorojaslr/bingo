@@ -13,4 +13,22 @@ class ParticipanteCartonPrueba extends Model
         'jugada_id',
         'carton_id',
     ];
+
+    // Relación con el participante
+    public function participante()
+    {
+        return $this->belongsTo(PruebaParticipante::class, 'participante_prueba_id');
+    }
+
+    // Relación con la jugada
+    public function jugada()
+    {
+        return $this->belongsTo(Jugada::class, 'jugada_id');
+    }
+
+    // Relación con el cartón 3x9
+    public function carton()
+    {
+        return $this->belongsTo(Carton::class, 'carton_id');
+    }
 }

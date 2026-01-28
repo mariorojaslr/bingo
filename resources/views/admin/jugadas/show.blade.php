@@ -35,6 +35,40 @@
     </div>
 </div>
 
+{{-- ================= ASIGNACIÓN MASIVA DE CARTONES ================= --}}
+<div class="card mb-4">
+    <div class="card-header bg-success text-white">
+        🎟 Asignación automática de cartones a participantes
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ route('admin.jugadas.asignarCartones', $jugada->id) }}">
+            @csrf
+
+            <div class="row align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label">Cantidad de cartones por participante</label>
+                    <input type="number"
+                           name="cantidad_por_participante"
+                           class="form-control"
+                           value="5"
+                           min="1"
+                           required>
+                </div>
+
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary mt-2">
+                        🎯 Asignar automáticamente
+                    </button>
+                </div>
+            </div>
+
+            <small class="text-muted d-block mt-2">
+                Se asignarán cartones al azar del lote activo, sin repetir, a todos los participantes.
+            </small>
+        </form>
+    </div>
+</div>
+
 {{-- ================= LOTES ================= --}}
 <div class="card mb-4">
     <div class="card-header d-flex justify-content-between align-items-center">

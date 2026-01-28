@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\InstitucionController;
 use App\Http\Controllers\Admin\SorteoController;
 use App\Http\Controllers\Admin\MonitorController;
 use App\Http\Controllers\Admin\PruebasController;
+use App\Http\Controllers\PilotoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,6 +75,11 @@ Route::prefix('admin')->group(function () {
     Route::get('/jugadas/{jugada}/cartones', [JugadaController::class, 'cartones'])->name('admin.jugadas.cartones');
     Route::post('/jugadas/{jugada}/lotes', [JugadaController::class, 'crearLote'])->name('admin.jugadas.lotes.crear');
 
+    // Asignación masiva de cartones a participantes
+    Route::post('/jugadas/{jugada}/asignar-cartones',
+        [JugadaController::class, 'asignarCartonesMasivo'])
+        ->name('admin.jugadas.asignarCartones');
+
     // Lotes
     Route::post('/lotes/{lote}/generar', [LoteController::class, 'generar'])->name('admin.lotes.generar');
     Route::post('/lotes/{lote}/materializar', [LoteController::class, 'materializar'])->name('admin.lotes.materializar');
@@ -85,6 +91,7 @@ Route::prefix('admin')->group(function () {
     Route::prefix('pruebas')->name('admin.pruebas.')->group(function () {
         Route::get('/', [PruebasController::class, 'index'])->name('index');
         Route::get('/participantes', [PruebasController::class, 'participantes'])->name('participantes');
+        Route::post('/participantes', [PruebasController::class, 'storeParticipante'])->name('participantes.store');
         Route::get('/jugadas', [PruebasController::class, 'jugadas'])->name('jugadas');
     });
 
@@ -109,3 +116,12 @@ Route::get('/monitor/jugada/{jugada}', [MonitorController::class, 'ver'])
     ->name('monitor.jugada');
 
 Route::get('/api/monitor/jugada/{jugada}', [MonitorController::class, 'estado']);
+
+/*
+|--------------------------------------------------------------------------
+| Vista Piloto por Token (Participantes)
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/piloto/{token}', [PilotoController::class, 'ver'])
+    ->name('piloto.ver');

@@ -8,6 +8,9 @@ use App\Models\Jugada;
 use App\Models\Organizador;
 use App\Models\Institucion;
 use App\Models\LoteImpresion;
+use App\Models\ParticipanteCartonPrueba;
+use App\Models\PruebaParticipante;
+use App\Models\JugadaCarton;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -83,7 +86,6 @@ class JugadaController extends Controller
     {
         $jugada = Jugada::with(['organizador', 'institucion'])->findOrFail($id);
 
-        // Lotes ya creados para esta jugada
         $lotes = LoteImpresion::where('jugada_id', $id)
             ->orderBy('created_at', 'asc')
             ->get();
@@ -94,7 +96,6 @@ class JugadaController extends Controller
     /**
      * ===============================
      * VISOR COMPLETO DE CARTONES
-     * (pantalla profesional de impresión)
      * ===============================
      */
     public function cartones($id)
@@ -105,17 +106,8 @@ class JugadaController extends Controller
 
     /**
      * =====================================================
-     * CREAR LOTE DE PRODUCCIÓN (PEDIDO DE IMPRESIÓN)
+     * CREAR LOTE DE PRODUCCIÓN
      * =====================================================
-     * Este método:
-     * - Recibe cartones u hojas
-     * - Calcula equivalencias según formato
-     * - Aplica precio por hoja congelado
-     * - Aplica costo por generación por cartón
-     * - Calcula total general
-     * - Genera código único de lote
-     * - Deja lote en estado PEDIDO
-     * - Cambia estado de la jugada a EN_PRODUCCION
      */
     public function crearLote(Request $request, $jugadaId)
     {
@@ -130,9 +122,6 @@ class JugadaController extends Controller
         $cartonesPorHoja = $jugada->cartones_por_hoja;
         $precioHoja      = $jugada->precio_hoja;
 
-        // ===============================
-        // Resolver equivalencia
-        // ===============================
         if ($request->cantidad_cartones) {
             $cantidadCartones = (int) $request->cantidad_cartones;
             $cantidadHojas = (int) ceil($cantidadCartones / $cartonesPorHoja);
@@ -141,25 +130,15 @@ class JugadaController extends Controller
             $cantidadCartones = $cantidadHojas * $cartonesPorHoja;
         }
 
-        // ===============================
-        // Cálculos económicos
-        // ===============================
         $totalImpresion = $cantidadHojas * $precioHoja;
 
-        // Costo unitario por cartón
         $costoUnitarioGeneracion = $request->costo_generacion ?? 0;
         $totalGeneracion = $costoUnitarioGeneracion * $cantidadCartones;
 
         $totalGeneral = $totalImpresion + $totalGeneracion;
 
-        // ===============================
-        // Código único del lote
-        // ===============================
         $codigoLote = 'L' . now()->format('YmdHis') . '-' . Str::upper(Str::random(4));
 
-        // ===============================
-        // Crear lote en base de datos
-        // ===============================
         LoteImpresion::create([
             'jugada_id'          => $jugada->id,
             'codigo_lote'        => $codigoLote,
@@ -172,9 +151,6 @@ class JugadaController extends Controller
             'estado'            => 'pedido'
         ]);
 
-        // ===============================
-        // Cambiar estado de la jugada
-        // ===============================
         $jugada->update([
             'estado' => 'en_produccion'
         ]);
@@ -182,5 +158,62 @@ class JugadaController extends Controller
         return redirect()
             ->route('admin.jugadas.show', $jugada->id)
             ->with('success', 'Lote creado correctamente. Quedó en estado PEDIDO.');
+    }
+
+    /**
+     * =====================================================
+     * ASIGNACIÓN MASIVA DE CARTONES A PARTICIPANTES
+     * (N por cada uno, aleatorios, sin repetir)
+     * =====================================================
+     */
+    public function asignarCartonesMasivo(Request $request, Jugada $jugada)
+    {
+        $request->validate([
+            'cantidad_por_participante' => 'required|integer|min:1',
+        ]);
+
+        $cantidad = (int) $request->cantidad_por_participante;
+
+        DB::transaction(function () use ($jugada, $cantidad) {
+
+            $participantes = PruebaParticipante::all();
+
+            $cartonesDisponibles = JugadaCarton::where('jugada_id', $jugada->id)
+                ->whereNotIn('carton_id', function ($q) use ($jugada) {
+                    $q->select('carton_id')
+                      ->from('participante_carton_prueba')
+                      ->where('jugada_id', $jugada->id);
+                })
+                ->inRandomOrder()
+                ->lockForUpdate()
+                ->get();
+
+            $necesarios = $participantes->count() * $cantidad;
+
+            if ($cartonesDisponibles->count() < $necesarios) {
+                throw new \Exception("No hay suficientes cartones para asignar {$cantidad} a cada participante.");
+            }
+
+            $indice = 0;
+
+            foreach ($participantes as $participante) {
+                for ($i = 0; $i < $cantidad; $i++) {
+
+                    $carton = $cartonesDisponibles[$indice];
+
+                    ParticipanteCartonPrueba::create([
+                        'participante_prueba_id' => $participante->id,
+                        'jugada_id'             => $jugada->id,
+                        'carton_id'             => $carton->carton_id,
+                    ]);
+
+                    $indice++;
+                }
+            }
+        });
+
+        return redirect()
+            ->route('admin.jugadas.show', $jugada->id)
+            ->with('success', 'Cartones asignados automáticamente a todos los participantes.');
     }
 }

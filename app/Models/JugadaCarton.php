@@ -15,19 +15,20 @@ class JugadaCarton extends Model
         'jugada_id',
         'carton_id',
         'lote_impresion',
-        'fecha_impresion',
         'numero_hoja',
         'posicion_en_hoja',
-        'estado'
+        'orden',
     ];
 
-    public function jugada()
-    {
-        return $this->belongsTo(Jugada::class);
-    }
-
+    // Relación con el cartón físico
     public function carton()
     {
-        return $this->belongsTo(Carton::class);
+        return $this->belongsTo(Carton::class, 'carton_id');
+    }
+
+    // Relación con la jugada
+    public function jugada()
+    {
+        return $this->belongsTo(Jugada::class, 'jugada_id');
     }
 }

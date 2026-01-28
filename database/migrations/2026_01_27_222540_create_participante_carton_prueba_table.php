@@ -9,9 +9,18 @@ return new class extends Migration {
     {
         Schema::create('participante_carton_prueba', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('participante_prueba_id')->constrained('participantes_prueba')->onDelete('cascade');
-            $table->foreignId('jugada_id')->constrained('jugadas')->onDelete('cascade');
-            $table->foreignId('carton_id')->constrained('cartons')->onDelete('cascade');
+            $table->foreignId('participante_prueba_id')
+                  ->constrained('prueba_participantes')
+                  ->onDelete('cascade');
+
+            $table->foreignId('jugada_id')
+                  ->constrained('jugadas')
+                  ->onDelete('cascade');
+
+            $table->foreignId('carton_id')
+                  ->constrained('cartons')
+                  ->onDelete('cascade');
+
             $table->timestamps();
 
             $table->unique(['participante_prueba_id', 'jugada_id', 'carton_id'], 'pp_jugada_carton_unique');

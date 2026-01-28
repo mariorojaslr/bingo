@@ -1,27 +1,40 @@
-@extends('layouts.admin')
+@extends('admin.layout')
 
-@section('content')
-<div class="container">
-    <h2>Participantes de Prueba</h2>
-    <table class="table">
-        <thead>
+@section('contenido')
+<h2 class="mb-4">👥 Participantes Piloto</h2>
+
+<form action="{{ route('admin.pruebas.participantes.store') }}" method="POST" class="row g-2 mb-4">
+    @csrf
+    <div class="col-md-4">
+        <input type="text" name="nombre" class="form-control" placeholder="Nombre completo" required>
+    </div>
+    <div class="col-md-4">
+        <input type="text" name="telefono" class="form-control" placeholder="Teléfono (opcional)">
+    </div>
+    <div class="col-md-4">
+        <button class="btn btn-success w-100">Agregar Participante</button>
+    </div>
+</form>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Link de acceso</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($participantes as $p)
             <tr>
-                <th>Nombre</th>
-                <th>DNI</th>
-                <th>Teléfono</th>
-                <th>Email</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($participantes as $p)
-            <tr>
-                <td>{{ $p->nombre }} {{ $p->apellido }}</td>
-                <td>{{ $p->dni }}</td>
+                <td>{{ $p->nombre }}</td>
                 <td>{{ $p->telefono }}</td>
-                <td>{{ $p->email }}</td>
+                <td>
+                    <input type="text" class="form-control" readonly
+                        value="{{ url('/piloto/'.$p->token) }}">
+                </td>
             </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
+        @endforeach
+    </tbody>
+</table>
 @endsection
