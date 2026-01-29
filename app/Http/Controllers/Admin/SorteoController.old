@@ -12,9 +12,6 @@ use App\Events\BingoConfirmado;
 
 class SorteoController extends Controller
 {
-    /**
-     * 🎯 Pantalla principal del sorteador
-     */
     public function ver($jugadaId)
     {
         $jugada = Jugada::findOrFail($jugadaId);
@@ -26,9 +23,6 @@ class SorteoController extends Controller
         return view('sorteador.jugada', compact('jugada', 'sorteo', 'jugadaId'));
     }
 
-    /**
-     * 🎲 Extraer bolilla (automático)
-     */
     public function extraer(Request $request, $jugadaId)
     {
         $sorteo = Sorteo::where('jugada_id', $jugadaId)
@@ -38,14 +32,13 @@ class SorteoController extends Controller
 
         $sacadas = $sorteo->bolillas_sacadas ?? [];
 
-        // 🛑 Corte total si ya salieron las 90
+        // Corte total: ya salieron las 90 bolillas
         if (count($sacadas) >= 90) {
             $sorteo->estado = 'finalizado';
             $sorteo->save();
-            return back()->with('error', 'Bolillero completo. Juego finalizado.');
+            return back()->with('error', 'Ya salieron todas las bolillas. Sorteo finalizado.');
         }
 
-        // Buscar una bolilla no repetida
         do {
             $nueva = rand(1, 90);
         } while (in_array($nueva, $sacadas));
@@ -58,37 +51,33 @@ class SorteoController extends Controller
 
         $ultimas = array_slice(array_reverse($sacadas), 0, 5);
 
-        // 📡 Emitir en tiempo real a todos
-        broadcast(new BolillaSorteada(
-            (int)$jugadaId,
-            (int)$nueva,
+        event(new BolillaSorteada(
+            (int) $jugadaId,
+            (int) $nueva,
             $ultimas
-        ))->toOthers();
+        ));
 
         return back();
     }
 
-    /**
-     * 🟦 Confirmar Línea (operador)
-     */
+    // El operador confirma que hay una línea
     public function confirmarLinea(Request $request, $jugadaId)
     {
         $sorteo = Sorteo::where('jugada_id', $jugadaId)->latest()->firstOrFail();
-
         $sorteo->estado = 'linea';
         $sorteo->save();
 
-        broadcast(new LineaConfirmada(
-            (int)$jugadaId,
-            (int)$request->carton_id
-        ))->toOthers();
+        $cartonId = $request->input('carton_id');
+
+        event(new LineaConfirmada(
+            (int) $jugadaId,
+            (int) $cartonId
+        ));
 
         return back();
     }
 
-    /**
-     * ▶ Reanudar después de pagar Línea
-     */
+    // Luego de pagar la línea, se reanuda el juego
     public function reanudar($jugadaId)
     {
         $sorteo = Sorteo::where('jugada_id', $jugadaId)->latest()->firstOrFail();
@@ -98,27 +87,24 @@ class SorteoController extends Controller
         return back();
     }
 
-    /**
-     * 🟥 Confirmar Bingo (operador o automático)
-     */
+    // El operador confirma que hay Bingo
     public function confirmarBingo(Request $request, $jugadaId)
     {
         $sorteo = Sorteo::where('jugada_id', $jugadaId)->latest()->firstOrFail();
-
         $sorteo->estado = 'bingo';
         $sorteo->save();
 
-        broadcast(new BingoConfirmado(
-            (int)$jugadaId,
-            (int)$request->carton_id
-        ))->toOthers();
+        $cartonId = $request->input('carton_id');
+
+        event(new BingoConfirmado(
+            (int) $jugadaId,
+            (int) $cartonId
+        ));
 
         return back();
     }
 
-    /**
-     * ⏹ Finalizar juego (cierre oficial)
-     */
+    // Finaliza completamente la jugada
     public function finalizar($jugadaId)
     {
         $sorteo = Sorteo::where('jugada_id', $jugadaId)->latest()->firstOrFail();
@@ -126,20 +112,5 @@ class SorteoController extends Controller
         $sorteo->save();
 
         return back();
-    }
-
-    /**
-     * 🔄 Reiniciar jugada completa (modo pruebas / nueva ronda)
-     */
-    public function reiniciar($jugadaId)
-    {
-        $sorteo = Sorteo::where('jugada_id', $jugadaId)->latest()->firstOrFail();
-
-        $sorteo->bolillas_sacadas = [];
-        $sorteo->bolilla_actual = null;
-        $sorteo->estado = 'en_curso';
-        $sorteo->save();
-
-        return back()->with('success', 'Jugada reiniciada correctamente.');
     }
 }

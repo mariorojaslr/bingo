@@ -8,19 +8,17 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class BolillaSorteada implements ShouldBroadcast
+class LineaConfirmada implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public int $jugadaId;
-    public int $bolilla;
-    public array $ultimas;
+    public int $cartonId;
 
-    public function __construct(int $jugadaId, int $bolilla, array $ultimas)
+    public function __construct(int $jugadaId, int $cartonId)
     {
         $this->jugadaId = $jugadaId;
-        $this->bolilla  = $bolilla;
-        $this->ultimas  = $ultimas;
+        $this->cartonId = $cartonId;
     }
 
     public function broadcastOn(): Channel
@@ -30,6 +28,6 @@ class BolillaSorteada implements ShouldBroadcast
 
     public function broadcastAs(): string
     {
-        return 'bolilla.sorteada';
+        return 'linea.confirmada';
     }
 }

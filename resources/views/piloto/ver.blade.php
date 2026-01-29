@@ -2,7 +2,28 @@
 
 @section('content')
 <style>
-body { background: #f3f4f6; }
+body { background: #f3f4f6; margin:0; }
+
+/* ===== BARRA FLOTANTE SUPERIOR ===== */
+.top-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: #0f172a;
+    color: white;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 50;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.switch-group { display: flex; gap: 14px; align-items: center; }
+.switch { display: flex; align-items: center; gap: 5px; font-size: 14px; }
+.switch input { transform: scale(1.2); }
+
+/* ===== CUERPO ===== */
+.wrapper { padding-top: 70px; }
 
 .bolilla-wrap {
     display: flex;
@@ -16,20 +37,13 @@ body { background: #f3f4f6; }
     height: 150px;
     border-radius: 50%;
     background: radial-gradient(circle at top, #22c55e, #15803d);
-    color: #fff;
+    color: #ffffff;
     font-size: 76px;
     font-weight: 900;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 0 30px rgba(34,197,94,0.7);
-    animation: pulse 1.4s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-    100% { transform: scale(1); }
 }
 
 .ultimos {
@@ -39,12 +53,12 @@ body { background: #f3f4f6; }
 }
 
 .ultimos span {
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     background: #e5e7eb;
     color: #000;
-    font-size: 25px;
+    font-size: 22px;
     font-weight: bold;
     display: flex;
     align-items: center;
@@ -67,46 +81,86 @@ body { background: #f3f4f6; }
     justify-content: center;
     font-weight: 900;
     font-size: 20px;
+    cursor: pointer;
 }
 
-.bingo-empty { opacity: 0.4; }
+.bingo-empty { opacity: 0.3; cursor: default; }
+.bingo-hit { background:#22c55e; color:#fff; }
 
-.bingo-hit { background:#22c55e;color:#fff; }
-.bingo-line { background:#2563eb;color:#fff; animation: lineflash 1s infinite; }
-.bingo-full { background:#dc2626;color:#fff; animation: bingoflash 0.8s infinite; }
-
-@keyframes lineflash {
-    0% { box-shadow: 0 0 0px #2563eb; }
-    50% { box-shadow: 0 0 20px #2563eb; }
-    100% { box-shadow: 0 0 0px #2563eb; }
+.bingo-pendiente {
+    animation: pulse 1s infinite;
+    background: #fde047;
 }
 
-@keyframes bingoflash {
-    0% { box-shadow: 0 0 0px #dc2626; }
-    50% { box-shadow: 0 0 25px #dc2626; }
-    100% { box-shadow: 0 0 0px #dc2626; }
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+/* ===== CARTELES ===== */
+.cartel {
+    position: fixed;
+    top: 35%;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 60px;
+    font-weight: bold;
+    display: none;
+    z-index: 100;
+}
+
+.cartel.linea { color: #2563eb; }
+.cartel.bingo { color: #dc2626; }
+
+.cartel.mostrar {
+    display: block;
+    animation: parpadeo 1s infinite;
+}
+
+@keyframes parpadeo {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
 }
 </style>
 
-<div class="max-w-md mx-auto p-3">
-
-    <div class="text-center mb-3">
-        <h1 class="text-xl font-bold">🎯 Bingo en Vivo</h1>
-        <div class="text-sm text-gray-600">{{ $participante->nombre }}</div>
+<div class="top-bar">
+    <div>{{ $participante->nombre }}</div>
+    <div class="switch-group">
+        <div class="switch">
+            <label>Auto</label>
+            <input type="checkbox" id="modoAuto">
+        </div>
+        <div class="switch">
+            <label>🔊</label>
+            <input type="checkbox" id="sonidoOn" checked>
+        </div>
     </div>
+</div>
+
+<div class="cartel linea" id="cartelLinea">¡LÍNEA!</div>
+<div class="cartel bingo" id="cartelBingo">¡BINGO!</div>
+
+<div class="wrapper max-w-md mx-auto p-3">
 
     <div class="bolilla-wrap">
-        <div class="bolilla-actual" id="bolillaActual">{{ $bolillaActual }}</div>
+        <div class="bolilla-actual" id="bolillaActual">
+            {{ $bolillaActual ?? ($sorteo->bolilla_actual ?? '–') }}
+        </div>
 
         <div class="ultimos" id="ultimos">
-            @foreach($ultimasBolillas as $u)
+            @php
+                $ult = $ultimasBolillas ?? array_slice(array_reverse($sorteo->bolillas_sacadas ?? []),0,5);
+            @endphp
+            @foreach($ult as $u)
                 <span>{{ $u }}</span>
             @endforeach
         </div>
     </div>
 
     @foreach($cartones as $pcp)
-        <div class="bg-white shadow rounded-lg p-2 mb-3 carton" data-carton="{{ $pcp->carton->id }}">
+        <div class="bg-white shadow rounded-lg p-2 mb-3 carton">
             <div class="text-xs text-gray-500 mb-1 text-center">
                 Cartón Nº {{ $pcp->carton->numero_carton }}
             </div>
@@ -124,21 +178,32 @@ body { background: #f3f4f6; }
             </div>
         </div>
     @endforeach
-
-    <div class="text-center mt-3 text-xs text-gray-500">
-        Código: <strong>{{ $participante->codigo_acceso }}</strong>
-    </div>
-
 </div>
 
-<audio id="audioHit" src="/sounds/hit.mp3" preload="auto"></audio>
-<audio id="audioLine" src="/sounds/linea.mp3" preload="auto"></audio>
-<audio id="audioBingo" src="/sounds/bingo.mp3" preload="auto"></audio>
+<audio id="audioHit" src="/sounds/hit.mp3"></audio>
+<audio id="audioLine" src="/sounds/linea.mp3"></audio>
+<audio id="audioBingo" src="/sounds/bingo.mp3"></audio>
 
 <script src="https://js.pusher.com/8.2/pusher.min.js"></script>
 
 <script>
-// === MARCAR BOLILLAS YA SALIDAS AL CARGAR ===
+let modoAuto = false;
+let sonido = true;
+let pendientes = [];
+
+document.getElementById('modoAuto').addEventListener('change', e => {
+    modoAuto = e.target.checked;
+    limpiarPendientes();
+});
+
+document.getElementById('sonidoOn').addEventListener('change', e => {
+    sonido = e.target.checked;
+});
+
+function play(id) {
+    if (sonido) document.getElementById(id).play();
+}
+
 const bolillasYaSalidas = @json($bolillasMarcadas);
 
 document.querySelectorAll('.numero').forEach(cell => {
@@ -146,10 +211,15 @@ document.querySelectorAll('.numero').forEach(cell => {
     if (bolillasYaSalidas.includes(n)) {
         cell.classList.add('bingo-hit');
     }
-});
 
-// === CONEXIÓN PUSHER REAL ===
-Pusher.logToConsole = true;
+    cell.addEventListener('click', () => {
+        if (!modoAuto && pendientes.includes(n)) {
+            cell.classList.remove('bingo-pendiente');
+            cell.classList.add('bingo-hit');
+            pendientes = pendientes.filter(x => x !== n);
+        }
+    });
+});
 
 const pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
     cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
@@ -158,50 +228,52 @@ const pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
 
 const channel = pusher.subscribe('jugada.{{ $jugadaId }}');
 
-// === FUNCIÓN CENTRAL DE ACTUALIZACIÓN ===
-function manejarBolilla(data) {
+channel.bind('BolillaSorteada', function(data) {
 
-    console.log('EVENTO RECIBIDO:', data);
-
-    const bolilla = data.bolilla;
-    const ultimas = data.ultimas;
-
-    document.getElementById('bolillaActual').innerText = bolilla;
+    document.getElementById('bolillaActual').innerText = data.bolilla;
 
     const ultimosDiv = document.getElementById('ultimos');
     ultimosDiv.innerHTML = '';
-    ultimas.forEach(n => {
+    data.ultimas.forEach(n => {
         const s = document.createElement('span');
         s.innerText = n;
         ultimosDiv.appendChild(s);
     });
 
     document.querySelectorAll('.numero').forEach(cell => {
-        if (parseInt(cell.dataset.numero) === bolilla) {
-            cell.classList.add('bingo-hit');
-            document.getElementById('audioHit').play();
+        if (parseInt(cell.dataset.numero) === data.bolilla) {
+
+            if (modoAuto) {
+                cell.classList.add('bingo-hit');
+            } else {
+                cell.classList.add('bingo-pendiente');
+                pendientes.push(data.bolilla);
+            }
+
+            play('audioHit');
         }
     });
+});
+
+channel.bind('LineaConfirmada', function() {
+    document.getElementById('cartelLinea').classList.add('mostrar');
+    play('audioLine');
+});
+
+channel.bind('BingoConfirmado', function() {
+    document.getElementById('cartelBingo').classList.add('mostrar');
+    play('audioBingo');
+});
+
+channel.bind('JuegoReanudado', function() {
+    document.getElementById('cartelLinea').classList.remove('mostrar');
+    document.getElementById('cartelBingo').classList.remove('mostrar');
+    limpiarPendientes();
+});
+
+function limpiarPendientes() {
+    pendientes = [];
+    document.querySelectorAll('.bingo-pendiente').forEach(c => c.classList.remove('bingo-pendiente'));
 }
-
-// === ESCUCHAR EVENTOS (NOMBRE CORRECTO) ===
-channel.bind('BolillaSorteada', manejarBolilla);
-channel.bind('bolilla.sorteada', manejarBolilla); // compatibilidad
-
-// === EVENTOS DE LÍNEA ===
-channel.bind('LineaConfirmada', function(data) {
-    document.querySelectorAll(`[data-carton="${data.carton_id}"] .numero`).forEach(c => {
-        c.classList.add('bingo-line');
-    });
-    document.getElementById('audioLine').play();
-});
-
-// === EVENTOS DE BINGO ===
-channel.bind('BingoConfirmado', function(data) {
-    document.querySelectorAll(`[data-carton="${data.carton_id}"] .numero`).forEach(c => {
-        c.classList.add('bingo-full');
-    });
-    document.getElementById('audioBingo').play();
-});
 </script>
 @endsection

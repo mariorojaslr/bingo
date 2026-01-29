@@ -12,6 +12,8 @@ use App\Http\Controllers\Admin\MonitorController;
 use App\Http\Controllers\Admin\PruebasController;
 use App\Http\Controllers\PilotoController;
 
+
+
 /*
 |--------------------------------------------------------------------------
 | Rutas Públicas
@@ -125,3 +127,59 @@ Route::get('/api/monitor/jugada/{jugada}', [MonitorController::class, 'estado'])
 */
 Route::get('/piloto/{token}', [PilotoController::class, 'ver'])
     ->name('piloto.ver');
+
+    Route::prefix('sorteador')->name('sorteador.')->group(function () {
+    Route::get('/jugada/{jugada}', [SorteoController::class, 'ver'])->name('jugada');
+    Route::post('/jugada/{jugada}/extraer', [SorteoController::class, 'extraer'])->name('extraer');
+    Route::post('/jugada/{jugada}/reanudar', [SorteoController::class, 'reanudar'])->name('reanudar');
+    Route::post('/jugada/{jugada}/finalizar', [SorteoController::class, 'finalizar'])->name('finalizar');
+});
+
+
+Route::prefix('sorteador')->name('sorteador.')->group(function () {
+
+    // Vista principal del sorteador
+    Route::get('/jugada/{jugada}', [SorteoController::class, 'ver'])
+        ->name('jugada');
+
+    // Sacar bolilla (modo automático)
+    Route::post('/jugada/{jugada}/extraer', [SorteoController::class, 'extraer'])
+        ->name('extraer');
+
+    // Confirmar línea (manual)
+    Route::post('/jugada/{jugada}/confirmar-linea', [SorteoController::class, 'confirmarLinea'])
+        ->name('confirmar.linea');
+
+    // Reanudar juego luego de pagar línea
+    Route::post('/jugada/{jugada}/reanudar', [SorteoController::class, 'reanudar'])
+        ->name('reanudar');
+
+    // Confirmar bingo (manual)
+    Route::post('/jugada/{jugada}/confirmar-bingo', [SorteoController::class, 'confirmarBingo'])
+        ->name('confirmar.bingo');
+
+    // Finalizar completamente la jugada
+    Route::post('/jugada/{jugada}/finalizar', [SorteoController::class, 'finalizar'])
+        ->name('finalizar');
+});
+
+Route::prefix('sorteador')->name('sorteador.')->group(function () {
+
+    Route::get('/jugada/{jugada}', [SorteoController::class, 'ver'])->name('jugada');
+
+    Route::post('/jugada/{jugada}/extraer', [SorteoController::class, 'extraer'])->name('extraer');
+
+    Route::post('/jugada/{jugada}/confirmar-linea', [SorteoController::class, 'confirmarLinea'])->name('confirmar.linea');
+
+    Route::post('/jugada/{jugada}/reanudar', [SorteoController::class, 'reanudar'])->name('reanudar');
+
+    Route::post('/jugada/{jugada}/confirmar-bingo', [SorteoController::class, 'confirmarBingo'])->name('confirmar.bingo');
+
+    Route::post('/jugada/{jugada}/finalizar', [SorteoController::class, 'finalizar'])->name('finalizar');
+
+    // 🔄 Nueva ruta
+    Route::post('/jugada/{jugada}/reiniciar', [SorteoController::class, 'reiniciar'])->name('reiniciar');
+});
+
+Route::post('/sorteador/jugada/{jugada}/reiniciar', [App\Http\Controllers\Admin\SorteoController::class, 'reiniciar'])
+    ->name('sorteador.reiniciar');

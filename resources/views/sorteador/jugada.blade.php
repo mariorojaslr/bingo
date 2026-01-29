@@ -10,112 +10,184 @@
             margin: 0;
             background: radial-gradient(circle at top, #0f172a, #020617);
             color: white;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             font-family: system-ui, sans-serif;
         }
 
-        .bola {
-            width: 180px;
-            height: 180px;
+        header {
+            position: sticky;
+            top: 0;
+            background: #020617;
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #1e293b;
+            z-index: 10;
+        }
+
+        .estado {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .bolilla {
+            margin: 20px auto 10px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             background: radial-gradient(circle at top, #22c55e, #15803d);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 96px;
-            font-weight: 900;
-            box-shadow: 0 0 40px rgba(34,197,94,.8);
-            margin-bottom: 20px;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.08); }
-            100% { transform: scale(1); }
-        }
-
-        .btn {
-            background: #22c55e;
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 10px;
-            font-size: 18px;
+            font-size: 64px;
             font-weight: bold;
-            cursor: pointer;
-            margin: 12px 0;
+            box-shadow: 0 0 30px rgba(34,197,94,0.8);
         }
 
         .ultimas {
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
             justify-content: center;
-            margin-top: 12px;
+            gap: 8px;
+            margin-bottom: 10px;
         }
 
         .ultimas span {
-            width: 38px;
-            height: 38px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
-            background: #1f2933;
+            background: #1e293b;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 18px;
+        }
+
+        .controles {
+            text-align: center;
+            margin: 12px;
+        }
+
+        button {
+            background: #22c55e;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 4px;
+        }
+
+        button[disabled] {
+            background: #475569;
+            cursor: not-allowed;
+        }
+
+        .cartel {
+            display: none;
+            text-align: center;
+            font-size: 42px;
             font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .cartel.linea { color: #3b82f6; }
+        .cartel.bingo { color: #ef4444; }
+
+        .cartel.mostrar {
+            display: block;
+            animation: parpadeo 1s infinite;
+        }
+
+        @keyframes parpadeo {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
         }
     </style>
 </head>
 <body>
 
-    <div class="bola" id="bolillaActual">
-        {{ $sorteo?->bolilla_actual ?? '—' }}
-    </div>
+<header>
+    <h3>{{ $jugada->nombre_jugada }}</h3>
+    <div class="estado">Estado: {{ strtoupper($sorteo->estado) }} | {{ now()->format('d/m/Y H:i') }}</div>
+</header>
 
-    <form method="POST" action="{{ route('sorteador.extraer', $jugada->id) }}">
+<div class="bolilla">
+    {{ $sorteo->bolilla_actual ?? '–' }}
+</div>
+
+<div class="ultimas">
+    @foreach(array_slice(array_reverse($sorteo->bolillas_sacadas ?? []), 0, 5) as $b)
+        <span>{{ $b }}</span>
+    @endforeach
+</div>
+
+<div class="cartel linea" id="cartelLinea">¡LÍNEA!</div>
+<div class="cartel bingo" id="cartelBingo">¡BINGO!</div>
+
+<div class="controles">
+
+    @if($sorteo->estado === 'en_curso')
+        <form method="POST" action="{{ route('sorteador.extraer', $jugadaId) }}">
+            @csrf
+            <button type="submit">🎯 SACAR BOLILLA</button>
+        </form>
+
+        <form method="POST" action="{{ route('sorteador.confirmar.linea', $jugadaId) }}">
+            @csrf
+            <input type="hidden" name="carton_id" value="0">
+            <button type="submit">🟦 CONFIRMAR LÍNEA</button>
+        </form>
+    @endif
+
+    @if($sorteo->estado === 'linea')
+        <script>document.getElementById('cartelLinea').classList.add('mostrar');</script>
+
+        <form method="POST" action="{{ route('sorteador.reanudar', $jugadaId) }}">
+            @csrf
+            <button type="submit">▶ REANUDAR JUEGO</button>
+        </form>
+    @endif
+
+    @if($sorteo->estado === 'en_curso')
+        <form method="POST" action="{{ route('sorteador.confirmar.bingo', $jugadaId) }}">
+            @csrf
+            <input type="hidden" name="carton_id" value="0">
+            <button type="submit">🟥 CONFIRMAR BINGO</button>
+        </form>
+    @endif
+
+    @if($sorteo->estado === 'bingo')
+        <script>document.getElementById('cartelBingo').classList.add('mostrar');</script>
+
+        <form method="POST" action="{{ route('sorteador.finalizar', $jugadaId) }}">
+            @csrf
+            <button type="submit">🏁 FINALIZAR JUGADA</button>
+        </form>
+    @endif
+
+    @if($sorteo->estado === 'finalizado')
+    <button disabled>✔ JUGADA FINALIZADA</button>
+
+    <form method="POST" action="{{ route('sorteador.reiniciar', $jugadaId) }}" style="margin-top:10px;">
         @csrf
-        <button class="btn">SACAR BOLILLA</button>
+        <button type="submit" style="background:#f59e0b;">🔄 REINICIAR JUGADA</button>
     </form>
+@endif
 
-    <div class="ultimas" id="ultimas">
-        @if($sorteo && $sorteo->bolillas_sacadas)
-            @foreach(array_reverse(array_slice($sorteo->bolillas_sacadas, -15)) as $b)
-                <span>{{ $b }}</span>
-            @endforeach
-        @endif
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/laravel-echo/dist/echo.iife.js"></script>
-    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+</div>
 
-    <script>
-        window.Pusher = Pusher;
+<audio id="audioLinea" src="/sounds/linea.mp3" preload="auto"></audio>
+<audio id="audioBingo" src="/sounds/bingo.mp3" preload="auto"></audio>
 
-        window.Echo = new Echo({
-            broadcaster: 'pusher',
-            key: '{{ env('PUSHER_APP_KEY') }}',
-            cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
-            forceTLS: true
-        });
+<script>
+    @if($sorteo->estado === 'linea')
+        document.getElementById('audioLinea').play();
+    @endif
 
-        Echo.channel('jugada.{{ $jugada->id }}')
-            .listen('.bolilla.sorteada', (e) => {
-                document.getElementById('bolillaActual').innerText = e.bolilla;
-
-                const ultimas = document.getElementById('ultimas');
-                ultimas.innerHTML = '';
-                e.ultimas.forEach(n => {
-                    const s = document.createElement('span');
-                    s.innerText = n;
-                    ultimas.appendChild(s);
-                });
-            });
-    </script>
+    @if($sorteo->estado === 'bingo')
+        document.getElementById('audioBingo').play();
+    @endif
+</script>
 
 </body>
 </html>
