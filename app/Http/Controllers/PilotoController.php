@@ -29,16 +29,19 @@ class PilotoController extends Controller
             ->first();
 
         // Valores por defecto
-        $bolillaActual = null;
-        $ultimasBolillas = [];
+        $bolillaActual    = null;
+        $ultimasBolillas  = collect();
         $bolillasMarcadas = [];
 
         if ($sorteo) {
             $bolillaActual = $sorteo->bolilla_actual;
 
             /**
-             * 🔑 NORMALIZACIÓN CLAVE
-             * bolillas_sacadas puede venir como array o como string JSON
+             * 🔑 NORMALIZACIÓN CRÍTICA
+             * bolillas_sacadas puede venir como:
+             * - array
+             * - string JSON
+             * - null
              */
             if (is_array($sorteo->bolillas_sacadas)) {
                 $todas = $sorteo->bolillas_sacadas;
@@ -49,7 +52,7 @@ class PilotoController extends Controller
             }
 
             $bolillasMarcadas = $todas;
-            $ultimasBolillas = collect(array_reverse($todas))->take(5)->values();
+            $ultimasBolillas  = collect(array_reverse($todas))->take(5)->values();
         }
 
         // 4. Cartones asignados al participante
