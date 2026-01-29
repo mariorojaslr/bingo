@@ -17,7 +17,6 @@ use App\Http\Controllers\PilotoController;
 | Rutas Públicas
 |--------------------------------------------------------------------------
 */
-
 Route::get('/', function () {
     return view('welcome');
 });
@@ -27,7 +26,6 @@ Route::get('/', function () {
 | Panel de Administración
 |--------------------------------------------------------------------------
 */
-
 Route::prefix('admin')->group(function () {
 
     Route::get('/', function () {
@@ -75,7 +73,6 @@ Route::prefix('admin')->group(function () {
     Route::get('/jugadas/{jugada}/cartones', [JugadaController::class, 'cartones'])->name('admin.jugadas.cartones');
     Route::post('/jugadas/{jugada}/lotes', [JugadaController::class, 'crearLote'])->name('admin.jugadas.lotes.crear');
 
-    // Asignación masiva de cartones a participantes
     Route::post('/jugadas/{jugada}/asignar-cartones',
         [JugadaController::class, 'asignarCartonesMasivo'])
         ->name('admin.jugadas.asignarCartones');
@@ -87,7 +84,7 @@ Route::prefix('admin')->group(function () {
     // Visor de impresión
     Route::get('/visor/lote/{lote}', [VisorController::class, 'verLote'])->name('admin.visor.lote');
 
-    // Módulo de Pruebas Internas
+    // Pruebas
     Route::prefix('pruebas')->name('admin.pruebas.')->group(function () {
         Route::get('/', [PruebasController::class, 'index'])->name('index');
         Route::get('/participantes', [PruebasController::class, 'participantes'])->name('participantes');
@@ -95,14 +92,15 @@ Route::prefix('admin')->group(function () {
         Route::get('/jugadas', [PruebasController::class, 'jugadas'])->name('jugadas');
     });
 
+    Route::post('/sorteo/sortear', [SorteoController::class, 'sortear'])
+        ->name('admin.sorteo.sortear');
 });
 
 /*
 |--------------------------------------------------------------------------
-| Sorteador y Monitor (por jugada)
+| Sorteador y Monitor (Tiempo Real)
 |--------------------------------------------------------------------------
 */
-
 Route::get('/sorteador/jugada/{jugada}', [SorteoController::class, 'ver'])
     ->name('sorteador.jugada');
 
@@ -112,6 +110,9 @@ Route::post('/sorteador/jugada/{jugada}/extraer', [SorteoController::class, 'ext
 Route::post('/sorteador/jugada/{jugada}/continuar', [SorteoController::class, 'continuar'])
     ->name('sorteador.continuar');
 
+Route::post('/sorteador/jugada/{jugada}/finalizar', [SorteoController::class, 'finalizar'])
+    ->name('sorteador.finalizar');
+
 Route::get('/monitor/jugada/{jugada}', [MonitorController::class, 'ver'])
     ->name('monitor.jugada');
 
@@ -119,9 +120,8 @@ Route::get('/api/monitor/jugada/{jugada}', [MonitorController::class, 'estado'])
 
 /*
 |--------------------------------------------------------------------------
-| Vista Piloto por Token (Participantes)
+| Vista Piloto (Participantes)
 |--------------------------------------------------------------------------
 */
-
 Route::get('/piloto/{token}', [PilotoController::class, 'ver'])
     ->name('piloto.ver');

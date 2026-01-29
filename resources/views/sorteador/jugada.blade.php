@@ -4,94 +4,118 @@
     <meta charset="UTF-8">
     <title>Sorteador – {{ $jugada->nombre_jugada }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         body {
+            margin: 0;
             background: radial-gradient(circle at top, #0f172a, #020617);
             color: white;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: system-ui, sans-serif;
         }
 
         .bola {
-            width: 110px;
-            height: 110px;
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
-            background: radial-gradient(circle at top left, #22c55e, #166534);
+            background: radial-gradient(circle at top, #22c55e, #15803d);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 48px;
-            font-weight: bold;
-            box-shadow: 0 0 25px rgba(34,197,94,.6);
+            font-size: 96px;
+            font-weight: 900;
+            box-shadow: 0 0 40px rgba(34,197,94,.8);
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite;
         }
 
-        .historial span {
-            display: inline-block;
-            background: #1e293b;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+
+        .btn {
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 12px 0;
+        }
+
+        .ultimas {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        .ultimas span {
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            line-height: 45px;
-            text-align: center;
-            margin: 4px;
-        }
-
-        .estado {
-            font-size: 20px;
+            background: #1f2933;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: bold;
-            margin: 10px 0;
         }
-
-        .aviso-linea { background:#dc2626; padding:8px; }
-        .aviso-bingo { background:#f59e0b; padding:8px; color:#000; }
     </style>
 </head>
 <body>
 
-<div class="container py-5 text-center">
-
-    <h2>🎱 Sorteador</h2>
-    <h4>{{ $jugada->nombre_jugada }}</h4>
-
-    <div class="estado">
-        ESTADO: {{ strtoupper(str_replace('_',' ', $sorteo->estado)) }}
+    <div class="bola" id="bolillaActual">
+        {{ $sorteo?->bolilla_actual ?? '—' }}
     </div>
 
-    <div class="d-flex justify-content-center my-4">
-        <div class="bola">
-            {{ $ultima ?? '—' }}
-        </div>
+    <form method="POST" action="{{ route('sorteador.extraer', $jugada->id) }}">
+        @csrf
+        <button class="btn">SACAR BOLILLA</button>
+    </form>
+
+    <div class="ultimas" id="ultimas">
+        @if($sorteo && $sorteo->bolillas_sacadas)
+            @foreach(array_reverse(array_slice($sorteo->bolillas_sacadas, -15)) as $b)
+                <span>{{ $b }}</span>
+            @endforeach
+        @endif
     </div>
 
-    @if($sorteo->estado == 'en_curso')
-        <form method="POST" action="{{ route('sorteador.extraer', $jugada->id) }}">
-            @csrf
-            <button class="btn btn-success btn-lg">🎯 Sacar bolilla</button>
-        </form>
-    @else
-        <form method="POST" action="{{ route('sorteador.continuar', $jugada->id) }}">
-            @csrf
-            <button class="btn btn-primary btn-lg mt-2">▶ CONTINUAR JUEGO</button>
-        </form>
-    @endif
+    <script src="https://cdn.jsdelivr.net/npm/laravel-echo/dist/echo.iife.js"></script>
+    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
 
-    @if($sorteo->estado == 'pausa_linea')
-        <div class="aviso-linea mt-3">🟥 LÍNEA COMPLETADA – Validar y pagar</div>
-    @endif
+    <script>
+        window.Pusher = Pusher;
 
-    @if($sorteo->estado == 'pausa_bingo')
-        <div class="aviso-bingo mt-3">🟨 BINGO COMPLETADO – Validar ganador</div>
-    @endif
+        window.Echo = new Echo({
+            broadcaster: 'pusher',
+            key: '{{ env('PUSHER_APP_KEY') }}',
+            cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
+            forceTLS: true
+        });
 
-    <h5 class="mt-4">Bolillas salidas: {{ count($bolillas) }}</h5>
+        Echo.channel('jugada.{{ $jugada->id }}')
+            .listen('.bolilla.sorteada', (e) => {
+                document.getElementById('bolillaActual').innerText = e.bolilla;
 
-    <div class="historial mt-3">
-        @foreach($bolillas as $b)
-            <span>{{ $b }}</span>
-        @endforeach
-    </div>
+                const ultimas = document.getElementById('ultimas');
+                ultimas.innerHTML = '';
+                e.ultimas.forEach(n => {
+                    const s = document.createElement('span');
+                    s.innerText = n;
+                    ultimas.appendChild(s);
+                });
+            });
+    </script>
 
-</div>
 </body>
 </html>

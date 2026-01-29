@@ -3,70 +3,61 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Jugada;
-use App\Models\Sorteo;
-use App\Services\DetectorBingoService;
 use Illuminate\Http\Request;
+use App\Models\Sorteo;
+use App\Models\Jugada;
+use App\Events\BolillaSorteada;
 
 class SorteoController extends Controller
 {
     public function ver($jugadaId)
     {
-        $jugada = Jugada::with(['institucion','organizador'])->findOrFail($jugadaId);
+        $jugada = Jugada::findOrFail($jugadaId);
 
-        $sorteo = Sorteo::firstOrCreate(
-            ['jugada_id' => $jugada->id],
-            ['estado' => 'en_curso', 'bolillas_sacadas' => []]
-        );
+        $sorteo = Sorteo::where('jugada_id', $jugadaId)
+            ->where('estado', 'en_curso')
+            ->latest()
+            ->first();
 
-        $bolillas = $sorteo->bolillas_sacadas ?? [];
-        $ultima = count($bolillas) ? end($bolillas) : null;
-
-        return view('sorteador.jugada', compact('jugada','sorteo','bolillas','ultima'));
+        return view('sorteador.jugada', compact('jugada', 'sorteo', 'jugadaId'));
     }
 
-    public function extraer($jugadaId)
+    public function extraer(Request $request, $jugadaId)
     {
-        $sorteo = Sorteo::where('jugada_id', $jugadaId)->firstOrFail();
+        $sorteo = Sorteo::where('jugada_id', $jugadaId)
+            ->where('estado', 'en_curso')
+            ->latest()
+            ->firstOrFail();
 
-        if ($sorteo->estado !== 'en_curso') {
-            return redirect()->route('sorteador.jugada', $jugadaId);
-        }
+        $sacadas = $sorteo->bolillas_sacadas ?? [];
 
-        $bolillas = $sorteo->bolillas_sacadas ?? [];
-        $disponibles = array_diff(range(1, 90), $bolillas);
+        do {
+            $nueva = rand(1, 90);
+        } while (in_array($nueva, $sacadas));
 
-        if (count($disponibles) === 0) return redirect()->back();
+        $sacadas[] = $nueva;
 
-        $nueva = collect($disponibles)->random();
-        $sorteo->agregarBolilla($nueva);
-        $bolillas = $sorteo->bolillas_sacadas;
+        $sorteo->bolilla_actual = $nueva;
+        $sorteo->bolillas_sacadas = $sacadas;
+        $sorteo->save();
 
-        $resultado = DetectorBingoService::detectar($jugadaId, $bolillas);
+        $ultimas = array_slice(array_reverse($sacadas), 0, 5);
 
-        if ($resultado['linea'] && !$sorteo->bolilla_linea) {
-            $sorteo->registrarLinea($nueva);
-            $sorteo->carton_linea_id = $resultado['linea']['carton_id'];
-            $sorteo->estado = 'pausa_linea';
-            $sorteo->save();
-        }
+        event(new BolillaSorteada(
+            (int) $jugadaId,
+            (int) $nueva,
+            $ultimas
+        ));
 
-        if ($resultado['bingo'] && !$sorteo->bolilla_bingo) {
-            $sorteo->registrarBingo($nueva);
-            $sorteo->carton_bingo_id = $resultado['bingo']['carton_id'];
-            $sorteo->estado = 'pausa_bingo';
-            $sorteo->save();
-        }
-
-        return redirect()->route('sorteador.jugada', $jugadaId);
+        return back();
     }
 
     public function continuar($jugadaId)
     {
-        $sorteo = Sorteo::where('jugada_id', $jugadaId)->firstOrFail();
+        $sorteo = Sorteo::where('jugada_id', $jugadaId)->latest()->first();
         $sorteo->estado = 'en_curso';
         $sorteo->save();
 
-        return redirect()->route('sorteador.jugada', $jugadaId);
+        return back();
     }
 }

@@ -3,76 +3,48 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Sorteo;
-use App\Models\Jugada;
 use Illuminate\Http\Request;
+use App\Models\Sorteo;
+use App\Events\BolillaSorteada;
 
 class SorteadorController extends Controller
 {
-    public function iniciar($jugadaId)
+    public function ver($jugadaId)
     {
-        $sorteo = Sorteo::firstOrCreate(
-            ['jugada_id' => $jugadaId],
-            ['estado' => 'pendiente']
-        );
+        $sorteo = Sorteo::where('jugada_id', $jugadaId)
+            ->where('estado', 'en_curso')
+            ->latest()
+            ->first();
 
-        $sorteo->iniciar();
-
-        return response()->json([
-            'ok' => true,
-            'mensaje' => 'Sorteo iniciado',
-            'sorteo' => $sorteo
-        ]);
+        return view('sorteador.jugada', compact('sorteo', 'jugadaId'));
     }
 
-    public function pausar($jugadaId)
+    public function extraer(Request $request, $jugadaId)
     {
-        $sorteo = Sorteo::where('jugada_id', $jugadaId)->firstOrFail();
-        $sorteo->pausar();
+        $sorteo = Sorteo::where('jugada_id', $jugadaId)
+            ->where('estado', 'en_curso')
+            ->latest()
+            ->firstOrFail();
 
-        return response()->json(['ok' => true, 'estado' => 'pausado']);
-    }
+        $sacadas = is_array($sorteo->bolillas_sacadas)
+            ? $sorteo->bolillas_sacadas
+            : (json_decode($sorteo->bolillas_sacadas, true) ?? []);
 
-    public function reanudar($jugadaId)
-    {
-        $sorteo = Sorteo::where('jugada_id', $jugadaId)->firstOrFail();
-        $sorteo->reanudar();
+        do {
+            $nueva = rand(1, 90);
+        } while (in_array($nueva, $sacadas));
 
-        return response()->json(['ok' => true, 'estado' => 'en_curso']);
-    }
+        $sacadas[] = $nueva;
 
-    public function sacarBolilla($jugadaId)
-    {
-        $sorteo = Sorteo::where('jugada_id', $jugadaId)->firstOrFail();
+        $sorteo->bolillas_sacadas = $sacadas;
+        $sorteo->bolilla_actual = $nueva;
+        $sorteo->save();
 
-        $yaSalieron = $sorteo->bolillas_sacadas ?? [];
-        $todas = range(1, 90);
+        $ultimas = array_slice(array_reverse($sacadas), 0, 5);
 
-        $disponibles = array_values(array_diff($todas, $yaSalieron));
+        // EMITIR EN TIEMPO REAL
+        event(new BolillaSorteada($jugadaId, $nueva, $ultimas));
 
-        if (count($disponibles) === 0) {
-            return response()->json(['ok' => false, 'mensaje' => 'No quedan bolillas']);
-        }
-
-        $numero = $disponibles[array_rand($disponibles)];
-
-        $sorteo->agregarBolilla($numero);
-
-        return response()->json([
-            'ok' => true,
-            'bolilla' => $numero,
-            'anteriores' => array_slice(array_reverse($sorteo->bolillas_sacadas), 1, 6)
-        ]);
-    }
-
-    public function estado($jugadaId)
-    {
-        $sorteo = Sorteo::where('jugada_id', $jugadaId)->first();
-
-        return response()->json([
-            'estado' => $sorteo?->estado ?? 'pendiente',
-            'actual' => $sorteo?->bolilla_actual,
-            'bolillas' => $sorteo?->bolillas_sacadas ?? []
-        ]);
+        return back();
     }
 }
