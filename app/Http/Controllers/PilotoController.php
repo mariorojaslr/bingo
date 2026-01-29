@@ -2,50 +2,71 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\PruebaParticipante;
+use App\Models\ParticipanteCartonPrueba;
+use App\Models\Jugada;
 use App\Models\Sorteo;
 
 class PilotoController extends Controller
 {
+    /**
+     * Vista del piloto / jugador
+     */
     public function ver($token)
     {
-        // Buscar participante por token
+        // 1. Buscar participante por token
         $participante = PruebaParticipante::where('token', $token)->firstOrFail();
 
-        // Buscar sorteo en curso
-        $sorteo = Sorteo::where('estado', 'en_curso')->latest()->first();
+        // 2. Buscar jugada activa
+        $jugada = Jugada::where('estado', 'en_produccion')
+            ->latest()
+            ->firstOrFail();
 
+        // 3. Buscar sorteo activo
+        $sorteo = Sorteo::where('jugada_id', $jugada->id)
+            ->latest()
+            ->first();
+
+        // Valores por defecto
         $bolillaActual = null;
         $ultimasBolillas = [];
         $bolillasMarcadas = [];
-        $jugadaId = null;
 
         if ($sorteo) {
-            $jugadaId = $sorteo->id;
             $bolillaActual = $sorteo->bolilla_actual;
 
-            if (!empty($sorteo->bolillas_sacadas)) {
-                if (is_array($sorteo->bolillas_sacadas)) {
-                    $bolillasMarcadas = $sorteo->bolillas_sacadas;
-                } else {
-                    $bolillasMarcadas = json_decode($sorteo->bolillas_sacadas, true) ?? [];
-                }
-
-                $ultimasBolillas = array_slice(array_reverse($bolillasMarcadas), 0, 5);
+            /**
+             * 🔑 NORMALIZACIÓN CLAVE
+             * bolillas_sacadas puede venir como array o como string JSON
+             */
+            if (is_array($sorteo->bolillas_sacadas)) {
+                $todas = $sorteo->bolillas_sacadas;
+            } elseif (is_string($sorteo->bolillas_sacadas)) {
+                $todas = json_decode($sorteo->bolillas_sacadas, true) ?? [];
+            } else {
+                $todas = [];
             }
+
+            $bolillasMarcadas = $todas;
+            $ultimasBolillas = collect(array_reverse($todas))->take(5)->values();
         }
 
-        // Cartones del participante
-        $cartones = $participante->cartones()->with('carton')->get();
+        // 4. Cartones asignados al participante
+        $cartones = ParticipanteCartonPrueba::where('participante_prueba_id', $participante->id)
+            ->where('jugada_id', $jugada->id)
+            ->with('carton')
+            ->get();
 
-        // Enviar todo a la vista correcta
-        return view('piloto.ver', compact(
-            'participante',
-            'bolillaActual',
-            'ultimasBolillas',
-            'bolillasMarcadas',
-            'cartones',
-            'jugadaId'
-        ));
+        // 5. Render
+        return view('piloto.ver', [
+            'participante'     => $participante,
+            'jugada'           => $jugada,
+            'jugadaId'         => $jugada->id,
+            'cartones'         => $cartones,
+            'bolillaActual'    => $bolillaActual,
+            'ultimasBolillas'  => $ultimasBolillas,
+            'bolillasMarcadas' => $bolillasMarcadas,
+        ]);
     }
 }
