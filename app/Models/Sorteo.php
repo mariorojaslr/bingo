@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Sorteo extends Model
 {
@@ -26,12 +27,6 @@ class Sorteo extends Model
         'premio_bingo'
     ];
 
-    protected $casts = [
-        'bolillas_sacadas' => 'array',
-        'inicio_sorteo'    => 'datetime',
-        'fin_sorteo'       => 'datetime',
-    ];
-
     // ================= RELACIONES =================
 
     public function jugada()
@@ -39,61 +34,83 @@ class Sorteo extends Model
         return $this->belongsTo(Jugada::class);
     }
 
+    // ================= NORMALIZACIÓN INTERNA =================
+
+    public function getBolillas(): array
+    {
+        if (empty($this->bolillas_sacadas)) {
+            return [];
+        }
+
+        if (is_array($this->bolillas_sacadas)) {
+            return $this->bolillas_sacadas;
+        }
+
+        if (is_string($this->bolillas_sacadas)) {
+            $decoded = json_decode($this->bolillas_sacadas, true);
+            return is_array($decoded) ? $decoded : [];
+        }
+
+        return [];
+    }
+
+    public function setBolillas(array $bolillas): void
+    {
+        $this->bolillas_sacadas = json_encode(array_values($bolillas));
+    }
+
     // ================= LÓGICA DE NEGOCIO =================
 
-    public function iniciar()
+    public function iniciar(): void
     {
-        $this->update([
-            'estado' => 'en_curso',
-            'inicio_sorteo' => now(),
-            'bolillas_sacadas' => [],
-        ]);
+        $this->estado = 'en_curso';
+        $this->inicio_sorteo = Carbon::now();
+        $this->setBolillas([]);
+        $this->save();
     }
 
-    public function pausar()
+    public function pausar(): void
     {
-        $this->update(['estado' => 'pausado']);
+        $this->estado = 'pausado';
+        $this->save();
     }
 
-    public function reanudar()
+    public function reanudar(): void
     {
-        $this->update(['estado' => 'en_curso']);
+        $this->estado = 'en_curso';
+        $this->save();
     }
 
-    public function finalizar()
+    public function finalizar(): void
     {
-        $this->update([
-            'estado' => 'finalizado',
-            'fin_sorteo' => now()
-        ]);
+        $this->estado = 'finalizado';
+        $this->fin_sorteo = Carbon::now();
+        $this->save();
     }
 
-    public function agregarBolilla($numero)
+    public function agregarBolilla(int $numero): void
     {
-        $bolillas = $this->bolillas_sacadas ?? [];
+        $bolillas = $this->getBolillas();
         $bolillas[] = $numero;
 
-        $this->update([
-            'bolillas_sacadas' => $bolillas,
-            'bolilla_actual' => $numero
-        ]);
+        $this->setBolillas($bolillas);
+        $this->bolilla_actual = $numero;
+        $this->save();
     }
 
-    public function registrarLinea($numeroBolilla)
+    public function registrarLinea(int $numeroBolilla): void
     {
-        $this->update([
-            'bolilla_linea' => $numeroBolilla,
-            'tiempo_linea' => now()->diffInSeconds($this->inicio_sorteo)
-        ]);
+        $this->bolilla_linea = $numeroBolilla;
+        $this->tiempo_linea = Carbon::now()->diffInSeconds(Carbon::parse($this->inicio_sorteo));
+        $this->save();
     }
 
-    public function registrarBingo($numeroBolilla)
+    public function registrarBingo(int $numeroBolilla): void
     {
-        $this->update([
-            'bolilla_bingo' => $numeroBolilla,
-            'tiempo_bingo' => now()->diffInSeconds($this->inicio_sorteo),
-            'estado' => 'finalizado',
-            'fin_sorteo' => now()
-        ]);
+        $this->bolilla_bingo = $numeroBolilla;
+        $this->tiempo_bingo = Carbon::now()->diffInSeconds(Carbon::parse($this->inicio_sorteo));
+        $this->estado = 'finalizado';
+        $this->fin_sorteo = Carbon::now();
+        $this->save();
     }
 }

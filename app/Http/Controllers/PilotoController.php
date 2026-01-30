@@ -13,46 +13,33 @@ class PilotoController extends Controller
     /**
      * Vista del piloto / jugador
      */
-    public function ver($token)
+    public function ver(string $token)
     {
-        // 1. Buscar participante por token
+        // 1. Participante por token
         $participante = PruebaParticipante::where('token', $token)->firstOrFail();
 
-        // 2. Buscar jugada activa
+        // 2. Jugada activa
         $jugada = Jugada::where('estado', 'en_produccion')
             ->latest()
             ->firstOrFail();
 
-        // 3. Buscar sorteo activo
+        // 3. Sorteo asociado a la jugada
         $sorteo = Sorteo::where('jugada_id', $jugada->id)
             ->latest()
             ->first();
 
-        // Valores por defecto
+        // Valores por defecto (estado seguro)
         $bolillaActual    = null;
-        $ultimasBolillas  = collect();
         $bolillasMarcadas = [];
+        $ultimasBolillas  = collect();
 
         if ($sorteo) {
-            $bolillaActual = $sorteo->bolilla_actual;
-
-            /**
-             * 🔑 NORMALIZACIÓN CRÍTICA
-             * bolillas_sacadas puede venir como:
-             * - array
-             * - string JSON
-             * - null
-             */
-            if (is_array($sorteo->bolillas_sacadas)) {
-                $todas = $sorteo->bolillas_sacadas;
-            } elseif (is_string($sorteo->bolillas_sacadas)) {
-                $todas = json_decode($sorteo->bolillas_sacadas, true) ?? [];
-            } else {
-                $todas = [];
-            }
-
-            $bolillasMarcadas = $todas;
-            $ultimasBolillas  = collect(array_reverse($todas))->take(5)->values();
+            $bolillaActual    = $sorteo->bolilla_actual;
+            $bolillasMarcadas = $sorteo->getBolillas();
+            $ultimasBolillas  = collect($bolillasMarcadas)
+                ->reverse()
+                ->take(5)
+                ->values();
         }
 
         // 4. Cartones asignados al participante
@@ -61,7 +48,7 @@ class PilotoController extends Controller
             ->with('carton')
             ->get();
 
-        // 5. Render
+        // 5. Render de la vista
         return view('piloto.ver', [
             'participante'     => $participante,
             'jugada'           => $jugada,
