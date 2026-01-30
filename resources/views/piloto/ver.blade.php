@@ -125,6 +125,12 @@ body { background: #f3f4f6; margin:0; }
 }
 </style>
 
+@php
+    // 🔒 Estado inicial coherente (desde BD)
+    $bolillasIniciales = $bolillasMarcadas ?? [];
+    $ultimasIniciales  = $ultimasBolillas ?? [];
+@endphp
+
 <div class="top-bar">
     <div>{{ $participante->nombre }}</div>
     <div class="switch-group">
@@ -146,14 +152,11 @@ body { background: #f3f4f6; margin:0; }
 
     <div class="bolilla-wrap">
         <div class="bolilla-actual" id="bolillaActual">
-            {{ $bolillaActual ?? ($sorteo->bolilla_actual ?? '–') }}
+            {{ $bolillaActual ?? '–' }}
         </div>
 
         <div class="ultimos" id="ultimos">
-            @php
-                $ult = $ultimasBolillas ?? array_slice(array_reverse($sorteo->bolillas_sacadas ?? []),0,5);
-            @endphp
-            @foreach($ult as $u)
+            @foreach($ultimasIniciales as $u)
                 <span>{{ $u }}</span>
             @endforeach
         </div>
@@ -171,7 +174,10 @@ body { background: #f3f4f6; margin:0; }
                         @if($celda == 0)
                             <div class="bingo-cell bingo-empty">♣</div>
                         @else
-                            <div class="bingo-cell numero" data-numero="{{ $celda }}">{{ $celda }}</div>
+                            <div class="bingo-cell numero {{ in_array($celda, $bolillasIniciales) ? 'bingo-hit' : '' }}"
+                                 data-numero="{{ $celda }}">
+                                {{ $celda }}
+                            </div>
                         @endif
                     @endforeach
                 @endforeach
@@ -204,23 +210,42 @@ function play(id) {
     if (sonido) document.getElementById(id).play();
 }
 
-const bolillasYaSalidas = @json($bolillasMarcadas);
+/**
+ * 🔑 SINCRONIZACIÓN REAL
+ * Reconstruye estado desde BD
+ */
+function sincronizarEstado() {
+    fetch('/api/piloto/jugada/{{ $jugadaId }}')
+        .then(r => r.json())
+        .then(data => {
 
-document.querySelectorAll('.numero').forEach(cell => {
-    const n = parseInt(cell.dataset.numero);
-    if (bolillasYaSalidas.includes(n)) {
-        cell.classList.add('bingo-hit');
-    }
+            document.getElementById('bolillaActual').innerText = data.ultima ?? '–';
 
-    cell.addEventListener('click', () => {
-        if (!modoAuto && pendientes.includes(n)) {
-            cell.classList.remove('bingo-pendiente');
-            cell.classList.add('bingo-hit');
-            pendientes = pendientes.filter(x => x !== n);
-        }
-    });
-});
+            const ult = document.getElementById('ultimos');
+            ult.innerHTML = '';
+            data.bolillas.slice(-5).reverse().forEach(n => {
+                const s = document.createElement('span');
+                s.innerText = n;
+                ult.appendChild(s);
+            });
 
+            document.querySelectorAll('.numero').forEach(cell => {
+                const n = parseInt(cell.dataset.numero);
+                if (data.bolillas.includes(n)) {
+                    cell.classList.remove('bingo-pendiente');
+                    cell.classList.add('bingo-hit');
+                }
+            });
+        });
+}
+
+// ⏱️ Mantiene coherencia aunque se pierdan eventos
+setInterval(sincronizarEstado, 2000);
+sincronizarEstado();
+
+/**
+ * 📡 PUSHER (solo aviso inmediato)
+ */
 const pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
     cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
     forceTLS: true
@@ -228,31 +253,9 @@ const pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
 
 const channel = pusher.subscribe('jugada.{{ $jugadaId }}');
 
-channel.bind('BolillaSorteada', function(data) {
-
-    document.getElementById('bolillaActual').innerText = data.bolilla;
-
-    const ultimosDiv = document.getElementById('ultimos');
-    ultimosDiv.innerHTML = '';
-    data.ultimas.forEach(n => {
-        const s = document.createElement('span');
-        s.innerText = n;
-        ultimosDiv.appendChild(s);
-    });
-
-    document.querySelectorAll('.numero').forEach(cell => {
-        if (parseInt(cell.dataset.numero) === data.bolilla) {
-
-            if (modoAuto) {
-                cell.classList.add('bingo-hit');
-            } else {
-                cell.classList.add('bingo-pendiente');
-                pendientes.push(data.bolilla);
-            }
-
-            play('audioHit');
-        }
-    });
+channel.bind('BolillaSorteada', function() {
+    play('audioHit');
+    sincronizarEstado();
 });
 
 channel.bind('LineaConfirmada', function() {

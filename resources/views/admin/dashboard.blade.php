@@ -98,17 +98,55 @@
 
 <div class="row g-4">
 
-    <div class="col-md-6">
-        <div class="card p-3 shadow-sm">
-            <h6><i class="bi bi-broadcast"></i> Sorteos en Tiempo Real</h6>
-            <p class="mb-1">Monitor:
-                <a href="/monitor/jugada/1" target="_blank">Abrir</a>
-            </p>
-            <p class="mb-1">Sorteador:
-                <a href="/sorteador/jugada/1" target="_blank">Abrir</a>
-            </p>
-        </div>
+        <div class="col-md-6">
+            <div class="card p-3 shadow-sm">
+
+
+               <h6><i class="bi bi-broadcast"></i> Sorteos en Tiempo Real</h6>
+
+<div class="d-flex gap-4 flex-wrap">
+    <div>
+        Monitor:
+        <a href="/monitor/jugada/1"
+           target="_blank"
+           class="link-primary">
+            Abrir
+        </a>
     </div>
+
+    <div>
+        Sorteador:
+        <a href="/sorteador/jugada/1"
+           target="_blank"
+           class="link-primary">
+            Abrir
+        </a>
+    </div>
+
+    <div>
+        Monitor TV:
+        <a href="/monitor-tv"
+           target="_blank"
+           class="link-primary fw-semibold">
+            Abrir
+        </a>
+    </div>
+</div>
+
+
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
 
     <div class="col-md-6">
         <div class="card p-3 shadow-sm">

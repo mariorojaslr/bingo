@@ -13,33 +13,46 @@ class PilotoController extends Controller
     /**
      * Vista del piloto / jugador
      */
-    public function ver(string $token)
+    public function ver($token)
     {
-        // 1. Participante por token
+        // 1. Buscar participante por token
         $participante = PruebaParticipante::where('token', $token)->firstOrFail();
 
-        // 2. Jugada activa
+        // 2. Buscar jugada activa
         $jugada = Jugada::where('estado', 'en_produccion')
             ->latest()
             ->firstOrFail();
 
-        // 3. Sorteo asociado a la jugada
+        // 3. Buscar sorteo activo
         $sorteo = Sorteo::where('jugada_id', $jugada->id)
             ->latest()
             ->first();
 
-        // Valores por defecto (estado seguro)
+        // Valores por defecto
         $bolillaActual    = null;
-        $bolillasMarcadas = [];
         $ultimasBolillas  = collect();
+        $bolillasMarcadas = [];
 
         if ($sorteo) {
-            $bolillaActual    = $sorteo->bolilla_actual;
-            $bolillasMarcadas = $sorteo->getBolillas();
-            $ultimasBolillas  = collect($bolillasMarcadas)
-                ->reverse()
-                ->take(5)
-                ->values();
+            $bolillaActual = $sorteo->bolilla_actual;
+
+            /**
+             * 🔑 NORMALIZACIÓN CRÍTICA
+             * bolillas_sacadas puede venir como:
+             * - array
+             * - string JSON
+             * - null
+             */
+            if (is_array($sorteo->bolillas_sacadas)) {
+                $todas = $sorteo->bolillas_sacadas;
+            } elseif (is_string($sorteo->bolillas_sacadas)) {
+                $todas = json_decode($sorteo->bolillas_sacadas, true) ?? [];
+            } else {
+                $todas = [];
+            }
+
+            $bolillasMarcadas = $todas;
+            $ultimasBolillas  = collect(array_reverse($todas))->take(5)->values();
         }
 
         // 4. Cartones asignados al participante
@@ -48,7 +61,7 @@ class PilotoController extends Controller
             ->with('carton')
             ->get();
 
-        // 5. Render de la vista
+        // 5. Render
         return view('piloto.ver', [
             'participante'     => $participante,
             'jugada'           => $jugada,

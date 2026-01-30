@@ -6,9 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Sorteo;
 use App\Models\Jugada;
-use App\Events\BolillaSorteada;
-use App\Events\LineaConfirmada;
-use App\Events\BingoConfirmado;
+use App\Events\SorteoActualizado;
 
 class SorteoController extends Controller
 {
@@ -27,7 +25,7 @@ class SorteoController extends Controller
     }
 
     /**
-     * 🎲 Extraer bolilla (automático)
+     * 🎲 Extraer bolilla
      */
     public function extraer(Request $request, $jugadaId)
     {
@@ -36,109 +34,105 @@ class SorteoController extends Controller
             ->latest()
             ->firstOrFail();
 
-        $sacadas = $sorteo->bolillas_sacadas ?? [];
+        // 🛑 Corte si ya salieron 90
+        if (count($sorteo->getBolillas()) >= 90) {
+            $sorteo->finalizar();
 
-        // 🛑 Corte total si ya salieron las 90
-        if (count($sacadas) >= 90) {
-            $sorteo->estado = 'finalizado';
-            $sorteo->save();
+            broadcast(new SorteoActualizado($sorteo))->toOthers();
+
             return back()->with('error', 'Bolillero completo. Juego finalizado.');
         }
 
-        // Buscar una bolilla no repetida
+        // Buscar bolilla no repetida
         do {
             $nueva = rand(1, 90);
-        } while (in_array($nueva, $sacadas));
+        } while (!$sorteo->agregarBolilla($nueva));
 
-        $sacadas[] = $nueva;
-
-        $sorteo->bolilla_actual = $nueva;
-        $sorteo->bolillas_sacadas = $sacadas;
-        $sorteo->save();
-
-        $ultimas = array_slice(array_reverse($sacadas), 0, 5);
-
-        // 📡 Emitir en tiempo real a todos
-        broadcast(new BolillaSorteada(
-            (int)$jugadaId,
-            (int)$nueva,
-            $ultimas
-        ))->toOthers();
+        // 📡 Emitir evento ÚNICO
+        broadcast(new SorteoActualizado($sorteo))->toOthers();
 
         return back();
     }
 
     /**
-     * 🟦 Confirmar Línea (operador)
+     * 🟦 Confirmar Línea
      */
     public function confirmarLinea(Request $request, $jugadaId)
     {
-        $sorteo = Sorteo::where('jugada_id', $jugadaId)->latest()->firstOrFail();
+        $sorteo = Sorteo::where('jugada_id', $jugadaId)
+            ->latest()
+            ->firstOrFail();
 
         $sorteo->estado = 'linea';
         $sorteo->save();
 
-        broadcast(new LineaConfirmada(
-            (int)$jugadaId,
-            (int)$request->carton_id
-        ))->toOthers();
+        broadcast(new SorteoActualizado($sorteo))->toOthers();
 
         return back();
     }
 
     /**
-     * ▶ Reanudar después de pagar Línea
+     * ▶ Reanudar sorteo
      */
     public function reanudar($jugadaId)
     {
-        $sorteo = Sorteo::where('jugada_id', $jugadaId)->latest()->firstOrFail();
+        $sorteo = Sorteo::where('jugada_id', $jugadaId)
+            ->latest()
+            ->firstOrFail();
+
         $sorteo->estado = 'en_curso';
         $sorteo->save();
+
+        broadcast(new SorteoActualizado($sorteo))->toOthers();
 
         return back();
     }
 
     /**
-     * 🟥 Confirmar Bingo (operador o automático)
+     * 🟥 Confirmar Bingo
      */
     public function confirmarBingo(Request $request, $jugadaId)
     {
-        $sorteo = Sorteo::where('jugada_id', $jugadaId)->latest()->firstOrFail();
+        $sorteo = Sorteo::where('jugada_id', $jugadaId)
+            ->latest()
+            ->firstOrFail();
 
         $sorteo->estado = 'bingo';
         $sorteo->save();
 
-        broadcast(new BingoConfirmado(
-            (int)$jugadaId,
-            (int)$request->carton_id
-        ))->toOthers();
+        broadcast(new SorteoActualizado($sorteo))->toOthers();
 
         return back();
     }
 
     /**
-     * ⏹ Finalizar juego (cierre oficial)
+     * ⏹ Finalizar juego
      */
     public function finalizar($jugadaId)
     {
-        $sorteo = Sorteo::where('jugada_id', $jugadaId)->latest()->firstOrFail();
-        $sorteo->estado = 'finalizado';
-        $sorteo->save();
+        $sorteo = Sorteo::where('jugada_id', $jugadaId)
+            ->latest()
+            ->firstOrFail();
+
+        $sorteo->finalizar();
+
+        broadcast(new SorteoActualizado($sorteo))->toOthers();
 
         return back();
     }
 
     /**
-     * 🔄 Reiniciar jugada completa (modo pruebas / nueva ronda)
+     * 🔄 Reiniciar jugada (modo pruebas)
      */
     public function reiniciar($jugadaId)
     {
-        $sorteo = Sorteo::where('jugada_id', $jugadaId)->latest()->firstOrFail();
+        $sorteo = Sorteo::where('jugada_id', $jugadaId)
+            ->latest()
+            ->firstOrFail();
 
-        $sorteo->bolillas_sacadas = [];
-        $sorteo->bolilla_actual = null;
-        $sorteo->estado = 'en_curso';
-        $sorteo->save();
+        $sorteo->iniciar();
+
+        broadcast(new SorteoActualizado($sorteo))->toOthers();
 
         return back()->with('success', 'Jugada reiniciada correctamente.');
     }

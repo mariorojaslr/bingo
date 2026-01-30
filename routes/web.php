@@ -183,3 +183,11 @@ Route::prefix('sorteador')->name('sorteador.')->group(function () {
 
 Route::post('/sorteador/jugada/{jugada}/reiniciar', [App\Http\Controllers\Admin\SorteoController::class, 'reiniciar'])
     ->name('sorteador.reiniciar');
+
+    // Monitor-tv.blade.php
+   Route::get('/monitor-tv', function () {
+    return view('monitor.monitor-tv');
+});
+
+
+

@@ -107,7 +107,9 @@
 
 <header>
     <h3>{{ $jugada->nombre_jugada }}</h3>
-    <div class="estado">Estado: {{ strtoupper($sorteo->estado) }} | {{ now()->format('d/m/Y H:i') }}</div>
+    <div class="estado">
+        Estado: {{ strtoupper($sorteo->estado) }} | {{ now()->format('d/m/Y H:i') }}
+    </div>
 </header>
 
 <div class="bolilla">
@@ -115,7 +117,7 @@
 </div>
 
 <div class="ultimas">
-    @foreach(array_slice(array_reverse($sorteo->bolillas_sacadas ?? []), 0, 5) as $b)
+    @foreach(array_slice(array_reverse($sorteo->getBolillas()), 0, 5) as $b)
         <span>{{ $b }}</span>
     @endforeach
 </div>
@@ -139,7 +141,11 @@
     @endif
 
     @if($sorteo->estado === 'linea')
-        <script>document.getElementById('cartelLinea').classList.add('mostrar');</script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('cartelLinea').classList.add('mostrar');
+            });
+        </script>
 
         <form method="POST" action="{{ route('sorteador.reanudar', $jugadaId) }}">
             @csrf
@@ -156,7 +162,11 @@
     @endif
 
     @if($sorteo->estado === 'bingo')
-        <script>document.getElementById('cartelBingo').classList.add('mostrar');</script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('cartelBingo').classList.add('mostrar');
+            });
+        </script>
 
         <form method="POST" action="{{ route('sorteador.finalizar', $jugadaId) }}">
             @csrf
@@ -165,14 +175,13 @@
     @endif
 
     @if($sorteo->estado === 'finalizado')
-    <button disabled>✔ JUGADA FINALIZADA</button>
+        <button disabled>✔ JUGADA FINALIZADA</button>
 
-    <form method="POST" action="{{ route('sorteador.reiniciar', $jugadaId) }}" style="margin-top:10px;">
-        @csrf
-        <button type="submit" style="background:#f59e0b;">🔄 REINICIAR JUGADA</button>
-    </form>
-@endif
-
+        <form method="POST" action="{{ route('sorteador.reiniciar', $jugadaId) }}" style="margin-top:10px;">
+            @csrf
+            <button type="submit" style="background:#f59e0b;">🔄 REINICIAR JUGADA</button>
+        </form>
+    @endif
 
 </div>
 

@@ -16,7 +16,7 @@
 
         .pantalla {
             display:grid;
-            grid-template-columns: 2.3fr 0.7fr; /* panel derecho más angosto */
+            grid-template-columns: 2.3fr 0.7fr;
             grid-template-rows: auto 1fr auto;
             height:100vh;
         }
@@ -30,7 +30,6 @@
             font-weight:bold;
         }
 
-        /* BOLILLA ACTUAL (se mantiene igual) */
         .numero-actual {
             width:180px;
             height:180px;
@@ -72,7 +71,6 @@
             padding:20px;
         }
 
-        /* BOLILLAS +40% */
         .bola {
             width:64px;
             height:64px;
@@ -98,7 +96,6 @@
             height:100%;
         }
 
-        /* PANEL ROJO ACHICADO */
         .panel-sorteo {
             background:#b00000;
             padding:10px;
@@ -199,12 +196,12 @@
     </div>
 
     <div>
-        <div class="numero-actual" id="numero-actual">{{ $numeroActual ?? '—' }}</div>
+        <div class="numero-actual" id="numero-actual">—</div>
         <div class="historial" id="historial"></div>
 
-        <div class="tablero" id="tablero">
-            @for($i=1; $i<=90; $i++)
-                <div class="bola">{{ $i }}</div>
+        <div class="tablero">
+            @for($i = 1; $i <= 90; $i++)
+                <div class="bola" data-num="{{ $i }}">{{ $i }}</div>
             @endfor
         </div>
     </div>
@@ -234,51 +231,55 @@
     <div class="footer">Monitor de Sorteo — Sistema Bingo Profesional</div>
 </div>
 
+<script src="https://js.pusher.com/8.2/pusher.min.js"></script>
+
 <script>
-function actualizarMonitor() {
-    fetch('/api/monitor/jugada/{{ $jugada->id }}')
-        .then(r => r.json())
-        .then(data => {
+const pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
+    cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
+    forceTLS: true
+});
 
-            document.getElementById('numero-actual').innerText = data.ultima ?? '—';
-            document.getElementById('total-bolillas').innerText = data.bolillas.length;
+const channel = pusher.subscribe('jugada.{{ $jugada->id }}');
 
-            const hist = document.getElementById('historial');
-            hist.innerHTML = '';
-            data.bolillas.slice(-10).forEach(n => {
-                const s = document.createElement('span');
-                s.innerText = n;
-                hist.appendChild(s);
-            });
+let bolillas = [];
 
-            document.querySelectorAll('.bola').forEach(el => {
-                const num = parseInt(el.innerText);
-                if (data.bolillas.includes(num)) el.classList.add('salida');
-            });
+channel.bind('BolillaSorteada', data => {
+    const n = data.bolilla;
+    bolillas.push(n);
 
-            const estado = document.getElementById('estado-texto');
+    document.getElementById('numero-actual').innerText = n;
+    document.getElementById('total-bolillas').innerText = bolillas.length;
 
-            if (data.estado === 'pausa_linea') {
-                estado.innerText = 'LÍNEA COMPLETADA';
-                document.getElementById('overlay-linea').classList.add('activo');
-            } else {
-                document.getElementById('overlay-linea').classList.remove('activo');
-            }
+    const hist = document.getElementById('historial');
+    hist.innerHTML = '';
+    data.ultimas.forEach(x => {
+        const s = document.createElement('span');
+        s.innerText = x;
+        hist.appendChild(s);
+    });
 
-            if (data.estado === 'pausa_bingo') {
-                estado.innerText = 'BINGO COMPLETADO';
-                document.getElementById('overlay-bingo').classList.add('activo');
-            } else {
-                document.getElementById('overlay-bingo').classList.remove('activo');
-            }
+    document.querySelectorAll('.bola').forEach(el => {
+        if (parseInt(el.dataset.num) === n) {
+            el.classList.add('salida');
+        }
+    });
+});
 
-            if (data.estado === 'en_curso') {
-                estado.innerText = 'EN JUEGO';
-            }
-        });
-}
+channel.bind('LineaConfirmada', () => {
+    document.getElementById('estado-texto').innerText = 'LÍNEA COMPLETADA';
+    document.getElementById('overlay-linea').classList.add('activo');
+});
 
-setInterval(actualizarMonitor, 2000);
+channel.bind('BingoConfirmado', () => {
+    document.getElementById('estado-texto').innerText = 'BINGO COMPLETADO';
+    document.getElementById('overlay-bingo').classList.add('activo');
+});
+
+channel.bind('JuegoReanudado', () => {
+    document.getElementById('estado-texto').innerText = 'EN JUEGO';
+    document.getElementById('overlay-linea').classList.remove('activo');
+    document.getElementById('overlay-bingo').classList.remove('activo');
+});
 </script>
 
 </body>

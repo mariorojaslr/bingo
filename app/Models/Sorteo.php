@@ -19,26 +19,29 @@ class Sorteo extends Model
         'bolilla_actual',
         'bolilla_linea',
         'bolilla_bingo',
+        'inicio',
+        'pausa',
+        'fin',
         'tiempo_linea',
         'tiempo_bingo',
-        'inicio_sorteo',
-        'fin_sorteo',
-        'premio_linea',
-        'premio_bingo'
     ];
 
-    // ================= RELACIONES =================
+    /* =======================
+       RELACIONES
+    ======================= */
 
     public function jugada()
     {
         return $this->belongsTo(Jugada::class);
     }
 
-    // ================= NORMALIZACIÓN INTERNA =================
+    /* =======================
+       BOLILLAS (TEXTO → ARRAY)
+    ======================= */
 
     public function getBolillas(): array
     {
-        if (empty($this->bolillas_sacadas)) {
+        if (!$this->bolillas_sacadas) {
             return [];
         }
 
@@ -46,12 +49,9 @@ class Sorteo extends Model
             return $this->bolillas_sacadas;
         }
 
-        if (is_string($this->bolillas_sacadas)) {
-            $decoded = json_decode($this->bolillas_sacadas, true);
-            return is_array($decoded) ? $decoded : [];
-        }
+        $decoded = json_decode($this->bolillas_sacadas, true);
 
-        return [];
+        return is_array($decoded) ? $decoded : [];
     }
 
     public function setBolillas(array $bolillas): void
@@ -59,12 +59,20 @@ class Sorteo extends Model
         $this->bolillas_sacadas = json_encode(array_values($bolillas));
     }
 
-    // ================= LÓGICA DE NEGOCIO =================
+    public function ultimaBolilla(): ?int
+    {
+        return $this->bolilla_actual;
+    }
+
+    /* =======================
+       CICLO DE VIDA DEL SORTEO
+    ======================= */
 
     public function iniciar(): void
     {
         $this->estado = 'en_curso';
-        $this->inicio_sorteo = Carbon::now();
+        $this->inicio = Carbon::now();
+        $this->bolilla_actual = null;
         $this->setBolillas([]);
         $this->save();
     }
@@ -72,45 +80,63 @@ class Sorteo extends Model
     public function pausar(): void
     {
         $this->estado = 'pausado';
-        $this->save();
-    }
-
-    public function reanudar(): void
-    {
-        $this->estado = 'en_curso';
+        $this->pausa = Carbon::now();
         $this->save();
     }
 
     public function finalizar(): void
     {
         $this->estado = 'finalizado';
-        $this->fin_sorteo = Carbon::now();
+        $this->fin = Carbon::now();
         $this->save();
     }
 
-    public function agregarBolilla(int $numero): void
+    /* =======================
+       SORTEO DE BOLILLA
+    ======================= */
+
+    /**
+     * @return bool true si se agregó, false si estaba repetida
+     */
+    public function agregarBolilla(int $numero): bool
     {
         $bolillas = $this->getBolillas();
+
+        if (in_array($numero, $bolillas)) {
+            return false;
+        }
+
         $bolillas[] = $numero;
 
         $this->setBolillas($bolillas);
         $this->bolilla_actual = $numero;
         $this->save();
+
+        return true;
     }
+
+    /* =======================
+       EVENTOS
+    ======================= */
 
     public function registrarLinea(int $numeroBolilla): void
     {
         $this->bolilla_linea = $numeroBolilla;
-        $this->tiempo_linea = Carbon::now()->diffInSeconds(Carbon::parse($this->inicio_sorteo));
+        $this->tiempo_linea = Carbon::now()->diffInSeconds(
+            Carbon::parse($this->inicio)
+        );
+        $this->estado = 'linea';
         $this->save();
     }
 
     public function registrarBingo(int $numeroBolilla): void
     {
         $this->bolilla_bingo = $numeroBolilla;
-        $this->tiempo_bingo = Carbon::now()->diffInSeconds(Carbon::parse($this->inicio_sorteo));
-        $this->estado = 'finalizado';
-        $this->fin_sorteo = Carbon::now();
+        $this->tiempo_bingo = Carbon::now()->diffInSeconds(
+            Carbon::parse($this->inicio)
+        );
+        $this->estado = 'bingo';
+        $this->fin = Carbon::now();
         $this->save();
     }
 }
