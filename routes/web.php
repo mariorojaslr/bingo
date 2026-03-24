@@ -25,7 +25,7 @@ Route::get('/auth/biometric', [\App\Http\Controllers\AuthController::class, 'sho
 Route::post('/auth/biometric/verify', [\App\Http\Controllers\AuthController::class, 'verifyBiometric'])->name('auth.biometric.verify');
 
 // Rutas API para el hardware (Passkeys) generador de llaves publicas
-\Laragear\WebAuthn\WebAuthn::routes();
+\Laragear\WebAuthn\Http\Routes::routes();
 
 /*
 |--------------------------------------------------------------------------
