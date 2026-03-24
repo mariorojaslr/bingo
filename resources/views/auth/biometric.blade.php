@@ -124,8 +124,8 @@
         </div>
     </div>
 
-    <!-- La Api WebAuthn Nativa Real -->
-    <script src="https://unpkg.com/@laragear/webauthn/dist/webauthn.min.js"></script>
+    <!-- La Api WebAuthn Nativa Real (Archivo Local) -->
+    <script src="/js/webauthn.js"></script>
     <script>
         const fpIcon = document.getElementById('fp-icon');
         const fpContainer = document.getElementById('fp-container');
