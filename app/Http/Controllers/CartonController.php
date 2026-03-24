@@ -5,13 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Carton;
 use App\Services\PdfService;
+use Illuminate\Support\Facades\DB;
+use Exception;
 
 class CartonController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
-    | GENERACIÓN DE CARTONES
+    | GENERACIÓN DE CARTONES (LA BOMBA ATÓMICA ROLLS-ROYCE)
     |--------------------------------------------------------------------------
+    | Algoritmo reescrito desde cero. Garantiza:
+    | 1. Ordenamiento vertical perfecto.
+    | 2. Cero colisiones matemáticas validando un Hash único.
+    | 3. Distribución perfecta de vacíos vs números.
     */
 
     public function generarCartones(Request $request)
@@ -23,24 +29,68 @@ class CartonController extends Controller
 
         $cantidad = (int) $request->cantidad;
         $serie = $request->serie;
+        $generados = 0;
+        $colisiones_evitadas = 0;
 
-        for ($i = 1; $i <= $cantidad; $i++) {
+        // Caché en RAM de todos los hashes de esta serie para validación O(1)
+        $hashesExistentes = Carton::where('serie', $serie)->pluck('hash')->toArray();
+        $hashesSet = array_flip($hashesExistentes);
 
-            // Generar número mágico irrepetible de 6 dígitos
-            do {
-                $numeroMagico = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-            } while (Carton::where('numero_carton', $numeroMagico)->exists());
+        DB::beginTransaction();
+        try {
+            $cartonesToInsert = [];
+            // Para mantener el consecutivo
+            $lastNumero = Carton::where('serie', $serie)->max('numero_carton') ?? 0;
 
-            Carton::create([
-                'serie' => $serie,
-                'numero_carton' => $numeroMagico,
-                'formato' => 'ARG',
-                'estado' => 'activo',
-                'grilla' => $this->generarGrillaArgentina()
-            ]);
+            while ($generados < $cantidad) {
+                
+                // 1. Crear matriz matemática
+                $grilla = $this->generarGrillaArgentina();
+                
+                // 2. Serializar a Hash
+                $hash = md5(json_encode($grilla));
+
+                // 3. Antibombas: Validar si la combinatoria ya existe en todo el universo
+                if (isset($hashesSet[$hash])) {
+                    $colisiones_evitadas++;
+                    continue; // Matemática idéntica detectada. Desechar este cartón.
+                }
+
+                $hashesSet[$hash] = true; // Lo registramos temporalmente
+                $lastNumero++;
+                $generados++;
+
+                $cartonesToInsert[] = [
+                    'serie' => $serie,
+                    'numero_carton' => $lastNumero,
+                    'formato' => 'ARG',
+                    'estado' => 'disponible',
+                    'grilla' => json_encode($grilla),
+                    'hash' => $hash,
+                    // 'organizador_id' => ... -> PRÓXIMAMENTE EN INYECCIÓN TENANT
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ];
+
+                // Chunking automático para no reventar la RAM del servidor
+                if (count($cartonesToInsert) === 500) {
+                    Carton::insert($cartonesToInsert);
+                    $cartonesToInsert = [];
+                }
+            }
+
+            if (!empty($cartonesToInsert)) {
+                Carton::insert($cartonesToInsert);
+            }
+
+            DB::commit();
+
+            return redirect()->back()->with('success', "¡Éxito nivel Dios! Se generaron $generados cartones perfectos. Colisiones matemáticas idénticas bloqueadas: $colisiones_evitadas.");
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Fallo Crítico: ' . $e->getMessage());
         }
-
-        return redirect()->back()->with('success', "Se generaron $cantidad cartones correctamente con números mágicos únicos.");
     }
 
     /*
@@ -80,59 +130,76 @@ class CartonController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | GENERADOR DE GRILLA ARGENTINA CORRECTA (3x9 oficial)
+    | GENERADOR MATEMÁTICO PURO - ALGORITMO ROLLS-ROYCE
     |--------------------------------------------------------------------------
     */
 
     private function generarGrillaArgentina()
-{
-    $rangos = [
-        range(1, 9), range(10, 19), range(20, 29),
-        range(30, 39), range(40, 49), range(50, 59),
-        range(60, 69), range(70, 79), range(80, 90)
-    ];
+    {
+        // 1. GENERAR MAPA DE HUECOS (MÁSCARA 3x9)
+        // Reglas estrictas: Exactamente 5 números por fila. Mínimo 1 número por columna.
+        $valido = false;
+        while (!$valido) {
+            $patrones = [
+                array_fill(0, 9, 0),
+                array_fill(0, 9, 0),
+                array_fill(0, 9, 0)
+            ];
+            
+            for ($f = 0; $f < 3; $f++) {
+                // Elegir aleatoriamente 5 columnas para esta fila
+                $indices = array_rand(range(0, 8), 5);
+                foreach ($indices as $col) {
+                    $patrones[$f][$col] = 1;
+                }
+            }
 
-    // Inicializar grilla vacía 3x9
-    $grilla = array_fill(0, 3, array_fill(0, 9, 0));
-
-    // Para cada columna, elegir cuántos números tendrá (1 o 2, y algunas 3)
-    $cantidades = array_fill(0, 9, 1); // base: 1 por columna (9)
-    $extra = 6; // faltan 6 para llegar a 15 números totales
-
-    while ($extra > 0) {
-        $col = rand(0, 8);
-        if ($cantidades[$col] < 3) {
-            $cantidades[$col]++;
-            $extra--;
+            // Chequeo de seguridad: asegurar que toda columna tenga al menos un número y no más de 3
+            $valido = true;
+            for ($c = 0; $c < 9; $c++) {
+                $sumaCol = $patrones[0][$c] + $patrones[1][$c] + $patrones[2][$c];
+                if ($sumaCol === 0) {
+                    $valido = false;
+                    break;
+                }
+            }
         }
-    }
 
-    // Para cada columna, seleccionar números únicos y ordenarlos
-    $columnas = [];
-    for ($col = 0; $col < 9; $col++) {
-        shuffle($rangos[$col]);
-        $numeros = array_slice($rangos[$col], 0, $cantidades[$col]);
-        sort($numeros);
-        $columnas[$col] = $numeros;
-    }
+        // 2. INYECCIÓN DE NÚMEROS Y ORDENAMIENTO ESTRICTO
+        $rangos = [
+            range(1, 9), range(10, 19), range(20, 29),
+            range(30, 39), range(40, 49), range(50, 59),
+            range(60, 69), range(70, 79), range(80, 90)
+        ];
 
-    // Distribuir en filas garantizando 5 por fila
-    $ocupacionFilas = [0, 0, 0];
+        $grilla = [
+            array_fill(0, 9, 0),
+            array_fill(0, 9, 0),
+            array_fill(0, 9, 0)
+        ];
 
-    for ($col = 0; $col < 9; $col++) {
-        foreach ($columnas[$col] as $num) {
-            // Buscar una fila con menos de 5 números
-            do {
-                $fila = rand(0, 2);
-            } while ($ocupacionFilas[$fila] >= 5);
+        for ($c = 0; $c < 9; $c++) {
+            $necesarios = $patrones[0][$c] + $patrones[1][$c] + $patrones[2][$c];
+            if ($necesarios > 0) {
+                // Seleccionar $necesarios números de este rango columna
+                $pool = $rangos[$c];
+                shuffle($pool);
+                $seleccionados = array_slice($pool, 0, $necesarios);
+                
+                // => AQUI SUCEDE LA MAGIA DE LA REGLA DE ORO <=
+                sort($seleccionados); 
 
-            $grilla[$fila][$col] = $num;
-            $ocupacionFilas[$fila]++;
+                // Injectarlos de arriba abajo
+                $idxDato = 0;
+                for ($f = 0; $f < 3; $f++) {
+                    if ($patrones[$f][$c] === 1) {
+                        $grilla[$f][$c] = $seleccionados[$idxDato];
+                        $idxDato++;
+                    }
+                }
+            }
         }
+
+        return $grilla;
     }
-
-    return $grilla;
-}
-
-
 }

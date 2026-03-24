@@ -13,7 +13,7 @@ class Carton extends Model
 
     protected $fillable = [
         'serie',
-        'numero_carton',   // número mágico único
+        'numero_carton',
         'formato',
         'grilla',
         'estado',
@@ -23,9 +23,10 @@ class Carton extends Model
         'grilla' => 'array',
     ];
 
-    /**
-     * Relación con Jugadas a través de la tabla pivote jugada_carton
-     */
+    /* =======================
+     |  RELACIONES
+     ======================= */
+
     public function jugadas()
     {
         return $this->belongsToMany(Jugada::class, 'jugada_carton')
@@ -38,11 +39,63 @@ class Carton extends Model
             ->withTimestamps();
     }
 
-    /**
-     * Relación directa con los registros de la tabla pivote
-     */
     public function jugadaCartones()
     {
         return $this->hasMany(JugadaCarton::class);
+    }
+
+    /* =======================
+     |  LÓGICA DE JUEGO
+     ======================= */
+
+    /**
+     * ¿Este cartón tiene BINGO?
+     */
+    public function esBingo(array $bolillas): bool
+    {
+        foreach ($this->grilla as $fila) {
+            foreach ($fila as $numero) {
+                if ($numero !== 0 && !in_array($numero, $bolillas)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * ¿Este cartón tiene al menos una LÍNEA?
+     */
+    public function tieneLinea(array $bolillas): bool
+    {
+        // filas
+        foreach ($this->grilla as $fila) {
+            if ($this->lineaCompleta($fila, $bolillas)) {
+                return true;
+            }
+        }
+
+        // columnas
+        for ($c = 0; $c < 9; $c++) {
+            $columna = [];
+            foreach ($this->grilla as $fila) {
+                $columna[] = $fila[$c];
+            }
+            if ($this->lineaCompleta($columna, $bolillas)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function lineaCompleta(array $linea, array $bolillas): bool
+    {
+        foreach ($linea as $numero) {
+            if ($numero !== 0 && !in_array($numero, $bolillas)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

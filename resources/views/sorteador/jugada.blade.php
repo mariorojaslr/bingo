@@ -14,22 +14,14 @@
         }
 
         header {
-            position: sticky;
-            top: 0;
             background: #020617;
             padding: 10px;
             text-align: center;
             border-bottom: 1px solid #1e293b;
-            z-index: 10;
-        }
-
-        .estado {
-            font-size: 12px;
-            opacity: 0.8;
         }
 
         .bolilla {
-            margin: 20px auto 10px;
+            margin: 20px auto;
             width: 140px;
             height: 140px;
             border-radius: 50%;
@@ -57,7 +49,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
         }
 
         .controles {
@@ -107,95 +98,67 @@
 
 <header>
     <h3>{{ $jugada->nombre_jugada }}</h3>
-    <div class="estado">
-        Estado: {{ strtoupper($sorteo->estado) }} | {{ now()->format('d/m/Y H:i') }}
-    </div>
+    <div id="estadoTxt">Estado: {{ strtoupper($sorteo->estado) }}</div>
 </header>
 
-<div class="bolilla">
+<div class="bolilla" id="bolillaActual">
     {{ $sorteo->bolilla_actual ?? '–' }}
 </div>
 
-<div class="ultimas">
-    @foreach(array_slice(array_reverse($sorteo->getBolillas()), 0, 5) as $b)
-        <span>{{ $b }}</span>
-    @endforeach
-</div>
+<div class="ultimas" id="ultimas"></div>
 
 <div class="cartel linea" id="cartelLinea">¡LÍNEA!</div>
 <div class="cartel bingo" id="cartelBingo">¡BINGO!</div>
 
 <div class="controles">
-
-    @if($sorteo->estado === 'en_curso')
-        <form method="POST" action="{{ route('sorteador.extraer', $jugadaId) }}">
-            @csrf
-            <button type="submit">🎯 SACAR BOLILLA</button>
-        </form>
-
-        <form method="POST" action="{{ route('sorteador.confirmar.linea', $jugadaId) }}">
-            @csrf
-            <input type="hidden" name="carton_id" value="0">
-            <button type="submit">🟦 CONFIRMAR LÍNEA</button>
-        </form>
-    @endif
-
-    @if($sorteo->estado === 'linea')
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                document.getElementById('cartelLinea').classList.add('mostrar');
-            });
-        </script>
-
-        <form method="POST" action="{{ route('sorteador.reanudar', $jugadaId) }}">
-            @csrf
-            <button type="submit">▶ REANUDAR JUEGO</button>
-        </form>
-    @endif
-
-    @if($sorteo->estado === 'en_curso')
-        <form method="POST" action="{{ route('sorteador.confirmar.bingo', $jugadaId) }}">
-            @csrf
-            <input type="hidden" name="carton_id" value="0">
-            <button type="submit">🟥 CONFIRMAR BINGO</button>
-        </form>
-    @endif
-
-    @if($sorteo->estado === 'bingo')
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                document.getElementById('cartelBingo').classList.add('mostrar');
-            });
-        </script>
-
-        <form method="POST" action="{{ route('sorteador.finalizar', $jugadaId) }}">
-            @csrf
-            <button type="submit">🏁 FINALIZAR JUGADA</button>
-        </form>
-    @endif
-
-    @if($sorteo->estado === 'finalizado')
-        <button disabled>✔ JUGADA FINALIZADA</button>
-
-        <form method="POST" action="{{ route('sorteador.reiniciar', $jugadaId) }}" style="margin-top:10px;">
-            @csrf
-            <button type="submit" style="background:#f59e0b;">🔄 REINICIAR JUGADA</button>
-        </form>
-    @endif
-
+    <button id="btnSacar">🎯 SACAR BOLILLA</button>
+    <button id="btnLinea">🟦 CONFIRMAR LÍNEA</button>
+    <button id="btnBingo">🟥 CONFIRMAR BINGO</button>
+    <button id="btnReiniciar" style="background:#f59e0b">🔄 REINICIAR</button>
 </div>
 
-<audio id="audioLinea" src="/sounds/linea.mp3" preload="auto"></audio>
-<audio id="audioBingo" src="/sounds/bingo.mp3" preload="auto"></audio>
-
+<script src="https://js.pusher.com/8.2/pusher.min.js"></script>
 <script>
-    @if($sorteo->estado === 'linea')
-        document.getElementById('audioLinea').play();
-    @endif
+const csrf = '{{ csrf_token() }}';
 
-    @if($sorteo->estado === 'bingo')
-        document.getElementById('audioBingo').play();
-    @endif
+function post(url) {
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': csrf
+        }
+    });
+}
+
+// BOTONES
+btnSacar.onclick     = () => post('{{ route("sorteador.extraer", $jugadaId) }}');
+btnLinea.onclick     = () => post('{{ route("sorteador.confirmar.linea", $jugadaId) }}');
+btnBingo.onclick     = () => post('{{ route("sorteador.confirmar.bingo", $jugadaId) }}');
+btnReiniciar.onclick = () => post('{{ route("sorteador.reiniciar", $jugadaId) }}');
+
+// PUSHER
+const pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
+    cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
+    forceTLS: true
+});
+
+const channel = pusher.subscribe('jugada.{{ $jugadaId }}');
+
+channel.bind('SorteoActualizado', data => {
+
+    bolillaActual.innerText = data.bolilla ?? '–';
+    estadoTxt.innerText = 'Estado: ' + data.estado.toUpperCase();
+
+    ultimas.innerHTML = '';
+    data.ultimas.forEach(n => {
+        const s = document.createElement('span');
+        s.innerText = n;
+        ultimas.appendChild(s);
+    });
+
+    cartelLinea.classList.toggle('mostrar', data.estado === 'linea');
+    cartelBingo.classList.toggle('mostrar', data.estado === 'bingo');
+});
 </script>
 
 </body>

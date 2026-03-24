@@ -26,6 +26,9 @@ class SorteoController extends Controller
 
     /**
      * 🎲 Extraer bolilla
+     * - Saca bolilla
+     * - Evalúa automáticamente línea / bingo
+     * - Emite UN SOLO evento
      */
     public function extraer(Request $request, $jugadaId)
     {
@@ -34,28 +37,37 @@ class SorteoController extends Controller
             ->latest()
             ->firstOrFail();
 
-        // 🛑 Corte si ya salieron 90
+        // 🛑 Corte si ya salieron 90 bolillas
         if (count($sorteo->getBolillas()) >= 90) {
             $sorteo->finalizar();
 
-            broadcast(new SorteoActualizado($sorteo))->toOthers();
-
-            return back()->with('error', 'Bolillero completo. Juego finalizado.');
+            event(new SorteoActualizado($sorteo));
+            return response()->noContent();
         }
 
-        // Buscar bolilla no repetida
+        // 🎯 Buscar bolilla no repetida
         do {
             $nueva = rand(1, 90);
         } while (!$sorteo->agregarBolilla($nueva));
 
-        // 📡 Emitir evento ÚNICO
-        broadcast(new SorteoActualizado($sorteo))->toOthers();
+        /**
+         * 🧠 LÓGICA CENTRAL
+         * Detecta automáticamente:
+         * - Línea
+         * - Bingo
+         */
+        $sorteo->evaluarGanadores();
 
-        return back();
+        // 📡 Evento ÚNICO (todas las pantallas escuchan)
+        event(new SorteoActualizado($sorteo));
+
+        // 🚀 Tecnología rápida (sin redirect)
+        return response()->noContent();
     }
 
     /**
-     * 🟦 Confirmar Línea
+     * 🟦 Confirmar Línea (manual)
+     * Útil como respaldo humano
      */
     public function confirmarLinea(Request $request, $jugadaId)
     {
@@ -66,13 +78,14 @@ class SorteoController extends Controller
         $sorteo->estado = 'linea';
         $sorteo->save();
 
-        broadcast(new SorteoActualizado($sorteo))->toOthers();
+        event(new SorteoActualizado($sorteo));
 
-        return back();
+        return response()->noContent();
     }
 
     /**
      * ▶ Reanudar sorteo
+     * Oculta overlays y vuelve a jugar
      */
     public function reanudar($jugadaId)
     {
@@ -83,13 +96,13 @@ class SorteoController extends Controller
         $sorteo->estado = 'en_curso';
         $sorteo->save();
 
-        broadcast(new SorteoActualizado($sorteo))->toOthers();
+        event(new SorteoActualizado($sorteo));
 
-        return back();
+        return response()->noContent();
     }
 
     /**
-     * 🟥 Confirmar Bingo
+     * 🟥 Confirmar Bingo (manual)
      */
     public function confirmarBingo(Request $request, $jugadaId)
     {
@@ -100,13 +113,13 @@ class SorteoController extends Controller
         $sorteo->estado = 'bingo';
         $sorteo->save();
 
-        broadcast(new SorteoActualizado($sorteo))->toOthers();
+        event(new SorteoActualizado($sorteo));
 
-        return back();
+        return response()->noContent();
     }
 
     /**
-     * ⏹ Finalizar juego
+     * ⏹ Finalizar juego completamente
      */
     public function finalizar($jugadaId)
     {
@@ -116,13 +129,16 @@ class SorteoController extends Controller
 
         $sorteo->finalizar();
 
-        broadcast(new SorteoActualizado($sorteo))->toOthers();
+        event(new SorteoActualizado($sorteo));
 
-        return back();
+        return response()->noContent();
     }
 
     /**
      * 🔄 Reiniciar jugada (modo pruebas)
+     * - Limpia bolillas
+     * - Vuelve a estado inicial
+     * - Todas las pantallas se resetean
      */
     public function reiniciar($jugadaId)
     {
@@ -132,8 +148,8 @@ class SorteoController extends Controller
 
         $sorteo->iniciar();
 
-        broadcast(new SorteoActualizado($sorteo))->toOthers();
+        event(new SorteoActualizado($sorteo));
 
-        return back()->with('success', 'Jugada reiniciada correctamente.');
+        return response()->noContent();
     }
 }
