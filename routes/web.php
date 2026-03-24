@@ -14,6 +14,18 @@ use App\Http\Controllers\PilotoController;
 
 /*
 |--------------------------------------------------------------------------
+| Autenticación Premium (Login y Passkeys)
+|--------------------------------------------------------------------------
+*/
+Route::get('/login', [\App\Http\Controllers\AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login'])->name('login.post');
+Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+
+Route::get('/auth/biometric', [\App\Http\Controllers\AuthController::class, 'showBiometric'])->name('auth.biometric');
+Route::post('/auth/biometric/verify', [\App\Http\Controllers\AuthController::class, 'verifyBiometric'])->name('auth.biometric.verify');
+
+/*
+|--------------------------------------------------------------------------
 | Rutas Públicas
 |--------------------------------------------------------------------------
 */
