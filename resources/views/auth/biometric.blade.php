@@ -189,7 +189,9 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ verified: true })
-            }).then(r => window.location.href = "{{ route('admin.dashboard') }}");
+            }).then(r => r.json()).then(data => {
+                if(data.redirect) window.location.href = data.redirect;
+            });
         }
 
         function errorAutenticacion(error) {

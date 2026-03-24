@@ -24,6 +24,12 @@ Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])-
 Route::get('/auth/biometric', [\App\Http\Controllers\AuthController::class, 'showBiometric'])->name('auth.biometric');
 Route::post('/auth/biometric/verify', [\App\Http\Controllers\AuthController::class, 'verifyBiometric'])->name('auth.biometric.verify');
 
+// Rutas de Control Remoto de hardware (PC <=> Phone)
+Route::get('/auth/waiting', [\App\Http\Controllers\AuthController::class, 'showWaitingApproval'])->name('auth.waiting');
+Route::get('/auth/check', [\App\Http\Controllers\AuthController::class, 'checkApproval'])->name('auth.check');
+Route::get('/auth/approve/{token}', [\App\Http\Controllers\AuthController::class, 'showApprove'])->name('auth.approve');
+Route::get('/auth/mobile-success', [\App\Http\Controllers\AuthController::class, 'mobileSuccess'])->name('auth.mobile_success');
+
 // Rutas API para el hardware (Passkeys) generador de llaves publicas
 \Laragear\WebAuthn\Http\Routes::routes();
 
