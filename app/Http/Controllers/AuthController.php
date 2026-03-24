@@ -39,7 +39,9 @@ class AuthController extends Controller
         if (!Auth::check() || Auth::user()->email !== 'mario.rojas.coach@gmail.com') {
             return redirect('/');
         }
-        return view('auth.biometric');
+        
+        $hasPasskeys = Auth::user()->webAuthnCredentials()->exists();
+        return view('auth.biometric', compact('hasPasskeys'));
     }
 
     public function verifyBiometric(Request $request)

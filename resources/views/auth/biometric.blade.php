@@ -123,7 +123,8 @@
         </div>
     </div>
 
-    <!-- Simulación pura JS de la Api WebAuthn Nativa para el flujo local (Visual Roll-Royce) -->
+    <!-- La Api WebAuthn Nativa Real -->
+    <script src="https://unpkg.com/@laragear/webauthn/dist/webauthn.min.js"></script>
     <script>
         const fpIcon = document.getElementById('fp-icon');
         const fpContainer = document.getElementById('fp-container');
@@ -131,43 +132,72 @@
         const desc = document.getElementById('status-desc');
         const prompt = document.getElementById('hardware-prompt');
 
-        // Se simula la llamada a navigator.credentials.create() / WebAuthn API
         function iniciarEscaneo() {
             if(fpContainer.classList.contains('scanning')) return;
             
             fpContainer.classList.add('scanning');
-            title.innerText = "ESCANEO DETECTADO...";
+            title.innerText = "ESPERANDO HARDWARE...";
             title.style.color = "#00FF88";
-            desc.innerText = "Intercambiando llaves criptográficas con el servidor.";
             prompt.classList.add('visible');
+            
+            const isRegistered = {{ $hasPasskeys ? 'true' : 'false' }};
+            const webauthn = new WebAuthn();
 
-            // Simulamos 3 segundos del usuario apoyando el dedo en su celular...
-            setTimeout(() => {
-                // Éxito Criptográfico
-                fpContainer.classList.remove('scanning');
-                fpIcon.classList.add('success');
-                title.innerText = "IDENTIDAD CONFIRMADA";
-                title.style.color = "#D4AF37";
-                desc.innerText = "Bienvenido Supremo. Accediendo a la Bóveda del Owner...";
-                prompt.style.opacity = '0';
+            if (!isRegistered) {
+                // PRIMERA VEZ: O.S. Pide Registrar Dispositivo (Huella, FaceID, USB)
+                desc.innerText = "Registrando tu huella principal. Sigue las instrucciones de tu SO móvil o PC.";
                 
-                // Disparamos la petición AJAX real a nuestro servidor para validar todo backend
-                fetch('{{ route("auth.biometric.verify") }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ verified: true })
+                webauthn.register()
+                    .then(response => {
+                        exitoAutenticacion("DISPOSITIVO REGISTRADO", true);
+                    })
+                    .catch(e => errorAutenticacion(e));
+            } else {
+                // VERIFICACIÓN CONSTANTE (2FA)
+                desc.innerText = "Leyendo criptografía de tu huella en el hardware local...";
+                
+                webauthn.login({ 
+                    email: 'mario.rojas.coach@gmail.com'
                 })
-                .then(r => r.json())
-                .then(data => {
-                    if(data.success) {
-                        setTimeout(() => window.location.href = data.redirect, 1000);
-                    }
-                });
+                .then(response => {
+                    exitoAutenticacion("IDENTIDAD CONFIRMADA", false);
+                })
+                .catch(e => errorAutenticacion(e));
+            }
+        }
 
-            }, 3500);
+        function exitoAutenticacion(msg, reload = false) {
+            fpContainer.classList.remove('scanning');
+            fpIcon.classList.add('success');
+            title.innerText = msg;
+            title.style.color = "#D4AF37";
+            desc.innerText = "Bóveda Owner abriéndose...";
+            prompt.style.opacity = '0';
+            
+            if (reload) {
+                // Refrescamos para que ahora si pida Validar (Login)
+                setTimeout(() => window.location.reload(), 2000);
+                return;
+            }
+
+            // Validamos contra nuestro backend el 2° paso asumiendo auth via cookies/session webauthn
+            fetch('{{ route("auth.biometric.verify") }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ verified: true })
+            }).then(r => window.location.href = "{{ route('admin.dashboard') }}");
+        }
+
+        function errorAutenticacion(error) {
+            fpContainer.classList.remove('scanning');
+            title.innerText = "LECTURA FALLIDA";
+            title.style.color = "#ff6b6b";
+            desc.innerText = "El hardware canceló o falló la verificación biométrica. " + (error.message || "Toca de nuevo.");
+            prompt.classList.remove('visible');
+            console.error(error);
         }
     </script>
 </body>
