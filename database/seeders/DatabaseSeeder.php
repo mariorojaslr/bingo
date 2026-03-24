@@ -29,12 +29,12 @@ class DatabaseSeeder extends Seeder
          * Conectando a la tabla 'roles' si existe.
          */
         if (Schema::hasTable('roles')) {
-            $role = DB::table('roles')->where('name', 'owner')->first();
+            $role = DB::table('roles')->where('nombre', 'owner')->first();
             
             if (!$role) {
                 $roleId = DB::table('roles')->insertGetId([
-                    'name' => 'owner',
-                    'description' => 'Propietario Supremo de la Plataforma (Multi-SaaS)',
+                    'nombre' => 'owner',
+                    'descripcion' => 'Propietario Supremo de la Plataforma (Multi-SaaS)',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
