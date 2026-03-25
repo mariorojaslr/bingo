@@ -1,260 +1,264 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-bs-theme="dark">
 <head>
-<meta charset="UTF-8">
-<title>Monitor TV Bingo</title>
+    <meta charset="UTF-8">
+    <title>Infinity Bingo | Transmisión Pública</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        * { box-sizing: border-box; }
+        
+        :root {
+            --bg-deep: #020202;
+            --panel: rgba(15, 15, 20, 0.65);
+            --border: rgba(255, 255, 255, 0.08);
+            --brand-green: #00FF88;
+            --brand-blue: #00A8FF;
+        }
 
-<style>
-*{box-sizing:border-box}
-body{
-    margin:0;
-    background:#0b0b0b;
-    font-family:Segoe UI,Tahoma,sans-serif;
-    color:#e8e0b8;
-}
-.monitor{
-    display:grid;
-    grid-template-columns:45% 55%;
-    gap:20px;
-    padding:20px;
-    height:100vh;
-}
-.col-left,.col-right{display:grid;gap:20px}
-.col-left{grid-template-rows:42% 58%}
-.col-right{grid-template-rows:52% 48%}
-.panel{
-    border:4px solid #e8e0b8;
-    border-radius:16px;
-    padding:16px;
-    position:relative;
-}
+        body {
+            margin: 0;
+            background: var(--bg-deep) url('https://www.transparenttextures.com/patterns/stardust.png');
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
 
-/* ================= BOLILLA ================= */
-.sorteador{display:flex;flex-direction:column;height:100%}
-.bolilla-grande{
-    margin:auto;
-    width:180px;height:180px;border-radius:50%;
-    background:radial-gradient(circle at top left,#00ff9c,#009e6a);
-    display:flex;align-items:center;justify-content:center;
-    font-size:96px;font-weight:900;color:#003b26;
-    border:6px solid #fff;
-    box-shadow:inset -10px -10px 20px rgba(0,0,0,.35),
-               inset 8px 8px 14px rgba(255,255,255,.25),
-               0 14px 28px rgba(0,255,156,.6);
-}
-.ultimas{
-    margin-top:auto;
-    display:grid;
-    grid-template-columns:repeat(9,1fr);
-    gap:8px;
-}
-.mini{
-    text-align:center;padding:8px 0;
-    border-radius:8px;border:2px solid #444;
-    background:#111;color:#777;font-weight:bold;
-}
-.mini.activa{background:#00ff9c;color:#000;border-color:#fff}
+        /* HEADER SUPREMO */
+        .monitor-header {
+            background: linear-gradient(180deg, rgba(0,0,0,0.9), transparent);
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            z-index: 10;
+        }
 
-/* ================= TABLERO ================= */
-.tablero h3{text-align:center;margin:0 0 10px;letter-spacing:2px}
-.grid90{
-    display:grid;
-    grid-template-columns:repeat(10,1fr);
-    gap:6px;
-}
-.num{
-    padding:6px 0;text-align:center;border-radius:6px;
-    border:1px solid #333;background:#111;color:#666;
-    font-size:13px;font-weight:bold;
-}
-.num.activo{
-    background:#00ff9c;color:#000;border-color:#fff;
-    box-shadow:0 0 6px rgba(0,255,156,.6);
-}
+        .logo-txt { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 900; letter-spacing: 2px; background: linear-gradient(90deg, #fff, #999); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .live-badge { border: 1px solid var(--brand-green); color: var(--brand-green); padding: 5px 15px; border-radius: 20px; font-weight: bold; letter-spacing: 2px; animation: pulse-border 2s infinite; }
+        
+        @keyframes pulse-border { 0% { box-shadow: 0 0 0 0 rgba(0,255,136,0.4); } 70% { box-shadow: 0 0 0 10px rgba(0,255,136,0); } 100% { box-shadow: 0 0 0 0 rgba(0,255,136,0); } }
 
-/* ================= VIDEO ================= */
-.video iframe{width:100%;height:100%;border:none}
-.controles-video{
-    position:absolute;bottom:14px;left:50%;
-    transform:translateX(-50%);
-    display:flex;gap:24px;
-    background:rgba(0,0,0,.55);
-    padding:8px 16px;border-radius:24px;
-}
-.control{display:flex;align-items:center;gap:8px;color:#fff;font-size:12px}
-.switch input{display:none}
-.slider{
-    width:40px;height:18px;background:#555;border-radius:18px;
-    position:relative;cursor:pointer;
-}
-.slider:before{
-    content:'';width:14px;height:14px;background:#fff;
-    border-radius:50%;position:absolute;top:2px;left:2px;
-    transition:.3s;
-}
-input:checked + .slider{background:#00c853}
-input:checked + .slider:before{transform:translateX(20px)}
+        /* GRID PRINCIPAL */
+        .monitor-body {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            padding: 2rem;
+            gap: 2rem;
+        }
 
-/* ================= DATOS ================= */
-.datos{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    grid-template-rows:repeat(2,1fr);
-    gap:14px;
-}
-.dato{
-    border:2px solid #e8e0b8;border-radius:12px;
-    text-align:center;padding:12px;
-}
-.dato label{font-size:12px;opacity:.7}
-.dato strong{display:block;font-size:22px;margin-top:6px}
-.vivo{color:#00ff9c}
-</style>
+        .glass-box {
+            background: var(--panel);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* COLUMNA IZQUIERDA: BOLILLERO Y TABLERO */
+        .orb-master {
+            width: 200px;
+            height: 200px;
+            margin: 2rem auto;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #fff, #b3b3b3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 90px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            color: #000;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset -10px -10px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .orb-master.active-pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes pop { 0% { transform: scale(1); box-shadow: 0 0 0 rgba(0,255,136,0); } 50% { transform: scale(1.15); box-shadow: 0 0 50px rgba(0,255,136,1); } 100% { transform: scale(1); box-shadow: 0 20px 40px rgba(0,0,0,0.5); } }
+
+        /* TABLERO 90 NUMS */
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 4px;
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            flex: 1;
+            align-content: end;
+        }
+
+        .matrix-num {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.3);
+            transition: all 0.3s;
+        }
+
+        .matrix-num.drawn {
+            background: var(--brand-green);
+            color: #000;
+            border-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            transform: scale(1.1);
+            z-index: 2;
+        }
+
+        /* COLUMNA DERECHA: STREAMING */
+        .streaming-container {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            border: 1px solid var(--border);
+            position: relative;
+            background: #000;
+        }
+
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* FOOTER DE HISTORIAL */
+        .history-ribbon {
+            background: rgba(0,0,0,0.8);
+            border-top: 1px solid var(--border);
+            padding: 1rem 3rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            overflow-x: hidden;
+            white-space: nowrap;
+        }
+        
+        .ribbon-label { font-family: 'Outfit'; font-weight: 800; color: var(--text-muted); letter-spacing: 2px; }
+        
+        .history-scroller { display: flex; gap: 15px; }
+
+        .hist-orb {
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            background: var(--brand-blue);
+            color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 20px;
+            box-shadow: 0 0 15px rgba(0, 168, 255, 0.4);
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+
+    </style>
 </head>
 
 @php
     $bolillas = $sorteo->getBolillas();
-    $ultimas = array_slice(array_reverse($bolillas),0,9);
+    $ultimas = array_slice(array_reverse($bolillas),0,15);
     $stream = $sorteo->jugada->streaming_url ?? 'https://www.youtube.com/embed/F7jzWJEIXmk';
 @endphp
 
 <body>
 
-<div class="monitor">
+<!-- HEADER -->
+<header class="monitor-header">
+    <div class="logo-txt"><i class="bi bi-box me-3"></i>INFINITY BINGO</div>
+    <div class="d-flex align-items-center gap-4">
+        <div style="font-family: 'Outfit'; font-size: 1.5rem; font-weight: 600; color: #fff;">Sorteo #{{ $jugadaId }} <span style="opacity:0.3">|</span> <span style="color: var(--brand-gold);">{{ $sorteo->jugada->organizador->nombre_fantasia ?? 'EMPRESA' }}</span></div>
+        <div class="live-badge"><i class="bi bi-record-circle-fill me-2"></i> EN VIVO</div>
+    </div>
+</header>
 
-<!-- IZQUIERDA -->
-<div class="col-left">
+<!-- CUERPO PRINCIPAL -->
+<div class="monitor-body">
+    
+    <!-- LATERAL TABLERO -->
+    <div class="glass-box">
+        <div class="orb-master" id="bolillaActual">
+            {{ $sorteo->bolilla_actual ?? '—' }}
+        </div>
+        
+        <h5 class="text-center mt-3 mb-4" style="font-family: 'Outfit'; letter-spacing: 5px; color: rgba(255,255,255,0.2);">TABLERO CERRADO</h5>
+        
+        <div class="matrix-grid">
+            @for($i=1; $i<=90; $i++)
+                <div class="matrix-num {{ in_array($i, $bolillas) ? 'drawn' : '' }}" id="num-{{$i}}">{{ $i }}</div>
+            @endfor
+        </div>
+    </div>
 
-<div class="panel sorteador">
-    <div class="bolilla-grande">{{ $sorteo->bolilla_actual ?? '—' }}</div>
+    <!-- STREAMING -->
+    <div class="streaming-container">
+        <!-- El autoplay solo funciona tras interacción o con mute en la mayoría de navegadores públicos. 
+             Se implementó con mute=0 bajo asunción de clic previo o bypass de kiosk -->
+        <iframe src="{{ $stream }}?autoplay=1&mute=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
 
-    <div class="ultimas">
-        @for($i=0;$i<9;$i++)
-            <div class="mini {{ isset($ultimas[$i]) ? 'activa' : '' }}">
-                {{ $ultimas[$i] ?? '—' }}
-            </div>
-        @endfor
+</div>
+
+<!-- CINTA INFERIOR HISTORIAL -->
+<div class="history-ribbon">
+    <div class="ribbon-label">ÚLTIMAS EXTRACCIONES <i class="bi bi-chevron-double-right mx-2"></i></div>
+    <div class="history-scroller" id="historialCinta">
+        @foreach($ultimas as $u)
+            <div class="hist-orb">{{ $u }}</div>
+        @endforeach
     </div>
 </div>
 
-<div class="panel tablero">
-<h3>NÚMEROS 1 AL 90</h3>
-<div class="grid90">
-@for($i=1;$i<=90;$i++)
-<div class="num {{ in_array($i,$bolillas) ? 'activo' : '' }}">{{ $i }}</div>
-@endfor
-</div>
-</div>
 
-</div>
-
-<!-- DERECHA -->
-<div class="col-right">
-
-<div class="panel video">
-
-<div class="controles-video">
-    <div class="control">
-        <span>VIDEO</span>
-        <label class="switch">
-            <input type="checkbox" id="videoToggle" checked>
-            <span class="slider"></span>
-        </label>
-    </div>
-    <div class="control">
-        <label class="switch">
-            <input type="checkbox" id="audioToggle" checked>
-            <span class="slider"></span>
-        </label>
-        <span>AUDIO</span>
-    </div>
-</div>
-
-<iframe id="frame"
-src="{{ $stream }}?autoplay=1&mute=0"
-allow="autoplay" allowfullscreen></iframe>
-
-</div>
-
-<div class="panel datos">
-<div class="dato"><label>Estado</label><strong class="vivo">{{ strtoupper($sorteo->estado) }}</strong></div>
-
-<div class="dato"><label>Jugadores</label><strong>—</strong></div>
-
-<div class="dato"><label>Bolillas</label><strong>{{ count($bolillas) }}</strong></div>
-<div class="dato"><label>Jugada</label><strong>#{{ $jugadaId }}</strong></div>
-<div class="dato"><label>Organizador</label><strong>{{ $sorteo->jugada->organizador->nombre ?? '—' }}</strong></div>
-<div class="dato"><label>Institución</label><strong>{{ $sorteo->jugada->institucion->nombre ?? '—' }}</strong></div>
-<div class="dato"><label>Provincia</label><strong>{{ $sorteo->jugada->provincia ?? '—' }}</strong></div>
-<div class="dato"><label>Ciudad</label><strong>{{ $sorteo->jugada->ciudad ?? '—' }}</strong></div>
-</div>
-
-</div>
-</div>
-
-<!-- VIDEO CONTROLS -->
-<script>
-const v=document.getElementById('videoToggle');
-const a=document.getElementById('audioToggle');
-const f=document.getElementById('frame');
-const BASE="{{ $stream }}?autoplay=1";
-function updateVideo(){
-    if(!v.checked){f.src="";return;}
-    f.src=BASE+"&mute="+(a.checked?0:1);
-}
-v.onchange=updateVideo;
-a.onchange=updateVideo;
-</script>
-
-<!-- PUSHER -->
-
-<!-- Pusher -->
+<!-- PUSHER ENGINE -->
 <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
-
 <script>
-    // 🔍 Activar logs SOLO para pruebas
-    Pusher.logToConsole = true;
-
-    // 📌 ID de la jugada (viene desde Laravel)
-    const JUGADA_ID = {{ $jugadaId }};
-
-    // ⚙️ Configuración correcta para LOCAL y PRODUCCIÓN
     const pusher = new Pusher("{{ config('broadcasting.connections.pusher.key') }}", {
         cluster: "{{ config('broadcasting.connections.pusher.options.cluster') }}",
         forceTLS: window.location.protocol === 'https:',
         enabledTransports: ['ws', 'wss']
     });
 
-    // 📡 Canal por jugada
-    const channel = pusher.subscribe('jugada.' + JUGADA_ID);
+    const channel = pusher.subscribe('jugada.{{ $jugadaId }}');
 
-    // 🔔 Evento principal
     channel.bind('SorteoActualizado', function (data) {
-        console.log('Evento recibido:', data);
-
-        // 🎱 Bolilla grande
+        
+        // 1. Bolilla Maestra Gigante
         if (data.bolilla !== null) {
-            const big = document.querySelector('.bolilla-grande');
-            if (big) big.innerText = data.bolilla;
+            const master = document.getElementById('bolillaActual');
+            master.innerText = data.bolilla;
+            master.classList.remove('active-pop');
+            void master.offsetWidth; // Trigger reflow
+            master.classList.add('active-pop');
         }
 
-        // 🔢 Últimas 9 bolillas
-        const minis = document.querySelectorAll('.mini');
-        minis.forEach((el, i) => {
-            const v = data.ultimas[i] ?? '—';
-            el.innerText = v;
-            el.classList.toggle('activa', v !== '—');
+        // 2. Tablero Matrix
+        document.querySelectorAll('.matrix-num').forEach(el => {
+            const n = parseInt(el.innerText);
+            if(data.bolillas.includes(n)) {
+                el.classList.add('drawn');
+            } else {
+                el.classList.remove('drawn');
+            }
         });
 
-        // 🔲 Tablero 1–90
-        document.querySelectorAll('.num').forEach(el => {
-            const n = Number(el.innerText);
-            el.classList.toggle('activo', data.bolillas.includes(n));
+        // 3. Cinta de Historial Inferior
+        const cinta = document.getElementById('historialCinta');
+        cinta.innerHTML = '';
+        data.ultimas.slice(0, 15).forEach(num => {
+            const orb = document.createElement('div');
+            orb.className = 'hist-orb';
+            orb.innerText = num;
+            cinta.appendChild(orb);
         });
+
     });
 </script>
-
-
 
 </body>
 </html>
