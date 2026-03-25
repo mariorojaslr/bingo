@@ -23,6 +23,38 @@ class Carton extends Model
         'grilla' => 'array',
     ];
 
+    /**
+     * Devuelve la grilla con los números ordenados de menor a mayor 
+     * verticalmente por cada columna, respetando los huecos vacíos.
+     */
+    public function getGrillaOrdenadaAttribute(): array
+    {
+        $grilla = $this->grilla;
+        if (!is_array($grilla) || count($grilla) !== 3) {
+            return $grilla;
+        }
+
+        for ($col = 0; $col < 9; $col++) {
+            $numeros = [];
+            for ($row = 0; $row < 3; $row++) {
+                if (isset($grilla[$row][$col]) && $grilla[$row][$col] > 0) {
+                    $numeros[] = $grilla[$row][$col];
+                }
+            }
+            sort($numeros);
+            
+            $i = 0;
+            for ($row = 0; $row < 3; $row++) {
+                if (isset($grilla[$row][$col]) && $grilla[$row][$col] > 0) {
+                    $grilla[$row][$col] = $numeros[$i];
+                    $i++;
+                }
+            }
+        }
+
+        return $grilla;
+    }
+
     /* =======================
      |  RELACIONES
      ======================= */

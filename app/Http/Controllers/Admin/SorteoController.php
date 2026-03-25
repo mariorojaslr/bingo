@@ -56,7 +56,7 @@ class SorteoController extends Controller
          * - Línea
          * - Bingo
          */
-        $sorteo->evaluarGanadores();
+        // $sorteo->evaluarGanadores(); // TODO: Implementar logica de ganadores despues
 
         // 📡 Evento ÚNICO (todas las pantallas escuchan)
         event(new SorteoActualizado($sorteo));

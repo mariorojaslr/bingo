@@ -40,7 +40,7 @@
                         <col style="width:11.11%">
                     @endfor
                 </colgroup>
-                @foreach($carton->grilla as $fila)
+                @foreach($carton->grilla_ordenada as $fila)
                     <tr>
                         @foreach($fila as $celda)
                             <td class="{{ $celda == 0 ? 'vacio' : '' }}">
