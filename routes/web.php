@@ -58,9 +58,7 @@ Route::get('/', function () {
 */
 Route::prefix('admin')->group(function () {
 
-    Route::get('/', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    // La ruta base de /admin redirige automáticamente vía el enrutado de arriba a /admin/dashboard
 
     // Organizadores
     Route::resource('organizadores', OrganizadorController::class)
