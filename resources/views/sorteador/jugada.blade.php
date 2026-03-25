@@ -2,7 +2,7 @@
 <html lang="es" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <title>Sorteador Extraterrestre | {{ $jugada->nombre_jugada }}</title>
+    <title>Sorteador Operativo | {{ $jugada->nombre_jugada }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
     <style>
         :root {
             --bg-dark: #020202;
-            --bg-panel: rgba(15, 15, 20, 0.6);
+            --bg-panel: rgba(15, 15, 20, 0.7);
             --border-glass: rgba(255, 255, 255, 0.05);
             --neon-green: #00FF88;
             --neon-blue: #00A8FF;
@@ -25,21 +25,32 @@
             background-color: var(--bg-dark);
             color: #fff;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             background-image: radial-gradient(circle at 50% -20%, rgba(0, 168, 255, 0.15) 0%, transparent 60%);
+            padding-bottom: 2rem;
+            margin: 0;
             overflow-x: hidden;
         }
 
         h1, h2, h3, h4, h5, .brand-font { font-family: 'Outfit', sans-serif; }
 
+        .top-navbar {
+            background: rgba(0,0,0,0.8);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            top: 0; position: sticky; z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
         .dashboard-container {
             width: 100%;
-            max-width: 1200px;
-            padding: 2rem;
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 350px 1fr 350px;
             gap: 2rem;
         }
 
@@ -47,191 +58,184 @@
             background: var(--bg-panel);
             backdrop-filter: blur(20px);
             border: 1px solid var(--border-glass);
-            border-radius: 24px;
-            padding: 2rem;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
-            align-items: center;
             position: relative;
         }
 
-        /* BOLILLA PRINCIPAL */
+        /* BOLILLA CENTRAL */
         .bolilla-orb {
-            width: 250px;
-            height: 250px;
+            width: 220px; height: 220px;
+            margin: 1rem auto;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #00FF88, #006633);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 110px;
-            font-weight: 900;
-            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at 30% 30%, var(--neon-green), #006633);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 100px; font-weight: 900; font-family: 'Outfit';
             color: #000;
-            box-shadow: 0 0 50px rgba(0, 255, 136, 0.6), inset -15px -15px 30px rgba(0,0,0,0.5);
-            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
-            margin: 20px 0;
-            position: relative;
-            z-index: 10;
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.4), inset -10px -10px 20px rgba(0,0,0,0.4);
+            text-shadow: 2px 2px 5px rgba(255,255,255,0.4);
         }
 
-        /* HISTORIAL (ÚLTIMAS) */
+        /* HISTORIAL 9 BOLILLAS (Derecha a Izquierda) */
         .history-container {
-            display: flex;
-            gap: 10px;
-            margin-top: auto;
-            width: 100%;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 5px;
+            margin-top: 1.5rem;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid var(--border-glass);
+            direction: rtl; /* IMPORTANTE: Derecha a izquierda */
         }
 
         .mini-orb {
-            width: 45px;
-            height: 45px;
+            aspect-ratio: 1;
             border-radius: 50%;
             background: #111;
-            border: 2px solid #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 18px;
-            color: #777;
+            border: 1px solid #333;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 14px; color: #555;
+            direction: ltr; /* Numeros se leen normales */
+        }
+        .mini-orb.active { background: var(--neon-blue); color: #fff; border-color: #fff; box-shadow: 0 0 10px var(--neon-blue); }
+
+        /* TABLERO 1-90 */
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 4px;
+            margin-top: 1rem;
         }
 
-        .mini-orb.active {
-            background: var(--neon-blue);
-            color: #fff;
-            border-color: #fff;
-            box-shadow: 0 0 15px rgba(0, 168, 255, 0.5);
+        .matrix-num {
+            aspect-ratio: 4/3;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 4px; font-size: 0.85rem; font-weight: 700;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05); color: rgba(255,255,255,0.2);
+            transition: 0.3s;
         }
+        .matrix-num.drawn { background: var(--neon-green); color: #000; border-color: #fff; transform: scale(1.1); }
 
-        /* CONTROLES (OPERADOR) */
-        .controls-panel {
-            justify-content: center;
-            align-items: stretch;
-            gap: 1.5rem;
+        /* CONTROLES ESTILO CONSOLA */
+        .btn-launch {
+            width: 100%; border-radius: 12px; padding: 20px;
+            font-family: 'Outfit'; font-weight: 800; font-size: 1.3rem; letter-spacing: 2px;
+            text-transform: uppercase; border: none; transition: 0.3s;
+            background: var(--neon-green); color: #000; margin-bottom: 1rem;
         }
+        .btn-launch:active { transform: scale(0.95); }
+        .btn-launch:hover { background: #fff; box-shadow: 0 0 30px var(--neon-green); }
 
-        .action-btn {
-            width: 100%;
-            padding: 20px;
-            border-radius: 16px;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 800;
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            position: relative;
-            overflow: hidden;
-            text-transform: uppercase;
+        .btn-action {
+            width: 100%; padding: 15px; border-radius: 12px; font-weight: 700; font-family: 'Outfit';
+            background: transparent; border: 2px solid; transition: 0.3s;
         }
-
-        .btn-sacar { background: var(--neon-green); color: #000; box-shadow: 0 10px 20px rgba(0, 255, 136, 0.3); }
-        .btn-sacar:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0, 255, 136, 0.5); background: #fff; }
-        .btn-sacar:active { transform: translateY(2px); }
-
-        .btn-linea { background: transparent; color: var(--neon-blue); border: 2px solid var(--neon-blue); }
-        .btn-linea:hover { background: var(--neon-blue); color: #fff; box-shadow: 0 0 20px rgba(0, 168, 255, 0.4); }
-
-        .btn-bingo { background: transparent; color: var(--neon-red); border: 2px solid var(--neon-red); }
-        .btn-bingo:hover { background: var(--neon-red); color: #fff; box-shadow: 0 0 20px rgba(255, 71, 87, 0.4); }
-
-        .btn-reset { background: transparent; color: var(--neon-gold); border: 1px solid var(--border-glass); font-size: 1rem; padding: 15px; }
-        .btn-reset:hover { background: rgba(212, 175, 55, 0.1); border-color: var(--neon-gold); }
-
-        /* CARTELES ANIMADOS */
-        .hologram-sign {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.5);
-            font-size: 150px;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 900;
-            text-transform: uppercase;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 100;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-shadow: 0 0 50px currentColor;
-        }
-
-        .hologram-sign.show.linea { color: var(--neon-blue); opacity: 1; transform: translate(-50%, -50%) scale(1); animation: blink 0.5s infinite alternate; }
-        .hologram-sign.show.bingo { color: var(--neon-red); opacity: 1; transform: translate(-50%, -50%) scale(1); animation: blink 0.3s infinite alternate; }
-
-        @keyframes blink { from { opacity: 1; filter: brightness(1.5); } to { opacity: 0.8; filter: brightness(0.8); } }
+        .btn-action.linea { border-color: var(--neon-blue); color: var(--neon-blue); }
+        .btn-action.linea:hover { background: var(--neon-blue); color: #fff; box-shadow: 0 0 20px var(--neon-blue); }
         
-        @media (max-width: 900px) {
-            .dashboard-container { grid-template-columns: 1fr; }
+        .btn-action.bingo { border-color: var(--neon-red); color: var(--neon-red); }
+        .btn-action.bingo:hover { background: var(--neon-red); color: #fff; box-shadow: 0 0 20px var(--neon-red); }
+
+        /* ÁREA DE GANADORES */
+        .winner-box {
+            display: none;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--neon-gold);
+            border-radius: 12px; padding: 15px; margin-top: 15px;
+            animation: pulse-gold 2s infinite;
+        }
+        .winner-box.show { display: block; }
+        @keyframes pulse-gold { 0% { box-shadow: 0 0 10px rgba(212,175,55,0.2); } 50% { box-shadow: 0 0 20px rgba(212,175,55,0.5); } 100% { box-shadow: 0 0 10px rgba(212,175,55,0.2); } }
+
+        /* RESPONSIVE (Celular Primero Arriba Abajo) */
+        @media (max-width: 1100px) {
+            .dashboard-container { grid-template-columns: 1fr; gap: 1rem; padding: 0 1rem; }
+            .matrix-num { aspect-ratio: 1; }
         }
     </style>
 </head>
+
+@php
+    $bolillas = $sorteo->getBolillas();
+    $ultimas = array_slice(array_reverse($bolillas), 0, 9);
+@endphp
+
 <body>
 
-<div class="hologram-sign linea" id="cartelLinea">LÍNEA</div>
-<div class="hologram-sign bingo" id="cartelBingo">BINGO</div>
+<header class="top-navbar">
+    <div class="d-flex align-items-center gap-3">
+        <i class="bi bi-controller fs-3 text-white"></i>
+        <div>
+            <h4 class="mb-0 fw-bold brand-font text-white" style="letter-spacing: 1px; color: var(--neon-gold) !important;">{{ mb_strtoupper($jugada->nombre_jugada) }}</h4>
+            <span class="badge" style="background: rgba(255,255,255,0.1); font-family: 'Inter';" id="estadoTxt"><i class="bi bi-broadcast me-1"></i> ESTADO: {{ strtoupper($sorteo->estado) }}</span>
+        </div>
+    </div>
+    <a href="/franquicia/dashboard" class="btn btn-sm btn-outline-light"><i class="bi bi-box-arrow-left"></i> Salir</a>
+</header>
 
 <div class="dashboard-container">
     
-    <!-- PANEL VISUAL -->
-    <div class="glass-panel">
-        <div class="w-100 d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h4 class="mb-0 fw-bold" style="color: var(--neon-gold);">{{ mb_strtoupper($jugada->nombre_jugada) }}</h4>
-                <p class="text-muted small mb-0">MONITOR OFICIAL DE OPERACIONES</p>
-            </div>
-            <div class="badge border py-2 px-3" style="background: rgba(255,255,255,0.05); border-color: var(--border-glass) !important;" id="estadoTxt">
-                ESTADO: <span class="text-white">{{ strtoupper($sorteo->estado) }}</span>
-            </div>
-        </div>
-
+    <!-- PANEL 1: BOLILLA Y SECUENCIA -->
+    <div class="glass-panel" style="justify-content: space-between;">
+        <h6 class="text-center text-white-50 fw-bold letter-spacing-1 mb-0">EXTRACCIÓN ACTUAL</h6>
+        
         <div class="bolilla-orb" id="bolillaActual">
             {{ $sorteo->bolilla_actual ?? '–' }}
         </div>
         
-        <p class="text-muted text-uppercase mt-4 mb-3" style="letter-spacing: 5px; font-size: 0.8rem;">Historial del Bolillero</p>
-        
-        <div class="history-container" id="ultimas">
-            <!-- Las ultimas 7 bolillas se inyectan via JS -->
-            @for($i=0; $i<7; $i++)
-                <div class="mini-orb">—</div>
+        <div class="w-100 mt-4">
+            <h6 class="text-center text-white-50 fw-bold" style="font-size: 0.75rem; letter-spacing: 2px;">SECUENCIA (DER a IZQ)</h6>
+            <div class="history-container" id="ultimas">
+                @for($i=0; $i<9; $i++)
+                    <div class="mini-orb {{ isset($ultimas[$i]) ? 'active' : '' }}">{{ $ultimas[$i] ?? '—' }}</div>
+                @endfor
+            </div>
+        </div>
+    </div>
+
+    <!-- PANEL 2: TABLERO DE OPERADOR -->
+    <div class="glass-panel">
+        <h6 class="text-white-50 fw-bold mb-3" style="font-size: 0.8rem; letter-spacing: 2px;"><i class="bi bi-grid-3x3"></i> MATRIZ DE CONTROL 1-90</h6>
+        <div class="matrix-grid">
+            @for($i=1; $i<=90; $i++)
+                <div class="matrix-num {{ in_array($i, $bolillas) ? 'drawn' : '' }}" id="num-{{$i}}">{{ $i }}</div>
             @endfor
         </div>
     </div>
 
-    <!-- PANEL OPERATIVO -->
-    <div class="glass-panel controls-panel">
-        <h3 class="w-100 text-center fw-bold text-white mb-2">PANEL DE CONTROL</h3>
-        <p class="text-white-50 text-center small mb-4">Transmisión Criptográfica en Tiempo Real</p>
-
-        <button id="btnSacar" class="action-btn btn-sacar mt-2">
-            <i class="bi bi-play-circle-fill"></i> Extraer Bolilla
-        </button>
-
-        <div class="d-flex w-100 gap-3 mt-4">
-            <button id="btnLinea" class="action-btn btn-linea w-50" style="padding: 15px; font-size: 1rem;">
-                <i class="bi bi-pause-fill"></i> Pausa por Línea
-            </button>
-            <button id="btnBingo" class="action-btn btn-bingo w-50" style="padding: 15px; font-size: 1rem;">
-                <i class="bi bi-stop-fill"></i> Cortar Bingo
-            </button>
+    <!-- PANEL 3: MANDOS Y GANADORES -->
+    <div class="glass-panel">
+        <h6 class="text-white-50 fw-bold mb-4" style="font-size: 0.8rem; letter-spacing: 2px;"><i class="bi bi-sliders"></i> CONSOLA DE MANDOS</h6>
+        
+        <button id="btnSacar" class="btn-launch"><i class="bi bi-play-fill me-1"></i> Extraer</button>
+        
+        <div class="d-flex gap-2 mb-3">
+            <button id="btnLinea" class="btn-action linea"><i class="bi bi-pause"></i> PAUSA LÍNEA</button>
+            <button id="btnBingo" class="btn-action bingo"><i class="bi bi-stop"></i> BINGO FINAL</button>
         </div>
 
-        <button id="btnReiniciar" class="action-btn btn-reset mt-auto mb-0">
-            <i class="bi bi-arrow-counterclockwise"></i> Reiniciar Mesa y Purgar Tubo
-        </button>
-    </div>
+        <button id="btnReiniciar" class="btn-action text-white-50 border-secondary mt-3"><i class="bi bi-arrow-counterclockwise"></i> Reiniciar Mesa</button>
 
+        <!-- CAJA DE REPORTE AUTOMATICO DEL SISTEMA -->
+        <div class="winner-box" id="winnerBox">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-trophy-fill fs-4" style="color: var(--neon-gold)"></i>
+                <h6 class="mb-0 fw-bold" style="color: var(--neon-gold); letter-spacing: 1px;">¡POSIBLE GANADOR!</h6>
+            </div>
+            <p class="small text-white mb-2">El sistema ha detectado un cartón ganador para esta extracción. Esperando grito en sala o validación automática.</p>
+            <div class="p-2 rounded bg-dark border border-secondary text-center font-monospace small" id="winnerData">
+                Buscando...
+            </div>
+        </div>
+
+    </div>
 </div>
 
-<!-- SCRIPT ENGINE -->
 <script src="https://js.pusher.com/8.2/pusher.min.js"></script>
 <script>
     const csrf = '{{ csrf_token() }}';
@@ -239,13 +243,11 @@
         fetch(url, { method: 'POST', headers: { 'X-CSRF-TOKEN': csrf } });
     }
 
-    // DISPARADORES
     document.getElementById('btnSacar').onclick     = () => postCall('{{ route("sorteador.extraer", $jugadaId) }}');
     document.getElementById('btnLinea').onclick     = () => postCall('{{ route("sorteador.confirmar.linea", $jugadaId) }}');
     document.getElementById('btnBingo').onclick     = () => postCall('{{ route("sorteador.confirmar.bingo", $jugadaId) }}');
     document.getElementById('btnReiniciar').onclick = () => postCall('{{ route("sorteador.reiniciar", $jugadaId) }}');
 
-    // PUSHER REALTIME V2
     const pusher = new Pusher("{{ config('broadcasting.connections.pusher.key') }}", {
         cluster: "{{ config('broadcasting.connections.pusher.options.cluster') }}",
         forceTLS: window.location.protocol === 'https:',
@@ -255,34 +257,37 @@
     const channel = pusher.subscribe('jugada.{{ $jugadaId }}');
 
     channel.bind('SorteoActualizado', data => {
-        // Actualizar Orbe Central
-        const bolillaActual = document.getElementById('bolillaActual');
-        bolillaActual.innerText = data.bolilla ?? '–';
+        // 1. Bolilla Maestra
+        document.getElementById('bolillaActual').innerText = data.bolilla ?? '–';
         
-        // Animacion Pop
-        bolillaActual.style.transform = 'scale(1.1)';
-        bolillaActual.style.boxShadow = '0 0 100px rgba(0, 255, 136, 1)';
-        setTimeout(() => {
-            bolillaActual.style.transform = 'scale(1)';
-            bolillaActual.style.boxShadow = '0 0 50px rgba(0, 255, 136, 0.6), inset -15px -15px 30px rgba(0,0,0,0.5)';
-        }, 200);
+        // 2. Estado
+        let est = data.estado.toUpperCase();
+        let col = est === 'EXTRAYENDO' ? 'var(--neon-green)' : (est === 'LINEA' || est === 'BINGO' ? 'var(--neon-red)' : '#fff');
+        document.getElementById('estadoTxt').innerHTML = `<i class="bi bi-broadcast me-1"></i> ESTADO: <span style="color:${col}; font-weight:bold;">${est}</span>`;
 
-        // Actualizar Estado
-        document.getElementById('estadoTxt').innerHTML = `ESTADO: <span class="${data.estado === 'extrayendo' ? 'text-success' : 'text-danger'} fw-bold">${data.estado.toUpperCase()}</span>`;
+        // 3. Matriz 1-90
+        document.querySelectorAll('.matrix-num').forEach(el => {
+            const n = parseInt(el.innerText);
+            if (data.bolillas.includes(n)) el.classList.add('drawn');
+            else el.classList.remove('drawn');
+        });
 
-        // Historial
-        const ultimasCont = document.getElementById('ultimas');
-        ultimasCont.innerHTML = '';
-        for(let i=0; i<7; i++){
-            let span = document.createElement('div');
-            span.className = 'mini-orb ' + (data.ultimas[i] ? 'active' : '');
-            span.innerText = data.ultimas[i] ?? '—';
-            ultimasCont.appendChild(span);
+        // 4. Historial (Derecha a Izquierda - visualmente rtl CSS)
+        const histCont = document.getElementById('ultimas');
+        histCont.innerHTML = '';
+        for(let i=0; i<9; i++){
+            let val = data.ultimas[i] ?? '—';
+            histCont.innerHTML += `<div class="mini-orb ${val!=='—' ? 'active':''}">${val}</div>`;
         }
 
-        // Hologramas Gigantes de Estado
-        document.getElementById('cartelLinea').classList.toggle('show', data.estado === 'linea');
-        document.getElementById('cartelBingo').classList.toggle('show', data.estado === 'bingo');
+        // 5. Caja de Ganadores Artificial
+        const wBox = document.getElementById('winnerBox');
+        if (data.estado === 'linea' || data.estado === 'bingo') {
+            wBox.classList.add('show');
+            document.getElementById('winnerData').innerText = "ESPERANDO CONFIRMACIÓN DE VENTA...";
+        } else {
+            wBox.classList.remove('show');
+        }
     });
 </script>
 

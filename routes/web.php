@@ -60,12 +60,14 @@ Route::post('/auth/otp', [\App\Http\Controllers\AuthController::class, 'verifyOt
 
 /*
 |--------------------------------------------------------------------------
-| Rutas Públicas
+| Rutas Públicas (Lobby y Venta)
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/salas', [\App\Http\Controllers\LobbyController::class, 'index'])->name('lobby.index');
 
 /*
 |--------------------------------------------------------------------------
