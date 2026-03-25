@@ -10,7 +10,21 @@ use App\Http\Controllers\Admin\InstitucionController;
 use App\Http\Controllers\Admin\SorteoController;
 use App\Http\Controllers\Admin\MonitorController;
 use App\Http\Controllers\Admin\PruebasController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\PilotoController;
+
+/*
+|--------------------------------------------------------------------------
+| Rutas Administrativas y Panel Owner
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+});
+
+Route::get('/admin', function () {
+    return redirect()->route('admin.dashboard');
+});
 
 /*
 |--------------------------------------------------------------------------
