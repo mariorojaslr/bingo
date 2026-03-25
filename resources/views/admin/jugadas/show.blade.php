@@ -2,255 +2,225 @@
 
 @section('contenido')
 
-{{-- ================= ENCABEZADO ================= --}}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>🎯 Jugada: {{ $jugada->nombre_jugada }}</h2>
-    <a href="{{ route('admin.jugadas.index') }}" class="btn btn-secondary">← Volver</a>
+    <div>
+        <h6 class="text-uppercase" style="color: var(--neon-blue); font-weight: 600; letter-spacing: 2px;"><i class="bi bi-router me-2"></i>ESTACIÓN DE CONTROL DE SALA</h6>
+        <h2 class="display-6 fw-bold mb-0 text-white" style="font-family: 'Outfit';">{{ mb_strtoupper($jugada->nombre_jugada) }}</h2>
+    </div>
+    <a href="{{ route('admin.jugadas.index') }}" class="btn btn-outline-secondary rounded-pill px-4">← Salir al Listado</a>
 </div>
 
-{{-- ================= DATOS GENERALES ================= --}}
-<div class="card mb-4">
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-4"><strong>Organizador:</strong> {{ $jugada->organizador->nombre_fantasia }}</div>
-            <div class="col-md-4"><strong>Institución:</strong> {{ $jugada->institucion->nombre }}</div>
-            <div class="col-md-4">
-                <strong>Estado:</strong>
-                <span class="badge bg-primary">{{ strtoupper(str_replace('_',' ', $jugada->estado)) }}</span>
+{{-- PANEL PRINCIPAL DE MÉTRICAS --}}
+<div class="row g-4 mb-5">
+    <!-- INFO BÁSICA -->
+    <div class="col-lg-8">
+        <div class="glass-card h-100 position-relative p-4" style="border-radius: 20px;">
+            <div class="position-absolute top-0 end-0 m-4">
+                <span class="badge rounded-pill px-3 py-2" style="background: rgba(0, 168, 255, 0.1); color: var(--neon-blue); border: 1px solid var(--neon-blue);">
+                    ESTADO: {{ strtoupper(str_replace('_',' ', $jugada->estado)) }}
+                </span>
             </div>
-        </div>
-
-        <hr>
-
-        <div class="row">
-            <div class="col-md-3"><strong>Fecha:</strong> {{ $jugada->fecha_evento }}</div>
-            <div class="col-md-3"><strong>Hora:</strong> {{ $jugada->hora_evento }}</div>
-            <div class="col-md-3"><strong>Lugar:</strong> {{ $jugada->lugar }}</div>
-            <div class="col-md-3"><strong>Formato:</strong> {{ $jugada->cartones_por_hoja }} por hoja</div>
-        </div>
-
-        <div class="row mt-2">
-            <div class="col-md-3"><strong>Precio hoja:</strong> ${{ number_format($jugada->precio_hoja,2) }}</div>
-        </div>
-    </div>
-</div>
-
-{{-- ================= ASIGNACIÓN MASIVA DE CARTONES ================= --}}
-<div class="card mb-4">
-    <div class="card-header bg-success text-white">
-        🎟 Asignación automática de cartones a participantes
-    </div>
-    <div class="card-body">
-        <form method="POST" action="{{ route('admin.jugadas.asignarCartones', $jugada->id) }}">
-            @csrf
-
-            <div class="row align-items-end">
+            <h5 class="text-white fw-bold mb-4" style="font-family: 'Outfit';"><i class="bi bi-info-circle me-2 text-white-50"></i>Ficha Técnica del Evento</h5>
+            
+            <div class="row g-4 mt-2">
                 <div class="col-md-4">
-                    <label class="form-label">Cantidad de cartones por participante</label>
-                    <input type="number"
-                           name="cantidad_por_participante"
-                           class="form-control"
-                           value="5"
-                           min="1"
-                           required>
+                    <p class="text-muted small mb-1 text-uppercase">Organizador / Titular</p>
+                    <h6 class="text-white"><i class="bi bi-building me-2 text-white-50"></i>{{ $jugada->organizador->nombre_fantasia }}</h6>
                 </div>
-
                 <div class="col-md-4">
-                    <button type="submit" class="btn btn-primary mt-2">
-                        🎯 Asignar automáticamente
-                    </button>
+                    <p class="text-muted small mb-1 text-uppercase">Institución a Beneficio</p>
+                    <h6 class="text-white"><i class="bi bi-bank me-2 text-white-50"></i>{{ $jugada->institucion->nombre }}</h6>
+                </div>
+                <div class="col-md-4">
+                    <p class="text-muted small mb-1 text-uppercase">Logística de Impresión</p>
+                    <h6 class="text-white"><i class="bi bi-file-earmark-ruled me-2 text-white-50"></i>{{ $jugada->cartones_por_hoja }} Cartones x Hoja</h6>
+                </div>
+                <div class="col-md-4">
+                    <p class="text-muted small mb-1 text-uppercase">Fecha y Hora</p>
+                    <h6 class="text-white"><i class="bi bi-calendar-event me-2 text-white-50"></i>{{ \Carbon\Carbon::parse($jugada->fecha_evento)->format('d/m/Y') }} a las {{ \Carbon\Carbon::parse($jugada->hora_evento)->format('H:i') }}H</h6>
+                </div>
+                <div class="col-md-8">
+                    <p class="text-muted small mb-1 text-uppercase">Lugar Físico / Streaming</p>
+                    <h6 class="text-white"><i class="bi bi-geo-alt me-2 text-white-50"></i>{{ $jugada->lugar }}</h6>
                 </div>
             </div>
-
-            <small class="text-muted d-block mt-2">
-                Se asignarán cartones al azar del lote activo, sin repetir, a todos los participantes.
-            </small>
-        </form>
+        </div>
+    </div>
+    
+    <!-- ACCESOS RÁPIDOS MÓDULOS -->
+    <div class="col-lg-4">
+        <div class="glass-card h-100 p-4" style="border-radius: 20px; background: linear-gradient(135deg, rgba(20,20,25,0.9), rgba(5,5,10,0.9)); border-color: rgba(255,255,255,0.1);">
+            <h5 class="text-white fw-bold mb-4" style="font-family: 'Outfit';"><i class="bi bi-toggles me-2 text-white-50"></i>Lanzamiento de Módulos</h5>
+            
+            <div class="d-grid gap-3">
+                <a href="/sorteador/jugada/{{ $jugada->id }}" target="_blank" class="btn btn-outline-light text-start py-3" style="border-radius: 12px; border-color: rgba(255,255,255,0.1) !important;">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-dark text-white rounded p-2 me-3 fs-4"><i class="bi bi-joystick"></i></div>
+                        <div>
+                            <div class="fw-bold" style="letter-spacing: 1px;">Sorteador Operativo</div>
+                            <div class="small text-white-50">Control de mesa en vivo</div>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="/monitor/jugada/{{ $jugada->id }}" target="_blank" class="btn btn-outline-light text-start py-3" style="border-radius: 12px; border-color: rgba(255,255,255,0.1) !important;">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-dark text-white rounded p-2 me-3 fs-4"><i class="bi bi-display"></i></div>
+                        <div>
+                            <div class="fw-bold" style="letter-spacing: 1px;">Monitor Clásico (Matriz)</div>
+                            <div class="small text-white-50">Proyector de sala 1-90</div>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="/monitor-tv/{{ $jugada->id }}" target="_blank" class="btn btn-outline-light text-start py-3" style="border-radius: 12px; border-color: rgba(255,255,255,0.1) !important;">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-dark text-white rounded p-2 me-3 fs-4"><i class="bi bi-camera-video"></i></div>
+                        <div>
+                            <div class="fw-bold" style="letter-spacing: 1px;">Monitor Audiovisual (TV)</div>
+                            <div class="small text-white-50">Streaming Bunny Integrado</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
-{{-- ================= LOTES ================= --}}
-<div class="card mb-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <strong>📦 Lotes de Producción</strong>
-        <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalNuevoLote">
-            ➕ Nuevo Pedido
+{{-- TABLA DE LOTES (ÓRDENES DE EXTRACCIÓN DEL ESTANQUE) --}}
+<div class="glass-card mb-4" style="border-radius: 20px;">
+    <div class="card-header border-bottom border-secondary d-flex justify-content-between align-items-center p-4 bg-transparent">
+        <div>
+            <h5 class="mb-0 text-white fw-bold" style="font-family: 'Outfit';"><i class="bi bi-box-seam me-2 text-white-50"></i>Lotes de Extracción (Talonarios)</h5>
+            <p class="text-white-50 small mb-0 mt-1">Los cartones se extraen aleatoriamente de la Pecera Maestra del Servidor.</p>
+        </div>
+        <button class="btn btn-neon rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalNuevoLote">
+            <i class="bi bi-cart-plus me-2"></i> Solicitar Talonario
         </button>
     </div>
 
-    <div class="card-body">
+    <div class="card-body p-0">
         @if($lotes->count() == 0)
-            <p class="text-muted">No hay pedidos de lotes aún.</p>
+            <div class="text-center py-5">
+                <i class="bi bi-inboxes text-white-50" style="font-size: 3rem; opacity: 0.2;"></i>
+                <p class="text-secondary mt-3">No hay talonarios generados. Solicita uno para poblar la sala.</p>
+            </div>
         @else
-            <table class="table table-bordered table-striped align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>Lote</th>
-                        <th>Fecha</th>
-                        <th>Cartones</th>
-                        <th>Hojas</th>
-                        <th>Total</th>
-                        <th>Estado</th>
-                        <th class="text-center">Acción</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($lotes as $lote)
+            <div class="table-responsive">
+                <table class="table table-dark table-hover mb-0" style="background: transparent;">
+                    <thead style="background: rgba(0,0,0,0.5);">
                         <tr>
-                            <td>{{ $lote->codigo_lote }}</td>
-                            <td>{{ $lote->created_at->format('d/m/Y H:i') }}</td>
-                            <td>{{ $lote->cantidad_cartones }}</td>
-                            <td>{{ $lote->cantidad_hojas }}</td>
-                            <td>${{ number_format($lote->total_general,2) }}</td>
-                            <td>
-                                <span class="badge bg-info">
-                                    {{ strtoupper(str_replace('_',' ', $lote->estado)) }}
-                                </span>
-                            </td>
-                            <td class="text-center">
-
-                                @if($lote->estado === 'pedido')
-                                    <form action="{{ route('admin.lotes.generar', $lote->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        <button class="btn btn-sm btn-warning">⚙ Generar</button>
-                                    </form>
-
-                                @elseif($lote->estado === 'generado')
-                                    <form action="{{ route('admin.lotes.materializar', $lote->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        <button class="btn btn-sm btn-success">🏭 Materializar</button>
-                                    </form>
-
-                                @elseif($lote->estado === 'en_impresion')
-                                    <a href="{{ route('admin.visor.lote', $lote->id) }}"
-                                       class="btn btn-sm btn-primary" target="_blank">
-                                        👁 Ver Cartones
-                                    </a>
-                                @endif
-
-                            </td>
+                            <th class="border-secondary text-secondary fw-normal py-3 px-4">LOTE ID</th>
+                            <th class="border-secondary text-secondary fw-normal py-3">CREACIÓN</th>
+                            <th class="border-secondary text-secondary fw-normal py-3 text-center">CANTIDAD TRASPASADA</th>
+                            <th class="border-secondary text-secondary fw-normal py-3 text-center">COMPOSICIÓN PAPEL</th>
+                            <th class="border-secondary text-secondary fw-normal py-3 text-center">ESTADO</th>
+                            <th class="border-secondary text-end fw-normal py-3 px-4">IMPRESIÓN / ACCIÓN</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach($lotes as $lote)
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <td class="px-4 text-white fw-bold" style="font-family: monospace;">{{ $lote->codigo_lote }}</td>
+                                <td class="text-white-50 small">{{ $lote->created_at->format('d/m/Y H:i') }}</td>
+                                <td class="text-center">
+                                    <span class="fs-5 text-white fw-bold">{{ $lote->cantidad_cartones }}</span>
+                                    <span class="text-muted small d-block">Cartones Matemáticos</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="fs-5 text-white fw-bold">{{ $lote->cantidad_hojas }}</span>
+                                    <span class="text-muted small d-block">Hojas PDF ({{ $jugada->cartones_por_hoja }} x/h)</span>
+                                </td>
+                                <td class="text-center align-middle">
+                                    @if($lote->estado === 'pedido')
+                                        <span class="badge border border-warning text-warning bg-transparent rounded-pill px-3">PENDIENTE EN PECERA</span>
+                                    @elseif($lote->estado === 'generado')
+                                        <span class="badge border border-info text-info bg-transparent rounded-pill px-3">ASIGNADOS A JUGADA</span>
+                                    @elseif($lote->estado === 'en_impresion')
+                                        <span class="badge border border-success text-success bg-transparent rounded-pill px-3">LISTO PARA IMPRIMIR</span>
+                                    @endif
+                                </td>
+                                <td class="text-end px-4 align-middle">
+                                    @if($lote->estado === 'pedido')
+                                        <form action="{{ route('admin.lotes.generar', $lote->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button class="btn btn-sm btn-outline-warning rounded-pill px-3"><i class="bi bi-cpu me-1"></i> Invocar Generador</button>
+                                        </form>
+
+                                    @elseif($lote->estado === 'generado')
+                                        <form action="{{ route('admin.lotes.materializar', $lote->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button class="btn btn-sm btn-outline-info rounded-pill px-3"><i class="bi bi-file-earmark-pdf me-1"></i> Generar Archivos Láser</button>
+                                        </form>
+
+                                    @elseif($lote->estado === 'en_impresion')
+                                        <!-- AQUÍ EVENTUALMENTE IRÁ LA FÁBRICA LASER (PDF REAL) -->
+                                        <a href="{{ route('admin.visor.lote', $lote->id) }}" class="btn btn-sm" style="background: var(--neon-green); color: #000; font-weight: 600; border-radius: 50px; px-3" target="_blank">
+                                            <i class="bi bi-printer-fill me-1"></i> Despachar a Láser (Visor)
+                                        </a>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         @endif
     </div>
 </div>
 
-{{-- ================= MODAL NUEVO PEDIDO ================= --}}
-<div class="modal fade" id="modalNuevoLote" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+{{-- MODAL SOLICITUD DE EXTRACCIÓN A PECERA --}}
+<div class="modal fade" id="modalNuevoLote" tabindex="-1" data-bs-theme="dark">
+    <div class="modal-dialog modal-dialog-centered">
         <form method="POST" action="{{ route('admin.jugadas.lotes.crear', $jugada->id) }}">
             @csrf
-            <div class="modal-content">
-
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">📦 Nuevo Pedido de Producción</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-content" style="background: #0d0d0d; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;">
+                <div class="modal-header border-bottom border-secondary pt-4 px-4">
+                    <h5 class="modal-title fw-bold" style="font-family: 'Outfit'; color: var(--neon-blue);"><i class="bi bi-box-arrow-in-down me-2"></i>Extracción de Pecera</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <div class="modal-body">
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label>Cantidad de Cartones</label>
-                            <input type="number" class="form-control" id="cantidad_cartones" name="cantidad_cartones">
-                        </div>
-                        <div class="col-md-6">
-                            <label>Cantidad de Hojas</label>
-                            <input type="number" class="form-control" id="cantidad_hojas" name="cantidad_hojas">
-                        </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small mb-4">Indica la cantidad de cartones que necesitas vender/imprimir. El sistema los extraerá del pozo inagotable oficial y garantizará cero colisiones numéricas.</p>
+                    
+                    <div class="mb-4">
+                        <label class="form-label text-white-50 small fw-bold">CANTIDAD DE CARTONES FÍSICOS REQUERIDOS</label>
+                        <input type="number" class="form-control form-control-lg bg-dark text-white border-secondary" id="cantidad_cartones" name="cantidad_cartones" placeholder="Ej: 1000" style="font-family: monospace; font-size: 1.5rem;" required>
                     </div>
 
-                    <hr>
-
-                    <div class="row text-center mb-2">
-                        <div class="col"><strong>Formato:</strong> {{ $jugada->cartones_por_hoja }} por hoja</div>
-                        <div class="col"><strong>Precio hoja:</strong> ${{ number_format($jugada->precio_hoja,2) }}</div>
-                        <div class="col"><strong>Impresión:</strong> $<span id="total_impresion">0.00</span></div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label>Costo de generación por cartón</label>
-                            <input type="number" step="0.01" class="form-control" id="costo_unitario" name="costo_generacion" value="0">
+                    <div class="p-3 rounded" style="background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1);">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">Cartones por Hoja de Impresión:</span>
+                            <span class="text-white fw-bold">{{ $jugada->cartones_por_hoja }}</span>
                         </div>
-                        <div class="col-md-6">
-                            <label>Total General</label>
-                            <input type="text" class="form-control" id="total_general" readonly>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted small">Total Resmas/Hojas Requeridas:</span>
+                            <span class="text-white fw-bold" id="resumen_hojas" style="color: var(--neon-green) !important;">0</span>
                         </div>
                     </div>
-
-                    <input type="hidden" id="cartones_por_hoja" value="{{ $jugada->cartones_por_hoja }}">
-                    <input type="hidden" id="precio_hoja" value="{{ $jugada->precio_hoja }}">
-
                 </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">✔ Registrar Pedido</button>
-                </div>
+                <!-- Hidden inputs if needed by Controller (based on previous code) -->
+                <input type="hidden" name="cantidad_hojas" id="hidden_hojas">
+                <input type="hidden" name="costo_generacion" value="0">
 
+                <div class="modal-footer border-top border-secondary px-4 py-3">
+                    <button type="button" class="btn text-white-50" data-bs-dismiss="modal">Cancelar Extracción</button>
+                    <button type="submit" class="btn btn-neon rounded-pill px-4"><i class="bi bi-cpu me-2"></i> Confirmar Extracción</button>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
-{{-- ================= SCRIPT PROFESIONAL ================= --}}
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-
-    const cartonesInput = document.getElementById('cantidad_cartones');
-    const hojasInput = document.getElementById('cantidad_hojas');
-    const costoUnitarioInput = document.getElementById('costo_unitario');
-
-    const cartonesPorHoja = parseInt(document.getElementById('cartones_por_hoja').value);
-    const precioHoja = parseFloat(document.getElementById('precio_hoja').value);
-
-    const totalImpresionSpan = document.getElementById('total_impresion');
-    const totalGeneralInput = document.getElementById('total_general');
-    const modal = document.getElementById('modalNuevoLote');
-
-    function recalcularTotales() {
-        let cartones = parseInt(cartonesInput.value) || 0;
-        let hojas = parseInt(hojasInput.value) || 0;
-        let costoUnitario = parseFloat(costoUnitarioInput.value) || 0;
-
-        let totalImpresion = hojas * precioHoja;
-        let totalGeneracion = cartones * costoUnitario;
-        let totalGeneral = totalImpresion + totalGeneracion;
-
-        totalImpresionSpan.innerText = totalImpresion.toFixed(2);
-        totalGeneralInput.value = '$ ' + totalGeneral.toFixed(2);
-    }
-
-    function desdeCartones() {
-        let cartones = parseInt(cartonesInput.value) || 0;
-        let hojas = Math.ceil(cartones / cartonesPorHoja);
-        hojasInput.value = cartones > 0 ? hojas : '';
-        recalcularTotales();
-    }
-
-    function desdeHojas() {
-        let hojas = parseInt(hojasInput.value) || 0;
-        let cartones = hojas * cartonesPorHoja;
-        cartonesInput.value = hojas > 0 ? cartones : '';
-        recalcularTotales();
-    }
-
-    cartonesInput.addEventListener('input', desdeCartones);
-    hojasInput.addEventListener('input', desdeHojas);
-    costoUnitarioInput.addEventListener('input', recalcularTotales);
-
-    modal.addEventListener('show.bs.modal', function () {
-        cartonesInput.value = '';
-        hojasInput.value = '';
-        costoUnitarioInput.value = 0;
-        totalImpresionSpan.innerText = '0.00';
-        totalGeneralInput.value = '$ 0.00';
+    document.getElementById('cantidad_cartones').addEventListener('input', function(e) {
+        const cant = parseInt(e.target.value) || 0;
+        const xhoja = {{ $jugada->cartones_por_hoja }};
+        const hojas = Math.ceil(cant / xhoja);
+        document.getElementById('resumen_hojas').innerText = hojas;
+        document.getElementById('hidden_hojas').value = hojas;
     });
-
-});
 </script>
 
 @endsection

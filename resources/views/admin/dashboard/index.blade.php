@@ -113,12 +113,67 @@
                                 @endif
                             </td>
                             <td class="py-3 px-4 align-middle text-end">
-                                <!-- ESTE ES EL BOTON MÁGICO DE TELETRANSPORTE (IMPERSONATION) -->
+                                <!-- BOTÓN DE PARAMETRIZACIÓN (MÓDULOS) -->
+                                <button class="btn btn-sm btn-outline-secondary border-0 me-2" data-bs-toggle="modal" data-bs-target="#configModal{{ $org->id }}">
+                                    <i class="bi bi-sliders text-warning"></i> Licencias
+                                </button>
+
+                                <!-- BOTON MÁGICO DE TELETRANSPORTE -->
                                 <a href="{{ route('admin.impersonate', $org->id) }}" class="btn btn-sm btn-outline-light border-0">
-                                    <i class="bi bi-box-arrow-in-right text-success"></i> Teletransportarse
+                                    <i class="bi bi-box-arrow-in-right text-success"></i> Entrar
                                 </a>
                             </td>
                         </tr>
+
+                        <!-- MODAL DE PARAMETRIZACION SAAS PARA ESTE CLIENTE -->
+                        <div class="modal fade" id="configModal{{ $org->id }}" tabindex="-1" aria-hidden="true" data-bs-theme="dark">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content" style="background: #0d0d0d; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;">
+                                    <div class="modal-header border-bottom border-secondary pt-4 px-4">
+                                        <h5 class="modal-title fw-bold" style="font-family: 'Outfit'; color: var(--neon-gold);">Parametrización de Módulos</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body p-4">
+                                        <p class="text-muted small mb-4">Configura qué herramientas de software activas o bloqueas para <strong>{{ mb_strtoupper($org->nombre_fantasia) }}</strong> según lo que hayan pagado.</p>
+                                        
+                                        <div class="form-check form-switch mb-3" style="font-size: 1.1rem;">
+                                            <input class="form-check-input" type="checkbox" id="modTalonarios{{ $org->id }}" checked>
+                                            <label class="form-check-label text-white" for="modTalonarios{{ $org->id }}">
+                                                <i class="bi bi-printer text-white-50 me-2"></i> Fotocopia/Láser (Cartones Físicos)
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-switch mb-3" style="font-size: 1.1rem;">
+                                            <input class="form-check-input" type="checkbox" id="modSorteador{{ $org->id }}" checked>
+                                            <label class="form-check-label text-white" for="modSorteador{{ $org->id }}">
+                                                <i class="bi bi-joystick text-white-50 me-2"></i> Visor Operativo (Sorteador)
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-switch mb-3" style="font-size: 1.1rem;">
+                                            <input class="form-check-input" type="checkbox" id="modMonitor{{ $org->id }}">
+                                            <label class="form-check-label text-white" for="modMonitor{{ $org->id }}">
+                                                <i class="bi bi-display text-white-50 me-2"></i> Monitor TV 1-90 (Proyector Local)
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-switch mb-3" style="font-size: 1.1rem;">
+                                            <input class="form-check-input" type="checkbox" id="modVirtual{{ $org->id }}">
+                                            <label class="form-check-label text-white" for="modVirtual{{ $org->id }}">
+                                                <i class="bi bi-globe text-white-50 me-2"></i> Telebingo (Lobby Virtual Público)
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-switch mb-3" style="font-size: 1.1rem;">
+                                            <input class="form-check-input" type="checkbox" id="modStream{{ $org->id }}">
+                                            <label class="form-check-label text-white" for="modStream{{ $org->id }}">
+                                                <i class="bi bi-camera-video text-white-50 me-2"></i> Streaming Bunny.net Limitless
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer border-top border-secondary px-4 py-3">
+                                        <button type="button" class="btn text-white-50" data-bs-dismiss="modal">Cancelar</button>
+                                        <button type="button" class="btn btn-success rounded-pill px-4" data-bs-dismiss="modal">Guardar Licencia</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         @empty
                         <tr>
                             <td colspan="4" class="text-center py-4 text-muted small">
