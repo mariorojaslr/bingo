@@ -37,32 +37,33 @@ class SorteoController extends Controller
             ->latest()
             ->firstOrFail();
 
-        // 🛑 Corte si ya salieron 90 bolillas
-        if (count($sorteo->getBolillas()) >= 90) {
-            $sorteo->finalizar();
+        try {
+            // 🛑 Corte si ya salieron 90 bolillas
+            if (count($sorteo->getBolillas()) >= 90) {
+                return response()->json(['success' => false, 'error' => 'Ya salieron 90 bolillas'], 400);
+            }
 
+            /**
+             * 🎲 Bucle Mágico: extrae aleatorio hasta encontrar una bolilla que no haya salido
+             */
+            do {
+                $nueva = rand(1, 90);
+            } while (!$sorteo->agregarBolilla($nueva));
+
+            // $sorteo->evaluarGanadores(); // TODO: Implementar logica de ganadores despues
+
+            // 📡 Evento ÚNICO (todas las pantallas escuchan)
             event(new SorteoActualizado($sorteo));
-            return response()->noContent();
+
+            // 🚀 Tecnología rápida (sin redirect)
+            return response()->json(['success' => true]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ], 500);
         }
-
-        // 🎯 Buscar bolilla no repetida
-        do {
-            $nueva = rand(1, 90);
-        } while (!$sorteo->agregarBolilla($nueva));
-
-        /**
-         * 🧠 LÓGICA CENTRAL
-         * Detecta automáticamente:
-         * - Línea
-         * - Bingo
-         */
-        // $sorteo->evaluarGanadores(); // TODO: Implementar logica de ganadores despues
-
-        // 📡 Evento ÚNICO (todas las pantallas escuchan)
-        event(new SorteoActualizado($sorteo));
-
-        // 🚀 Tecnología rápida (sin redirect)
-        return response()->noContent();
     }
 
     /**

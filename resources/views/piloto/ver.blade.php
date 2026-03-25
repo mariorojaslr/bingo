@@ -162,6 +162,18 @@ body {
 .bingo { color: #FF0055; text-shadow: 0 0 30px #FF0055; }
 @keyframes blink { from { transform: scale(0.9); opacity: 0.8; } to { transform: scale(1.1); opacity: 1; } }
 
+/* ===== ESCRITORIO (Desktop) ===== */
+@media (min-width: 900px) {
+    .btn-hundir-group {
+        justify-content: flex-end; /* A la derecha en escritorio */
+    }
+    .dynamic-container {
+        max-width: 1400px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        align-items: start; /* Para que cada modulo mida solo su contenido */
+    }
+}
 </style>
 
 @php

@@ -214,15 +214,16 @@
     const csrf = '{{ csrf_token() }}';
     function postCall(url) {
         fetch(url, { method: 'POST', headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' } })
-            .then(res => {
+            .then(async res => {
                 if (!res.ok) {
-                    console.error('Error del servidor:', res.status);
-                    alert('Error en conexión: ' + res.status + '. Revisa la consola o recarga la página.');
+                    let msg = res.status;
+                    try { const data = await res.json(); msg += ' - ' + (data.error || JSON.stringify(data)); } catch(e){}
+                    alert('Error en conexión: ' + msg);
                 }
             })
             .catch(err => {
                 console.error('Fetch error:', err);
-                alert('No se pudo comunicar con el servidor para la extracción.');
+                alert('No se pudo comunicar con el servidor.');
             });
     }
 
