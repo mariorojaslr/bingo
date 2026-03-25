@@ -213,7 +213,17 @@
 <script>
     const csrf = '{{ csrf_token() }}';
     function postCall(url) {
-        fetch(url, { method: 'POST', headers: { 'X-CSRF-TOKEN': csrf } });
+        fetch(url, { method: 'POST', headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' } })
+            .then(res => {
+                if (!res.ok) {
+                    console.error('Error del servidor:', res.status);
+                    alert('Error en conexión: ' + res.status + '. Revisa la consola o recarga la página.');
+                }
+            })
+            .catch(err => {
+                console.error('Fetch error:', err);
+                alert('No se pudo comunicar con el servidor para la extracción.');
+            });
     }
 
     document.getElementById('btnSacar').onclick     = () => postCall('{{ route("sorteador.extraer", $jugadaId) }}');
@@ -221,8 +231,8 @@
     document.getElementById('btnBingo').onclick     = () => postCall('{{ route("sorteador.confirmar.bingo", $jugadaId) }}');
     document.getElementById('btnReiniciar').onclick = () => postCall('{{ route("sorteador.reiniciar", $jugadaId) }}');
 
-    const pusher = new Pusher("{{ config('broadcasting.connections.pusher.key') }}", {
-        cluster: "{{ config('broadcasting.connections.pusher.options.cluster') }}",
+    const pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
+        cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
         forceTLS: window.location.protocol === 'https:',
         enabledTransports: ['ws', 'wss']
     });
