@@ -2,91 +2,159 @@
 
 @section('contenido')
 
-<h3>🎯 {{ $lote->jugada->nombre_jugada }}</h3>
-<p>{{ $lote->jugada->institucion->nombre }} — {{ $lote->jugada->organizador->nombre_fantasia }}</p>
-
-<form method="GET" class="row mb-3 g-2">
-    <div class="col-auto">
-        <label>Columnas</label>
-        <input type="number" name="columnas" value="{{ $columnas }}" class="form-control" min="1" max="6">
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h6 class="text-uppercase" style="color: var(--neon-green); font-weight: 600; letter-spacing: 2px;">VISTA DE OJO DE HALCÓN</h6>
+        <h2 class="display-6 fw-bold mb-0 text-white" style="font-family: 'Outfit';">Visor de Lote para Impresión</h2>
     </div>
-
-    <div class="col-auto">
-        <label>Filas</label>
-        <input type="number" name="filas" value="{{ $filas }}" class="form-control" min="1" max="6">
+    <div class="d-flex gap-3">
+        <button onclick="window.print()" class="btn btn-neon rounded-pill px-4"><i class="bi bi-printer me-2"></i> Enviar a Láser</button>
+        <a href="{{ route('admin.jugadas.show', $lote->jugada_id) }}" class="btn btn-outline-secondary rounded-pill px-4"><i class="bi bi-x-lg me-2"></i> Cerrar Visor</a>
     </div>
-
-    <div class="col-auto">
-        <label>Ir al cartón (ID o Nº)</label>
-        <input type="text" name="ir_a_carton" value="{{ request('ir_a_carton') }}" class="form-control">
-    </div>
-
-    <div class="col-auto align-self-end">
-        <button class="btn btn-primary">Actualizar Vista</button>
-        <a href="{{ route('admin.jugadas.show', $lote->jugada_id) }}" class="btn btn-secondary">Volver</a>
-    </div>
-</form>
-
-<div class="d-grid" style="grid-template-columns: repeat({{ $columnas }}, 1fr); gap: 15px;">
-@foreach($cartones as $carton)
-    <div class="carton" id="carton-{{ $carton->numero }}">
-        <div class="carton-titulo">Cartón Nº {{ $carton->numero }}</div>
-
-        <table class="carton-tabla">
-            <colgroup>
-                @for($i=1; $i<=9; $i++)
-                    <col style="width:11.11%">
-                @endfor
-            </colgroup>
-            @foreach($carton->grilla as $fila)
-                <tr>
-                    @foreach($fila as $celda)
-                        <td class="{{ $celda == 0 ? 'vacio' : '' }}">
-                            {{ $celda ?: '' }}
-                        </td>
-                    @endforeach
-                </tr>
-            @endforeach
-        </table>
-    </div>
-@endforeach
 </div>
 
-<div class="mt-4">
-    {{ $cartones->withQueryString()->links() }}
+<div class="glass-card mb-4" style="border-radius: 16px;">
+    <div class="card-body p-4 text-white-50 small">
+        <i class="bi bi-info-circle me-1"></i> Este tablero muestra el formato crudo en alto contraste listo para la impresora fotocopiadora. El número de 'Sorteo Consuelo' está pre-inyectado en la esquina superior derecha de cada cartón.
+    </div>
+</div>
+
+{{-- AREA DE IMPRESION - SOLO LO QUE SE IMPRIME --}}
+<div class="area-impresion mt-4" style="background: #000; padding: 2rem; border-radius: 20px;">
+    
+    <div class="d-grid" style="grid-template-columns: repeat({{ $columnas }}, 1fr); gap: 30px;">
+    @foreach($cartones as $carton)
+        <div class="carton-laser">
+            <div class="carton-header">
+                <div class="fw-bold" style="font-size: 10px; letter-spacing: 1px;">
+                    SERIE: {{ mb_strtoupper($lote->jugada->nombre_jugada) }}
+                </div>
+                <div class="fw-bold fs-6" style="letter-spacing: 1px;">
+                    Sorteo Consuelo: <span style="font-size: 1.1rem; border-bottom: 2px solid #000;">{{ 1000 + $carton->numero }}</span>
+                </div>
+            </div>
+
+            <table class="carton-tabla">
+                <colgroup>
+                    @for($i=1; $i<=9; $i++)
+                        <col style="width:11.11%">
+                    @endfor
+                </colgroup>
+                @foreach($carton->grilla as $fila)
+                    <tr>
+                        @foreach($fila as $celda)
+                            <td class="{{ $celda == 0 ? 'vacio' : '' }}">
+                                {{ $celda ?: '' }}
+                            </td>
+                        @endforeach
+                    </tr>
+                @endforeach
+            </table>
+            
+            <div class="carton-footer">
+                ID SISTEMA: {{ str_pad($carton->id, 8, '0', STR_PAD_LEFT) }} | IMPRESIÓN OFICIAL INFINITY
+            </div>
+        </div>
+    @endforeach
+    </div>
+
+</div>
+
+<div class="mt-4 pb-5 d-flex justify-content-center">
+    <!-- Paginación con estilo oscuro -->
+    <div class="pagination-dark">
+        {{ $cartones->withQueryString()->links('pagination::bootstrap-5') }}
+    </div>
 </div>
 
 <style>
-.carton {
-    border:1px solid #ccc;
-    padding:8px;
-    border-radius:6px;
-    background:white;
+/* CSS PARA LA PANTALLA MODO DARK */
+.pagination-dark .pagination {
+    --bs-pagination-bg: rgba(255,255,255,0.05);
+    --bs-pagination-border-color: rgba(255,255,255,0.1);
+    --bs-pagination-color: #fff;
+    --bs-pagination-hover-bg: rgba(255,255,255,0.1);
+    --bs-pagination-hover-color: #00FF88;
 }
 
-.carton-titulo {
-    text-align:center;
-    font-weight:bold;
-    margin-bottom:6px;
+/* CSS EXACTO PARA EL CARTON LÁSER B/N (INSPIRADO EN LA IMAGEN) */
+.carton-laser {
+    background: white;
+    padding: 15px;
+    border: 3px solid #000;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    color: #000;
+}
+
+.carton-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 10px;
+    font-family: 'Arial', sans-serif;
+    text-transform: uppercase;
 }
 
 .carton-tabla {
-    width:100%;
-    border-collapse:collapse;
-    table-layout: fixed;   /* CLAVE: evita columnas colapsadas */
+    width: 100%;
+    border-collapse: collapse;
+    border: 4px solid #000;
+    table-layout: fixed;
+    background: white;
 }
 
 .carton-tabla td {
-    border:1px solid #000;
-    height:36px;
-    text-align:center;
-    font-weight:bold;
-    font-size:14px;
-    padding:0;
+    border: 2px solid #000;
+    height: 48px;
+    text-align: center;
+    vertical-align: middle;
+    font-weight: 900;
+    font-size: 24px;
+    font-family: 'Arial', sans-serif;
+    color: #000;
+    padding: 0;
 }
 
 .carton-tabla td.vacio {
-    background:#e0e0e0;
+    background: #D5D5D5; /* El fondo gris clásico */
+    border: 2px solid #000;
+}
+
+.carton-footer {
+    text-align: right;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 9px;
+    font-weight: bold;
+    color: #555;
+    margin-top: 5px;
+    border-top: 1px solid #ccc;
+    padding-top: 2px;
+}
+
+/* MÉTODO DE IMPRESIÓN -> QUITAR TODO LO QUE NO ES CARTÓN */
+@media print {
+    body, html {
+        background: white !important;
+        margin: 0;
+        padding: 0;
+        min-height: auto;
+    }
+    .top-navbar, .sidebar, .top-bar, .d-flex.justify-content-between, .glass-card, .mt-4.pb-5 {
+        display: none !important;
+    }
+    .area-impresion {
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    .carton-laser {
+        box-shadow: none !important;
+        margin-bottom: 20px;
+        page-break-inside: avoid;
+    }
+    .d-grid {
+        gap: 20px !important;
+    }
 }
 </style>
 

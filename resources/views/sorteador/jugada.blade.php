@@ -46,11 +46,11 @@
 
         .dashboard-container {
             width: 100%;
-            max-width: 1400px;
+            max-width: 900px; /* Reducido para 2 paneles centrales */
             margin: 2rem auto;
             padding: 0 2rem;
             display: grid;
-            grid-template-columns: 350px 1fr 350px;
+            grid-template-columns: 1fr 1fr;
             gap: 2rem;
         }
 
@@ -59,7 +59,7 @@
             backdrop-filter: blur(20px);
             border: 1px solid var(--border-glass);
             border-radius: 20px;
-            padding: 1.5rem;
+            padding: 2rem;
             box-shadow: 0 20px 40px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
@@ -68,12 +68,12 @@
 
         /* BOLILLA CENTRAL */
         .bolilla-orb {
-            width: 220px; height: 220px;
+            width: 250px; height: 250px;
             margin: 1rem auto;
             border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, var(--neon-green), #006633);
             display: flex; align-items: center; justify-content: center;
-            font-size: 100px; font-weight: 900; font-family: 'Outfit';
+            font-size: 110px; font-weight: 900; font-family: 'Outfit';
             color: #000;
             box-shadow: 0 0 50px rgba(0, 255, 136, 0.4), inset -10px -10px 20px rgba(0,0,0,0.4);
             text-shadow: 2px 2px 5px rgba(255,255,255,0.4);
@@ -98,35 +98,17 @@
             background: #111;
             border: 1px solid #333;
             display: flex; align-items: center; justify-content: center;
-            font-weight: 800; font-size: 14px; color: #555;
+            font-weight: 800; font-size: 16px; color: #555;
             direction: ltr; /* Numeros se leen normales */
         }
         .mini-orb.active { background: var(--neon-blue); color: #fff; border-color: #fff; box-shadow: 0 0 10px var(--neon-blue); }
 
-        /* TABLERO 1-90 */
-        .matrix-grid {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 4px;
-            margin-top: 1rem;
-        }
-
-        .matrix-num {
-            aspect-ratio: 4/3;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 4px; font-size: 0.85rem; font-weight: 700;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.05); color: rgba(255,255,255,0.2);
-            transition: 0.3s;
-        }
-        .matrix-num.drawn { background: var(--neon-green); color: #000; border-color: #fff; transform: scale(1.1); }
-
         /* CONTROLES ESTILO CONSOLA */
         .btn-launch {
             width: 100%; border-radius: 12px; padding: 20px;
-            font-family: 'Outfit'; font-weight: 800; font-size: 1.3rem; letter-spacing: 2px;
+            font-family: 'Outfit'; font-weight: 800; font-size: 1.5rem; letter-spacing: 2px;
             text-transform: uppercase; border: none; transition: 0.3s;
-            background: var(--neon-green); color: #000; margin-bottom: 1rem;
+            background: var(--neon-green); color: #000; margin-bottom: 1.5rem;
         }
         .btn-launch:active { transform: scale(0.95); }
         .btn-launch:hover { background: #fff; box-shadow: 0 0 30px var(--neon-green); }
@@ -153,9 +135,11 @@
         @keyframes pulse-gold { 0% { box-shadow: 0 0 10px rgba(212,175,55,0.2); } 50% { box-shadow: 0 0 20px rgba(212,175,55,0.5); } 100% { box-shadow: 0 0 10px rgba(212,175,55,0.2); } }
 
         /* RESPONSIVE (Celular Primero Arriba Abajo) */
-        @media (max-width: 1100px) {
-            .dashboard-container { grid-template-columns: 1fr; gap: 1rem; padding: 0 1rem; }
-            .matrix-num { aspect-ratio: 1; }
+        @media (max-width: 900px) {
+            .dashboard-container { grid-template-columns: 1fr; gap: 1rem; padding: 1rem; margin: 1rem auto; }
+            .bolilla-orb { width: 200px; height: 200px; font-size: 80px; }
+            .btn-launch { padding: 15px; font-size: 1.2rem; }
+            .top-navbar { padding: 1rem; }
         }
     </style>
 </head>
@@ -168,21 +152,21 @@
 <body>
 
 <header class="top-navbar">
-    <div class="d-flex align-items-center gap-3">
+    <div class="d-flex align-items-center gap-2">
         <i class="bi bi-controller fs-3 text-white"></i>
         <div>
-            <h4 class="mb-0 fw-bold brand-font text-white" style="letter-spacing: 1px; color: var(--neon-gold) !important;">{{ mb_strtoupper($jugada->nombre_jugada) }}</h4>
+            <h5 class="mb-0 fw-bold brand-font text-warning">{{ mb_strtoupper($jugada->nombre_jugada) }}</h5>
             <span class="badge" style="background: rgba(255,255,255,0.1); font-family: 'Inter';" id="estadoTxt"><i class="bi bi-broadcast me-1"></i> ESTADO: {{ strtoupper($sorteo->estado) }}</span>
         </div>
     </div>
-    <a href="/franquicia/dashboard" class="btn btn-sm btn-outline-light"><i class="bi bi-box-arrow-left"></i> Salir</a>
+    <a href="/admin/jugadas/{{ $jugada->id }}" class="btn btn-sm btn-outline-light"><i class="bi bi-box-arrow-left"></i> Salir</a>
 </header>
 
 <div class="dashboard-container">
     
     <!-- PANEL 1: BOLILLA Y SECUENCIA -->
     <div class="glass-panel" style="justify-content: space-between;">
-        <h6 class="text-center text-white-50 fw-bold letter-spacing-1 mb-0">EXTRACCIÓN ACTUAL</h6>
+        <h6 class="text-center text-white-50 fw-bold mb-0" style="letter-spacing: 2px;">EXTRACCIÓN ACTUAL</h6>
         
         <div class="bolilla-orb" id="bolillaActual">
             {{ $sorteo->bolilla_actual ?? '–' }}
@@ -198,18 +182,8 @@
         </div>
     </div>
 
-    <!-- PANEL 2: TABLERO DE OPERADOR -->
-    <div class="glass-panel">
-        <h6 class="text-white-50 fw-bold mb-3" style="font-size: 0.8rem; letter-spacing: 2px;"><i class="bi bi-grid-3x3"></i> MATRIZ DE CONTROL 1-90</h6>
-        <div class="matrix-grid">
-            @for($i=1; $i<=90; $i++)
-                <div class="matrix-num {{ in_array($i, $bolillas) ? 'drawn' : '' }}" id="num-{{$i}}">{{ $i }}</div>
-            @endfor
-        </div>
-    </div>
-
     <!-- PANEL 3: MANDOS Y GANADORES -->
-    <div class="glass-panel">
+    <div class="glass-panel text-center">
         <h6 class="text-white-50 fw-bold mb-4" style="font-size: 0.8rem; letter-spacing: 2px;"><i class="bi bi-sliders"></i> CONSOLA DE MANDOS</h6>
         
         <button id="btnSacar" class="btn-launch"><i class="bi bi-play-fill me-1"></i> Extraer</button>
@@ -223,16 +197,15 @@
 
         <!-- CAJA DE REPORTE AUTOMATICO DEL SISTEMA -->
         <div class="winner-box" id="winnerBox">
-            <div class="d-flex align-items-center gap-2 mb-2">
+            <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
                 <i class="bi bi-trophy-fill fs-4" style="color: var(--neon-gold)"></i>
                 <h6 class="mb-0 fw-bold" style="color: var(--neon-gold); letter-spacing: 1px;">¡POSIBLE GANADOR!</h6>
             </div>
-            <p class="small text-white mb-2">El sistema ha detectado un cartón ganador para esta extracción. Esperando grito en sala o validación automática.</p>
-            <div class="p-2 rounded bg-dark border border-secondary text-center font-monospace small" id="winnerData">
+            <p class="small text-white mb-2">El sistema ha detectado un cartón ganador. Esperando grito en sala.</p>
+            <div class="p-2 rounded bg-dark border border-secondary text-center font-monospace small text-white" id="winnerData">
                 Buscando...
             </div>
         </div>
-
     </div>
 </div>
 
