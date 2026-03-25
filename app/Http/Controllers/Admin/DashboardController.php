@@ -10,7 +10,7 @@ class DashboardController extends Controller
     public function index()
     {
         // El dashboard principal del OWNER. 
-        // Más adelante inyectaremos aquí las métricas reales de los tenants.
-        return view('admin.dashboard.index');
+        $organizadores = \App\Models\Organizador::latest()->get();
+        return view('admin.dashboard.index', compact('organizadores'));
     }
 }

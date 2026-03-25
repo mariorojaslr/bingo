@@ -93,38 +93,40 @@
                         </tr>
                     </thead>
                     <tbody style="border-top: none;">
+                        @forelse($organizadores as $org)
                         <tr style="border-color: rgba(255,255,255,0.05);">
                             <td class="py-3 px-4 align-middle">
                                 <div class="d-flex align-items-center gap-3">
                                     <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(0, 168, 255, 0.1); color: #00A8FF; display: flex; align-items: center; justify-content: center;"><i class="bi bi-building"></i></div>
                                     <div>
-                                        <div class="fw-bold">Bingo Club del Norte</div>
-                                        <div class="small text-muted">norte.gentepiola.net</div>
+                                        <div class="fw-bold">{{ mb_strtoupper($org->nombre_fantasia) }}</div>
+                                        <div class="small text-muted">{{ $org->email_contacto ?? 'sin-correo@sistema.com' }}</div>
                                     </div>
                                 </div>
                             </td>
                             <td class="py-3 px-4 align-middle text-center"><span class="badge bg-dark border" style="border-color: var(--accent-gold) !important; color: var(--accent-gold);">Pro Max ($50k)</span></td>
-                            <td class="py-3 px-4 align-middle text-center"><span class="text-success small fw-bold"><i class="bi bi-circle-fill me-1" style="font-size: 0.5rem;"></i> ACTIVO</span></td>
+                            <td class="py-3 px-4 align-middle text-center">
+                                @if($org->activo)
+                                    <span class="text-success small fw-bold"><i class="bi bi-circle-fill me-1" style="font-size: 0.5rem;"></i> ACTIVO</span>
+                                @else
+                                    <span class="text-danger small fw-bold"><i class="bi bi-circle-fill me-1" style="font-size: 0.5rem;"></i> MOROSO</span>
+                                @endif
+                            </td>
                             <td class="py-3 px-4 align-middle text-end">
-                                <button class="btn btn-sm btn-outline-light border-0"><i class="bi bi-eye"></i> Entrar como Admin</button>
+                                <!-- ESTE ES EL BOTON MÁGICO DE TELETRANSPORTE (IMPERSONATION) -->
+                                <a href="{{ route('admin.impersonate', $org->id) }}" class="btn btn-sm btn-outline-light border-0">
+                                    <i class="bi bi-box-arrow-in-right text-success"></i> Teletransportarse
+                                </a>
                             </td>
                         </tr>
-                        <tr style="border-color: rgba(255,255,255,0.05);">
-                            <td class="py-3 px-4 align-middle">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(162, 0, 255, 0.1); color: #A200FF; display: flex; align-items: center; justify-content: center;"><i class="bi bi-building"></i></div>
-                                    <div>
-                                        <div class="fw-bold">Sorteos Solidarios SL</div>
-                                        <div class="small text-muted">solidarios.gentepiola.net</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="py-3 px-4 align-middle text-center"><span class="badge bg-dark text-light border border-secondary">Básico ($25k)</span></td>
-                            <td class="py-3 px-4 align-middle text-center"><span class="text-success small fw-bold"><i class="bi bi-circle-fill me-1" style="font-size: 0.5rem;"></i> ACTIVO</span></td>
-                            <td class="py-3 px-4 align-middle text-end">
-                                <button class="btn btn-sm btn-outline-light border-0"><i class="bi bi-eye"></i> Entrar como Admin</button>
+                        @empty
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted small">
+                                <i class="bi bi-inboxes mb-2 d-block" style="font-size: 2rem; color: rgba(255,255,255,0.1);"></i>
+                                No hay franquicias registradas en la Base de Datos.
                             </td>
                         </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

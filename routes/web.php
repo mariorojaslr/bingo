@@ -19,7 +19,23 @@ use App\Http\Controllers\PilotoController;
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
+    // 1. ÁTICO DEL OWNER
     Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+
+    // 2. ASCENSOR TELETRANSPORTADOR
+    Route::get('/admin/impersonate/{organizador}', [\App\Http\Controllers\Admin\ImpersonateController::class, 'enter'])->name('admin.impersonate');
+    Route::get('/admin/impersonate/leave/casino', [\App\Http\Controllers\Admin\ImpersonateController::class, 'leave'])->name('admin.leave_impersonation');
+
+    // 3. PISO DE LA FRANQUICIA (Panel del Cliente)
+    Route::get('/franquicia/dashboard', function () {
+        // Validación de Seguridad: Solo entras si eres el Dueño real del Tenant o el Owner en modo "Fantasma"
+        if (!session('impersonating_organizador_id') && auth()->user()->email === 'mario.rojas.coach@gmail.com') {
+            return redirect()->route('admin.dashboard')->with('error', 'Debes entrar bajando por el ascensor de franquicias.');
+        }
+
+        // Devolvemos TU ANTIGUO DASHBOARD exactamente como te gustaba.
+        return view('admin.dashboard');
+    })->name('tenant.dashboard');
 });
 
 Route::get('/admin', function () {
