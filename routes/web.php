@@ -176,7 +176,7 @@ Route::get('/api/monitor/jugada/{jugada}', [MonitorController::class, 'estado'])
 |--------------------------------------------------------------------------
 */
 Route::get('/monitor-tv', function () {
-    return view('monitor.monitor-tv');
+    return redirect()->route('admin.jugadas.index')->with('error', 'Debes seleccionar una sala.');
 });
 
 Route::get('/monitor-tv/{jugada}', function ($jugadaId) {
