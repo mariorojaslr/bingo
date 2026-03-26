@@ -4,31 +4,36 @@
 
 <style>
 /* =========================================================
-   ESTILOS GENERALES Y LAYOUT MÓVIL
+   ESTÉTICA ROLLS-ROYCE OLED | VISTA DEL TUGADOR (PILOTO)
 ========================================================= */
 body { 
-    background: #050505; 
+    background: #020202; 
     margin: 0; 
     font-family: 'Inter', sans-serif;
     color: #fff;
-    padding-bottom: 50px;
 }
 
-/* ===== ENCABEZADO Y BOTONES DE HUNDIR ===== */
-.top-portal {
-    position: sticky; top: 0; left: 0; right: 0;
-    background: rgba(10, 10, 10, 0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    z-index: 100;
-    padding: 10px 15px;
+.piloto-wrapper {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 1rem;
+    animation: fadeIn 0.5s ease;
 }
 
-.portal-nav {
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ===== 1. ENCABEZADO Y CONTROLES ===== */
+.piloto-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    background: rgba(15, 15, 20, 0.7);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 15px 25px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .player-info {
@@ -36,204 +41,243 @@ body {
     font-weight: 800;
     color: var(--neon-gold, #D4AF37);
     letter-spacing: 1px;
-}
-
-/* BOTONES HUNDIBLES */
-.btn-hundir-group {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    overflow-x: auto;
-    padding-bottom: 5px;
-}
-
-.btn-hundir {
-    background: #222;
-    border: 1px solid #444;
-    color: #888;
-    width: 45px; height: 45px;
-    border-radius: 12px;
-    font-family: 'Outfit';
-    font-weight: 900;
     font-size: 1.2rem;
-    box-shadow: inset 0 4px 6px rgba(255,255,255,0.1), 0 4px 6px rgba(0,0,0,0.5);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
 }
 
-/* Estado activo/hundido */
-.btn-hundir.active {
-    background: rgba(0, 255, 136, 0.1);
-    border: 1px solid var(--neon-green, #00FF88);
-    color: var(--neon-green, #00FF88);
-    box-shadow: inset 0 4px 8px rgba(0,0,0,0.6), 0 0 15px rgba(0,255,136,0.3);
-    transform: translateY(3px); /* Hace el efecto visual de "hundirse" */
-}
-
-.btn-hundir.active.btn-bingo { border-color: #00A8FF; color: #00A8FF; box-shadow: inset 0 4px 8px rgba(0,0,0,0.6), 0 0 15px rgba(0,168,255,0.3); background: rgba(0, 168, 255, 0.1); }
-.btn-hundir.active.btn-trans { border-color: #FF0055; color: #FF0055; box-shadow: inset 0 4px 8px rgba(0,0,0,0.6), 0 0 15px rgba(255,0,85,0.3); background: rgba(255, 0, 85, 0.1); }
-
-/* CONTROLES EXTRA (Auto y Audio) */
 .switch-control {
-    display: flex; align-items: center; gap: 5px;
-    background: rgba(255,255,255,0.05); padding: 5px 10px;
-    border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.1);
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.05); padding: 5px 15px;
+    border-radius: 20px; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* ===== CONTENEDOR DINÁMICO ===== */
-.dynamic-container {
-    display: flex;
-    flex-direction: column;
+/* ===== 2. LAYOUT PRINCIPAL (GRID) ===== */
+.piloto-grid-top {
+    display: grid;
+    grid-template-columns: 320px 1fr;
     gap: 20px;
-    padding: 15px;
-    max-width: 600px;
-    margin: 0 auto;
+    margin-bottom: 20px;
 }
 
-.module {
-    display: none; /* Ocultos por defecto, activados por js */
-    background: rgba(20,20,25,0.9);
+@media (max-width: 992px) {
+    .piloto-grid-top { grid-template-columns: 1fr; }
+}
+
+.glass-panel {
+    background: rgba(15, 15, 20, 0.7);
     border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 16px;
-    padding: 15px;
+    border-radius: 20px;
+    padding: 20px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    animation: fadeIn 0.3s ease forwards;
+    display: flex; flex-direction: column;
 }
-.module.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Títulos de módulos */
-.mod-title {
+.panel-title {
     font-family: 'Outfit';
     font-size: 0.85rem;
     color: #888;
     text-transform: uppercase;
     letter-spacing: 2px;
-    margin-bottom: 15px;
     text-align: center;
     border-bottom: 1px dashed rgba(255,255,255,0.1);
-    padding-bottom: 8px;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
 }
 
-/* ===== MÓDULOS ESPECÍFICOS ===== */
-/* B: Bolillero */
-.bolilla-actual {
-    width: 130px; height: 130px; margin: 0 auto;
+/* Bolilla Gigante */
+.orb-gigante {
+    width: 160px; height: 160px; margin: 0 auto;
+    background: radial-gradient(circle at 30% 30%, #00FF88, #004422);
     border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #00FF88, #005522);
-    color: #000; font-size: 70px; font-weight: 900; font-family: 'Outfit';
+    color: #000; font-size: 75px; font-weight: 900; font-family: 'Outfit';
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 0 40px rgba(0, 255, 136, 0.4), inset -5px -5px 15px rgba(0,0,0,0.5);
+    transition: 0.3s;
 }
-.ultimos { display: flex; gap: 8px; justify-content: center; margin-top: 15px; direction: rtl; }
-.ultimos span { width: 35px; height: 35px; border-radius: 50%; background: #222; border: 1px solid #444; color: #fff; font-weight: bold; display: flex; align-items: center; justify-content: center; direction: ltr; }
-.ultimos span.hi { background: #00A8FF; color: #fff; border-color: transparent; }
+.orb-gigante.pop { animation: popOrb 0.5s ease-out; }
+@keyframes popOrb { 0% { transform: scale(1); } 50% { transform: scale(1.15); box-shadow: 0 0 60px #00FF88; } 100% { transform: scale(1); } }
 
-/* M: Monitor 1-90 */
-.matrix-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
-.matrix-num { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 4px; font-size: 11px; font-weight: bold; color: rgba(255,255,255,0.4); }
-.matrix-num.drawn { background: #FF0055; color: #fff; }
+/* Secuencia historial */
+.history-ribbon {
+    display: flex; gap: 8px; justify-content: center; margin-top: 20px;
+}
+.history-ribbon span {
+    width: 40px; height: 40px; border-radius: 50%; background: #111; border: 1px solid #333; 
+    color: #fff; font-weight: bold; font-family: 'Outfit';
+    display: flex; align-items: center; justify-content: center;
+}
+.history-ribbon span.hi { background: #00A8FF; color: #fff; border-color: transparent; box-shadow: 0 0 15px rgba(0,168,255,0.4); }
 
-/* T: Transmisión */
-.tv-frame { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-.tv-frame::before { content: '🔴 LIVE STREAMING OFF'; color: #444; font-weight: bold; letter-spacing: 2px; font-size: 0.9rem; }
+/* Streaming TV */
+.tv-container {
+    width: 100%; height: 100%; min-height: 350px;
+    border-radius: 16px; overflow: hidden;
+    background: #050505;
+    border: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+}
+.tv-container iframe {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;
+}
+.live-tag {
+    position: absolute; top: 15px; right: 20px;
+    background: rgba(255, 0, 85, 0.2); color: #FF0055;
+    border: 1px solid #FF0055; padding: 5px 15px; border-radius: 20px;
+    font-family: 'Outfit'; font-weight: 800; letter-spacing: 2px;
+    font-size: 0.8rem; z-index: 10; animation: blinkLive 2s infinite;
+}
+@keyframes blinkLive { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-/* C: Cartones */
-.bingo-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 3px; background: #fff; padding: 5px; border-radius: 8px; margin-bottom: 15px;}
-.bingo-cell { aspect-ratio: 3/4; background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; color: #000; }
-.bingo-empty { background: #D5D5D5; color: transparent; }
-.bingo-hit { background: #00FF88 !important; color: #000 !important; }
-.bingo-pendiente { background: #fde047; animation: pulseItem 1s infinite; }
-@keyframes pulseItem { 0% { transform: scale(1); } 50% { transform: scale(1.1); box-shadow: 0 0 10px #fde047; } 100% { transform: scale(1); } }
+/* ===== 3. ZONA DE CARTONES (MÁXIMO 4) ===== */
+.zona-cartones-title {
+    font-family: 'Outfit'; font-weight: 800; font-size: 1.2rem;
+    color: #fff; letter-spacing: 1px; margin-bottom: 15px;
+    display: flex; align-items: center; gap: 10px;
+}
 
-/* D: Datos */
-.kpi-row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 10px 0; }
+.piloto-cartones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+}
 
-/* CARTELES */
+.carton-wrapper {
+    background: linear-gradient(135deg, #e0e0e0, #c0c0c0);
+    border-radius: 16px;
+    padding: 12px;
+    border: 3px solid #444;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(0,0,0,0.1);
+}
+
+.carton-header {
+    background: #111; color: #D4AF37; text-align: center;
+    font-weight: 900; font-family: 'Outfit'; padding: 8px; 
+    border-radius: 10px; margin-bottom: 12px;
+    letter-spacing: 2px; font-size: 0.9rem;
+    border: 1px solid #333;
+}
+
+.bingo-grid {
+    display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px;
+}
+
+.bingo-cell {
+    aspect-ratio: 1; 
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 1.1rem; color: #000;
+    border-radius: 6px;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1);
+    transition: all 0.2s;
+}
+
+.bingo-empty { background: transparent; box-shadow: none; }
+
+.bingo-hit { 
+    background: #00FF88 !important; color: #000 !important; 
+    box-shadow: 0 0 15px rgba(0,255,136,0.6), inset 0 -2px 0 rgba(0,0,0,0.2) !important; 
+    transform: scale(1.05); z-index: 2;
+}
+
+.bingo-pendiente { 
+    background: #fde047; 
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(253, 224, 71, 0.5);
+    animation: pulseItem 1.5s infinite; 
+}
+
+@keyframes pulseItem { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+/* ===== OVERLAYS ====== */
 .overlay-cartel {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 999;
+    position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999;
     display: flex; align-items: center; justify-content: center; flex-direction: column;
-    display: none;
+    opacity: 0; pointer-events: none; transition: 0.3s;
 }
-.overlay-cartel.mostrar { display: flex; }
-.cartel-text { font-size: 5rem; font-weight: 900; font-family: 'Outfit'; animation: blink 0.8s infinite alternate;}
-.linea { color: #00A8FF; text-shadow: 0 0 30px #00A8FF; }
-.bingo { color: #FF0055; text-shadow: 0 0 30px #FF0055; }
-@keyframes blink { from { transform: scale(0.9); opacity: 0.8; } to { transform: scale(1.1); opacity: 1; } }
-
-/* ===== ESCRITORIO (Desktop) ===== */
-@media (min-width: 900px) {
-    .btn-hundir-group {
-        justify-content: flex-end; /* A la derecha en escritorio */
-    }
-    .dynamic-container {
-        max-width: 1400px;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        align-items: start; /* Para que cada modulo mida solo su contenido */
-    }
-}
+.overlay-cartel.mostrar { opacity: 1; pointer-events: all; }
+.cartel-text { font-size: 8rem; font-weight: 900; font-family: 'Outfit'; animation: blink 0.5s infinite alternate;}
+.linea { color: #00A8FF; text-shadow: 0 0 50px #00A8FF; }
+.bingo { color: #FF0055; text-shadow: 0 0 50px #FF0055; }
+@keyframes blink { from { transform: scale(0.9); } to { transform: scale(1.1); } }
 </style>
 
 @php
     $bolillasIniciales = $bolillasMarcadas ?? [];
+    $streamUrl = $jugada->streaming_url ?? 'https://www.youtube.com/embed/live_stream?channel=UC4R8DWoMoI7CAwX8_LjQHig';
+    
+    // REGLA DE JUEGO: Limitamos visualmente a un máximo de 4 cartones simultáneos en pantalla.
+    $cartonesVisibles = $cartones->take(4);
 @endphp
 
-<!-- ================= ENCABEZADO Y CONTROLES ================= -->
-<div class="top-portal">
-    <div class="portal-nav">
-        <div class="player-info"><i class="bi bi-person-circle text-white-50 me-1"></i> {{ mb_strtoupper($participante->nombre) }}</div>
+<div class="piloto-wrapper">
+    
+    <!-- 1. ENCABEZADO -->
+    <header class="piloto-header">
+        <div class="player-info">
+            <i class="bi bi-person-fill text-white-50 me-2"></i>{{ mb_strtoupper($participante->nombre) }}
+        </div>
         
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-3">
             <div class="switch-control">
-                <label for="modoAuto" class="text-white-50 fw-bold">AUTO</label>
+                <label for="modoAuto" class="text-white fw-bold" style="font-family: 'Outfit'; font-size: 0.8rem; letter-spacing: 1px;">MODO AUTO</label>
                 <div class="form-check form-switch m-0 pt-1">
                     <input class="form-check-input" type="checkbox" id="modoAuto" checked style="background-color: var(--neon-green); border-color: var(--neon-green);">
                 </div>
             </div>
             <div class="switch-control">
-                <label for="sonidoOn" class="text-white-50"><i class="bi bi-volume-up-fill"></i></label>
+                <label for="sonidoOn" class="text-white-50"><i class="bi bi-volume-up-fill fs-5"></i></label>
                 <div class="form-check form-switch m-0 pt-1">
                     <input class="form-check-input" type="checkbox" id="sonidoOn" checked>
                 </div>
             </div>
+            <a href="/salas" class="btn btn-sm btn-outline-secondary d-flex align-items-center"><i class="bi bi-door-closed me-1"></i> Salir</a>
+        </div>
+    </header>
+
+    <!-- 2. ZONA SUPERIOR (BOLILLERO + TV) -->
+    <div class="piloto-grid-top">
+        
+        <!-- Izquierda: Bolillero -->
+        <div class="glass-panel text-center">
+            <div class="panel-title"><i class="bi bi-diagram-3"></i> SORTEADOR</div>
+            
+            <div class="orb-gigante" id="bolillaActual">
+                {{ $bolillaActual ?? '—' }}
+            </div>
+            
+            <div class="history-ribbon" id="ultimos">
+                @for($i=0; $i<8; $i++)
+                    <span class="{{ isset($ultimasBolillas[$i]) ? 'hi' : '' }}">{{ $ultimasBolillas[$i] ?? '' }}</span>
+                @endfor
+            </div>
+            
+            <div class="mt-4 pt-3" style="border-top: 1px dashed rgba(255,255,255,0.05);">
+                <div class="text-white-50 small" style="font-family: 'Outfit'; letter-spacing: 1px;">SALA / FRANQUICIA</div>
+                <div class="text-warning fw-bold">{{ mb_strtoupper($jugada->organizador->nombre_fantasia) }}</div>
+            </div>
+        </div>
+
+        <!-- Derecha: TV Transmisión -->
+        <div class="glass-panel p-1">
+            <div class="tv-container">
+                <div class="live-tag">🔴 EN DIRECTO</div>
+                <iframe src="{{ $streamUrl }}?autoplay=1&mute=0&controls=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
         </div>
     </div>
 
-    <!-- BOTONES DE HUNDIR (LA MAGIA VISUAL) -->
-    <div class="btn-hundir-group">
-        <div class="btn-hundir active" data-mod="cartones" title="Cartones">C</div>
-        <div class="btn-hundir btn-bingo active" data-mod="bolillero" title="Bolillero">B</div>
-        <div class="btn-hundir btn-trans active" data-mod="monitor" title="Monitor 1-90">M</div>
-        <div class="btn-hundir" data-mod="transmision" title="Transmisión TV">T</div>
-        <div class="btn-hundir" data-mod="datos" title="Datos de Sala">D</div>
+    <!-- 3. ZONA INFERIOR (CARTONES - MAX 4) -->
+    <div class="zona-cartones-title">
+        <i class="bi bi-grid-3x2-gap-fill text-warning"></i> TUS CARTONES ACTIVOS (MÁX 4)
     </div>
-</div>
-
-<!-- ================= OVERLAYS DE PREMIOS ================= -->
-<div class="overlay-cartel" id="cartelLinea">
-    <div class="cartel-text linea">¡LÍNEA!</div>
-    <div class="text-white-50 mt-3">Validando premio en mesa...</div>
-</div>
-<div class="overlay-cartel" id="cartelBingo">
-    <div class="cartel-text bingo">¡BINGO!</div>
-    <div class="text-white-50 mt-3">Juego finalizado.</div>
-</div>
-
-<!-- ================= CONTENEDOR DINÁMICO DE MÓDULOS ================= -->
-<div class="dynamic-container" id="moduleContainer">
-
-    <!-- C: CARTONES -->
-    <div class="module active" id="mod-cartones" style="order: 1;">
-        <div class="mod-title"><i class="bi bi-grid-3x2"></i> TUS CARTONES OFICIALES</div>
-        
-        @foreach($cartones as $pcp)
-            <div>
-                <div class="text-white-50 text-center small mb-1">
+    
+    <div class="piloto-cartones-grid">
+        @foreach($cartonesVisibles as $pcp)
+            <div class="carton-wrapper">
+                <div class="carton-header">
                     CARTÓN Nº {{ str_pad($pcp->carton->numero, 6, '0', STR_PAD_LEFT) }} | S.C: {{ 1000 + $pcp->carton->numero }}
                 </div>
-                <!-- GRiLLA ORDENADA VERTICALMENTE (Corregida) -->
+                
                 <div class="bingo-grid">
                     @foreach($pcp->carton->grilla_ordenada as $fila)
                         @foreach($fila as $celda)
@@ -251,87 +295,30 @@ body {
         @endforeach
     </div>
 
-    <!-- B: BOLILLERO -->
-    <div class="module active" id="mod-bolillero" style="order: 2;">
-        <div class="mod-title"><i class="bi bi-circle"></i> EXTRACCIÓN EN VIVO</div>
-        <div class="bolilla-actual" id="bolillaActual">{{ $bolillaActual ?? '—' }}</div>
-        <div class="ultimos" id="ultimos">
-            @for($i=0; $i<9; $i++)
-                <span class="{{ isset($ultimas[$i]) ? 'hi' : '' }}">{{ $ultimas[$i] ?? '' }}</span>
-            @endfor
-        </div>
-    </div>
-
-    <!-- M: MONITOR -->
-    <div class="module active" id="mod-monitor" style="order: 3;">
-        <div class="mod-title"><i class="bi bi-grid-apps"></i> MATRIZ CENTRAL 1-90</div>
-        <div class="matrix-grid">
-            @for($i=1; $i<=90; $i++)
-                <div class="matrix-num {{ in_array($i, $bolillasIniciales) ? 'drawn' : '' }}" id="mat-{{$i}}">{{ $i }}</div>
-            @endfor
-        </div>
-    </div>
-
-    <!-- T: TRANSMISION -->
-    <div class="module" id="mod-transmision" style="order: 4;">
-        <div class="mod-title"><i class="bi bi-camera-video text-danger"></i> TV STREAMING</div>
-        <div class="tv-frame"></div>
-    </div>
-
-    <!-- D: DATOS -->
-    <div class="module" id="mod-datos" style="order: 5;">
-        <div class="mod-title"><i class="bi bi-bar-chart"></i> DATOS DE SALA</div>
-        <div class="kpi-row">
-            <span class="text-white-50">Sala / Franquicia:</span>
-            <span class="text-white fw-bold">{{ mb_strtoupper($jugada->organizador->nombre_fantasia) }}</span>
-        </div>
-        <div class="kpi-row">
-            <span class="text-white-50">Tus Cartones:</span>
-            <span class="text-warning fw-bold">{{ count($cartones) }} unidades</span>
-        </div>
-        <div class="kpi-row border-0">
-            <span class="text-white-50">Pozo Total (Estimado):</span>
-            <span class="text-success fw-bold">$ {{ number_format(count($cartones) * 10 * 3500, 2) }}</span>
-        </div>
-    </div>
-
 </div>
 
-<!-- ================= AUDIOS PÚBLICOS ================= -->
+<!-- AUDIOS -->
 <audio id="audioHit" src="/sounds/hit.mp3" preload="auto"></audio>
 <audio id="audioLine" src="/sounds/linea.mp3" preload="auto"></audio>
 <audio id="audioBingo" src="/sounds/bingo.mp3" preload="auto"></audio>
 
-<!-- ================= SCRIPTS ================= -->
+<!-- OVERLAYS -->
+<div class="overlay-cartel" id="cartelLinea">
+    <div class="cartel-text linea">¡LÍNEA!</div>
+    <div class="text-white-50 mt-4 fs-4">Verificando ganadores en sala...</div>
+</div>
+<div class="overlay-cartel" id="cartelBingo">
+    <div class="cartel-text bingo">¡BINGO!</div>
+    <div class="text-white-50 mt-4 fs-4">Juego finalizado.</div>
+</div>
+
+<!-- SCRIPTS DE LÓGICA -->
 <script src="https://js.pusher.com/8.2/pusher.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
     /* =========================================================
-       MAGIA DE BOTONES HUNDIBLES Y ORDENACIÓN
-    ========================================================= */
-    let orderCounter = 10; // Empieza alto para agregarlos al final al encenderlos
-    
-    document.querySelectorAll('.btn-hundir').forEach(btn => {
-        btn.addEventListener('click', function() {
-            // Toglear clase visual de "hundido"
-            this.classList.toggle('active');
-            
-            // Buscar módulo objetivo
-            const targetId = 'mod-' + this.dataset.mod;
-            const targetEl = document.getElementById(targetId);
-            
-            if (this.classList.contains('active')) {
-                targetEl.classList.add('active'); // Mostrar
-                targetEl.style.order = orderCounter++; // Mandar al final del flujo visible
-            } else {
-                targetEl.classList.remove('active'); // Ocultar
-            }
-        });
-    });
-
-    /* =========================================================
-       ESTADO LÓGICO Y CONTROLES
+       CONFIGURACIÓN DE AUTO-DABBER Y SONIDO
     ========================================================= */
     let modoAuto = document.getElementById('modoAuto').checked;
     let sonido = document.getElementById('sonidoOn').checked;
@@ -339,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('modoAuto').addEventListener('change', e => {
         modoAuto = e.target.checked;
         if(modoAuto) {
-            // Si activa auto, pintar todos los pendientes que el usuario se olvidó de tocar
+            // Convierte todos los pendientes olvidados a aciertos automáticos
             document.querySelectorAll('.bingo-pendiente').forEach(c => {
                 c.classList.remove('bingo-pendiente');
                 c.classList.add('bingo-hit');
@@ -349,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.getElementById('sonidoOn').addEventListener('change', e => sonido = e.target.checked);
     
-    // Si el usuario toca un pendiente en modo MANUAL, lo marca a HIT
+    // Toque manual del cartón
     document.querySelectorAll('.numero').forEach(c => {
         c.addEventListener('click', function() {
             if(!modoAuto && this.classList.contains('bingo-pendiente')) {
@@ -367,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* =========================================================
-       PUSHER Y SINCRONIZACIÓN REALTIME
+       CONEXIÓN PUSHER TIEMPO REAL
     ========================================================= */
     const pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
         cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
@@ -375,40 +362,40 @@ document.addEventListener('DOMContentLoaded', () => {
         enabledTransports: ['ws', 'wss']
     });
 
-    const channel = pusher.subscribe('jugada.{{ $jugadaId }}');
+    const channel = pusher.subscribe('jugada.{{ $jugada->id }}');
 
     channel.bind('SorteoActualizado', data => {
 
-        // REINICIO DE TABLERO
+        // REINICIO
         if(data.bolilla === null) {
-            document.getElementById('bolillaActual').innerText = '–';
+            document.getElementById('bolillaActual').innerText = '—';
             document.getElementById('ultimos').innerHTML = '';
-            document.querySelectorAll('.numero, .matrix-num').forEach(c => {
-                c.classList.remove('bingo-hit', 'bingo-pendiente', 'drawn');
+            document.querySelectorAll('.numero').forEach(c => {
+                c.classList.remove('bingo-hit', 'bingo-pendiente');
             });
             document.getElementById('cartelLinea').classList.remove('mostrar');
             document.getElementById('cartelBingo').classList.remove('mostrar');
             return;
         }
 
-        // B: BOLILLA ACTUAL
-        document.getElementById('bolillaActual').innerText = data.bolilla;
+        // BOLILLA PRINCIPAL
+        const bActual = document.getElementById('bolillaActual');
+        bActual.innerText = data.bolilla;
+        bActual.classList.remove('pop');
+        void bActual.offsetWidth; // Force reflow
+        bActual.classList.add('pop');
 
-        // B: ULTIMAS
+        // SECUENCIA HISTORIAL (CINTA)
         const ult = document.getElementById('ultimos');
         ult.innerHTML = '';
-        data.ultimas.forEach((n, i) => {
+        data.ultimas.slice(0, 8).forEach((n, i) => {
             const s = document.createElement('span');
             s.innerText = n;
             if(i === 0) s.classList.add('hi');
             ult.appendChild(s);
         });
 
-        // M: MATRIZ
-        const mat = document.getElementById('mat-' + data.bolilla);
-        if(mat) mat.classList.add('drawn');
-
-        // C: MARCADOR DE CARTONES PROPIOS
+        // MARCADOR DE CARTONES PROPIOS (MODO AUTO VS PENDIENTE)
         document.querySelectorAll('.numero').forEach(c => {
             const n = parseInt(c.dataset.numero);
             if(modoAuto && n === data.bolilla) {
@@ -420,17 +407,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         playAudio('audioHit');
 
-        // CARTELES 
+        // PREMIOS
         if(data.estado === 'linea') {
             document.getElementById('cartelLinea').classList.add('mostrar');
             playAudio('audioLine');
+        } else {
+            document.getElementById('cartelLinea').classList.remove('mostrar');
         }
+        
         if(data.estado === 'bingo') {
             document.getElementById('cartelBingo').classList.add('mostrar');
             playAudio('audioBingo');
-        }
-        if(data.estado === 'en_curso') {
-            document.getElementById('cartelLinea').classList.remove('mostrar');
+        } else {
             document.getElementById('cartelBingo').classList.remove('mostrar');
         }
     });
