@@ -7,6 +7,8 @@ use Carbon\Carbon;
 
 class Sorteo extends Model
 {
+    protected $guarded = [];
+
     protected $casts = [
         'bolillas' => 'array',
     ];
