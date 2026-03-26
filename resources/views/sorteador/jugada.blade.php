@@ -291,11 +291,24 @@
             histCont.innerHTML += `<div class="mini-orb ${val!=='—' ? 'active':''}">${val}</div>`;
         }
 
-        // 5. Caja de Ganadores Artificial
+        // 5. Caja de Reporte del Sistema
         const wBox = document.getElementById('winnerBox');
-        if (data.estado === 'linea' || data.estado === 'bingo') {
+        if ((data.ganadores && (data.ganadores.lineas.length > 0 || data.ganadores.bingos.length > 0)) || data.estado === 'linea' || data.estado === 'bingo') {
             wBox.classList.add('show');
-            document.getElementById('winnerData').innerText = "ESPERANDO CONFIRMACIÓN DE VENTA...";
+            let content = `
+            <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                <i class="bi bi-robot fs-4" style="color: var(--neon-gold)"></i>
+                <h6 class="mb-0 fw-bold" style="color: var(--neon-gold); letter-spacing: 1px;">¡REPORTE DEL SISTEMA!</h6>
+            </div>`;
+            
+            if (data.ganadores.bingos.length > 0) {
+                 content += `<p class="small text-danger fw-bold mb-2">POSIBLE BINGO ENCONTRADO EN PRUEBA</p><div class="p-2 rounded bg-dark border border-danger text-center font-monospace small text-white mb-2">Cartones: ${data.ganadores.bingos.join(', ')}</div>`;
+            } else if (data.ganadores.lineas.length > 0) {
+                 content += `<p class="small text-info fw-bold mb-2">POSIBLE LÍNEA ENCONTRADA EN PRUEBA</p><div class="p-2 rounded bg-dark border border-info text-center font-monospace small text-white mb-2">Cartones: ${data.ganadores.lineas.join(', ')}</div>`;
+            } else {
+                 content += `<p class="small text-white-50 mb-2">Estado pausado manualmente. Esperando resolución de sala.</p>`;
+            }
+            wBox.innerHTML = content;
         } else {
             wBox.classList.remove('show');
         }

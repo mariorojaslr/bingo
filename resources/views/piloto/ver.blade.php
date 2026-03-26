@@ -246,9 +246,10 @@ body {
             </div>
             
             <div class="history-ribbon" id="ultimos">
-                @for($i=0; $i<8; $i++)
-                    <span class="{{ isset($ultimasBolillas[$i]) ? 'hi' : '' }}">{{ $ultimasBolillas[$i] ?? '' }}</span>
-                @endfor
+                @php $ultR = array_reverse(array_slice(is_array($ultimasBolillas) ? $ultimasBolillas : $ultimasBolillas->toArray(), 0, 8)); @endphp
+                @foreach($ultR as $idx => $val)
+                    <span class="{{ $idx === count($ultR) - 1 ? 'hi' : '' }}">{{ $val }}</span>
+                @endforeach
             </div>
             
             <div class="mt-4 pt-3" style="border-top: 1px dashed rgba(255,255,255,0.05);">
@@ -275,7 +276,7 @@ body {
         @foreach($cartonesVisibles as $pcp)
             <div class="carton-wrapper">
                 <div class="carton-header">
-                    CARTÓN Nº {{ str_pad($pcp->carton->numero, 6, '0', STR_PAD_LEFT) }} | S.C: {{ 1000 + $pcp->carton->numero }}
+                    CARTÓN Nº {{ str_pad($pcp->carton->numero_carton, 6, '0', STR_PAD_LEFT) }} | S.C: {{ 1000 + $pcp->carton->numero_carton }}
                 </div>
                 
                 <div class="bingo-grid">

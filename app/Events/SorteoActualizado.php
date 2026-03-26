@@ -18,6 +18,7 @@ class SorteoActualizado implements ShouldBroadcastNow
     public array $bolillas;
     public array $ultimas;
     public string $estado;
+    public array $ganadores;
 
     public function __construct(Sorteo $sorteo)
     {
@@ -26,6 +27,7 @@ class SorteoActualizado implements ShouldBroadcastNow
         $this->bolillas = $sorteo->getBolillas();
         $this->ultimas  = array_slice(array_reverse($this->bolillas), 0, 9);
         $this->estado   = $sorteo->estado;
+        $this->ganadores = $sorteo->evaluarGanadores();
     }
 
     public function broadcastOn()

@@ -167,9 +167,9 @@
                     @if($sala->estado_sala === 'en_curso')
                         <button class="btn-enter closed" disabled><i class="bi bi-door-closed me-2"></i> SALA CERRADA (JUGANDO)</button>
                     @elseif($sala->estado_sala === 'por_cerrar')
-                        <button class="btn-enter available" style="background: var(--neon-gold);"><i class="bi bi-ticket-perforated me-2"></i> ¡ÚLTIMOS CUPOS!</button>
+                        <a href="{{ route('tienda.show', $sala->id) }}" class="btn btn-enter available text-decoration-none" style="background: var(--neon-gold);"><i class="bi bi-ticket-perforated me-2"></i> ¡ÚLTIMOS CUPOS!</a>
                     @else
-                        <button class="btn-enter available"><i class="bi bi-cart me-2"></i> COMPRAR Y ENTRAR</button>
+                        <a href="{{ route('tienda.show', $sala->id) }}" class="btn btn-enter available text-decoration-none"><i class="bi bi-cart me-2"></i> COMPRAR Y ENTRAR</a>
                     @endif
                 </div>
             </div>

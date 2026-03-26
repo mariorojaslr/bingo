@@ -325,8 +325,8 @@
             </p>
             
             <div class="d-flex justify-content-center gap-4">
-                <button class="btn btn-gold">VER PLANES DE SUSCRIPCIÓN</button>
-                <button class="btn btn-neon"><i class="bi bi-play-circle me-2"></i> EXPLORAR DEMO</button>
+                <a href="#planes" class="btn btn-gold text-decoration-none">VER PLANES DE SUSCRIPCIÓN</a>
+                <a href="/salas" class="btn btn-neon text-decoration-none"><i class="bi bi-play-circle me-2"></i> EXPLORAR DEMO</a>
             </div>
             
             <!-- Dashboard Mockup Preview -->
@@ -380,7 +380,7 @@
                             </div>
                             <h4 class="fw-bold mb-3">Mega Bingo Solidario</h4>
                             <p class="text-muted small mb-4">Sorteo de premios en efectivo, línea dorada y pozo acumulado. Transmisión en directo por la plataforma.</p>
-                            <button class="btn btn-outline-light w-100 rounded-pill" style="border-color: rgba(255,255,255,0.1)">Entrar a la Sala</button>
+                            <a href="/salas" class="btn btn-outline-light w-100 rounded-pill text-decoration-none" style="border-color: rgba(255,255,255,0.1)">Entrar a la Sala</a>
                         </div>
                     </div>
                 </div>
@@ -399,7 +399,7 @@
                             </div>
                             <h4 class="fw-bold mb-3">Sorteo Fin de Curso</h4>
                             <p class="text-muted small mb-4">Compra tus cartones hasta 15 minutos antes de empezar. Tablero online interactivo.</p>
-                            <button class="btn btn-neon w-100">Comprar Cartón ($5.00)</button>
+                            <a href="/salas" class="btn btn-neon w-100 text-decoration-none">Comprar Cartón ($5.00)</a>
                         </div>
                     </div>
                 </div>

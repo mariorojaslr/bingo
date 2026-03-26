@@ -69,6 +69,10 @@ Route::get('/', function () {
 
 Route::get('/salas', [\App\Http\Controllers\LobbyController::class, 'index'])->name('lobby.index');
 
+Route::get('/tienda/{jugada}', [\App\Http\Controllers\UserStoreController::class, 'showTienda'])->name('tienda.show');
+Route::post('/tienda/{jugada}', [\App\Http\Controllers\UserStoreController::class, 'procesarCompra'])->name('tienda.procesar');
+Route::get('/tienda/gracias/{token}', [\App\Http\Controllers\UserStoreController::class, 'gracias'])->name('tienda.gracias');
+
 /*
 |--------------------------------------------------------------------------
 | Panel de Administración
