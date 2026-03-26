@@ -186,8 +186,13 @@
     <div class="glass-panel text-center">
         <h6 class="text-white-50 fw-bold mb-4" style="font-size: 0.8rem; letter-spacing: 2px;"><i class="bi bi-sliders"></i> CONSOLA DE MANDOS</h6>
         
-        <button id="btnSacar" class="btn-launch"><i class="bi bi-play-fill me-1"></i> Extraer</button>
+        <button id="btnSacar" class="btn-launch mb-3" style="margin-bottom: 0.5rem;"><i class="bi bi-cpu-fill me-1"></i> EXTRAER AUTO</button>
         
+        <div class="input-group mb-4" style="box-shadow: 0 0 20px rgba(0,0,0,0.5); border-radius: 12px; overflow: hidden;">
+            <input type="number" id="inputManual" class="form-control bg-dark text-white border-0 text-center fw-bold font-monospace fs-3" placeholder="Nº (1-90)" min="1" max="90" style="font-family: 'Outfit';">
+            <button class="btn px-4 text-dark fw-bold fs-5" id="btnManual" style="background: var(--neon-gold); font-family: 'Outfit';"><i class="bi bi-send-check-fill"></i> ENVIAR</button>
+        </div>
+
         <div class="d-flex gap-2 mb-3">
             <button id="btnLinea" class="btn-action linea"><i class="bi bi-pause"></i> PAUSA LÍNEA</button>
             <button id="btnBingo" class="btn-action bingo"><i class="bi bi-stop"></i> BINGO FINAL</button>
@@ -212,13 +217,25 @@
 <script src="https://js.pusher.com/8.2/pusher.min.js"></script>
 <script>
     const csrf = '{{ csrf_token() }}';
-    function postCall(url) {
-        fetch(url, { method: 'POST', headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' } })
+    function postCall(url, dataPayload = null) {
+        let opts = { method: 'POST', headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' } };
+        
+        if (dataPayload) {
+            opts.headers['Content-Type'] = 'application/json';
+            opts.body = JSON.stringify(dataPayload);
+        }
+        
+        fetch(url, opts)
             .then(async res => {
                 if (!res.ok) {
                     let msg = res.status;
                     try { const data = await res.json(); msg += ' - ' + (data.error || JSON.stringify(data)); } catch(e){}
-                    alert('Error en conexión: ' + msg);
+                    alert('Error: ' + msg);
+                } else {
+                    if (document.getElementById('inputManual')) {
+                        document.getElementById('inputManual').value = '';
+                        document.getElementById('inputManual').focus();
+                    }
                 }
             })
             .catch(err => {
@@ -228,6 +245,16 @@
     }
 
     document.getElementById('btnSacar').onclick     = () => postCall('{{ route("sorteador.extraer", $jugadaId) }}');
+    
+    // Ingreso Manual
+    document.getElementById('btnManual').onclick = () => {
+        let num = document.getElementById('inputManual').value;
+        if(num) postCall('{{ route("sorteador.extraer", $jugadaId) }}', { numero: num });
+    };
+    document.getElementById('inputManual').addEventListener('keypress', function(e) {
+        if(e.key === 'Enter') document.getElementById('btnManual').click();
+    });
+
     document.getElementById('btnLinea').onclick     = () => postCall('{{ route("sorteador.confirmar.linea", $jugadaId) }}');
     document.getElementById('btnBingo').onclick     = () => postCall('{{ route("sorteador.confirmar.bingo", $jugadaId) }}');
     document.getElementById('btnReiniciar').onclick = () => postCall('{{ route("sorteador.reiniciar", $jugadaId) }}');

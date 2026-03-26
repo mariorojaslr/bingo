@@ -43,12 +43,24 @@ class SorteoController extends Controller
                 return response()->json(['success' => false, 'error' => 'Ya salieron 90 bolillas'], 400);
             }
 
-            /**
-             * 🎲 Bucle Mágico: extrae aleatorio hasta encontrar una bolilla que no haya salido
-             */
-            do {
-                $nueva = rand(1, 90);
-            } while (!$sorteo->agregarBolilla($nueva));
+            $numeroManual = $request->input('numero');
+
+            if ($numeroManual) {
+                $numeroManual = (int)$numeroManual;
+                if ($numeroManual < 1 || $numeroManual > 90) {
+                    return response()->json(['success' => false, 'error' => 'El número debe estar entre 1 y 90.'], 400);
+                }
+                if (!$sorteo->agregarBolilla($numeroManual)) {
+                    return response()->json(['success' => false, 'error' => "El número $numeroManual ya salió previamente."], 400);
+                }
+            } else {
+                /**
+                 * 🎲 Bucle Mágico: extrae aleatorio hasta encontrar una bolilla que no haya salido
+                 */
+                do {
+                    $nueva = rand(1, 90);
+                } while (!$sorteo->agregarBolilla($nueva));
+            }
 
             // $sorteo->evaluarGanadores(); // TODO: Implementar logica de ganadores despues
 
