@@ -279,4 +279,3 @@
     }
 </style>
 @endsection
-@endsection
