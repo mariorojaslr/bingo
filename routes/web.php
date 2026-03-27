@@ -132,6 +132,10 @@ Route::prefix('admin')->group(function () {
         [JugadaController::class, 'asignarCartonesMasivo']
     )->name('admin.jugadas.asignarCartones');
 
+    Route::post('/jugadas/{jugada}/streaming',
+        [JugadaController::class, 'updateStreaming']
+    )->name('admin.jugadas.streaming.update');
+
     // Lotes
     Route::post('/lotes/{lote}/generar', [LoteController::class, 'generar'])->name('admin.lotes.generar');
     Route::post('/lotes/{lote}/materializar', [LoteController::class, 'materializar'])->name('admin.lotes.materializar');

@@ -159,10 +159,17 @@
     </style>
 </head>
 
-@php
     $bolillas = $sorteo->getBolillas();
     $ultimas = array_slice(array_reverse($bolillas), 0, 8);
+    
+    // Prioridad: 1. URL de la jugada, 2. Default YouTube
     $streamUrl = $sorteo->jugada->streaming_url ?? 'https://www.youtube.com/embed/live_stream?channel=UC4R8DWoMoI7CAwX8_LjQHig'; 
+    
+    // Si es una URL de Bunny (solo ID), la convertimos en iframe URL
+    if (is_numeric($streamUrl)) {
+        // Ejemplo de Bunny Stream: https://iframe.mediadelivery.net/embed/LIBRARY_ID/VIDEO_ID
+        $streamUrl = "https://iframe.mediadelivery.net/embed/" . ($sorteo->jugada->bunny_library_id ?? 'default') . "/" . $streamUrl;
+    }
 @endphp
 
 <body>
@@ -171,10 +178,12 @@
 <div id="overlay-linea" class="overlay-premio">
     <div class="texto-premio premio-linea">¡LÍNEA!</div>
     <div class="h3 text-white-50 mt-4 font-monospace">VERIFICANDO GANADORES EN SALA...</div>
+    <div id="winner-linea-name" class="mt-2 fs-1 fw-bold text-info"></div>
 </div>
 <div id="overlay-bingo" class="overlay-premio">
     <div class="texto-premio premio-bingo">¡BINGO!</div>
     <div class="h3 text-white-50 mt-4 font-monospace">SORTEO EXTRAORDINARIO FINALIZADO</div>
+    <div id="winner-bingo-name" class="mt-2 fs-1 fw-bold text-danger"></div>
 </div>
 
 <div class="monitor-wrapper">
@@ -289,8 +298,23 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('conteoBolas').innerText = data.bolillas.length + " / 90";
 
         // 5. Overlays
-        document.getElementById('overlay-linea').classList.toggle('activo', data.estado === 'linea');
-        document.getElementById('overlay-bingo').classList.toggle('activo', data.estado === 'bingo');
+        const lOverlay = document.getElementById('overlay-linea');
+        const bOverlay = document.getElementById('overlay-bingo');
+        
+        lOverlay.classList.remove('activo');
+        bOverlay.classList.remove('activo');
+
+        if (data.estado === 'linea') {
+            lOverlay.classList.add('activo');
+            let txt = data.ganadores.lineas.map(g => g.nombre + ' (#' + g.numero + ')').join(' | ');
+            document.getElementById('winner-linea-name').innerText = txt;
+        }
+        
+        if (data.estado === 'bingo') {
+            bOverlay.classList.add('activo');
+            let txt = data.ganadores.bingos.map(g => g.nombre + ' (#' + g.numero + ')').join(' | ');
+            document.getElementById('winner-bingo-name').innerText = txt;
+        }
     });
 
 });

@@ -87,6 +87,93 @@
     </div>
 </div>
 
+{{-- CONFIGURACIÓN DE STREAMING Y OBS --}}
+<div class="row g-4 mb-5">
+    <div class="col-12">
+        <div class="glass-card p-4" style="border-radius: 20px; border-left: 4px solid var(--neon-blue);">
+            <div class="row align-items-center">
+                <div class="col-md-7">
+                    <h5 class="text-white fw-bold mb-2" style="font-family: 'Outfit';"><i class="bi bi-broadcast me-2 text-info"></i>Configuración de Streaming (OBS / Directo)</h5>
+                    <p class="text-white-50 small mb-4">Usa estos datos en tu software de transmisión (OBS Studio, vMix) para conectar la sala con el Monitor TV.</p>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small text-uppercase">Servidor RTMP (Bunny)</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control bg-dark text-white-50 border-secondary small" value="{{ $jugada->streaming_server ?? 'rtmp://video.bunny.net/live' }}" readonly>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="navigator.clipboard.writeText('{{ $jugada->streaming_server ?? 'rtmp://video.bunny.net/live' }}')"><i class="bi bi-copy"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small text-uppercase">Clave de Retransmisión</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control bg-dark text-white-50 border-secondary small" value="{{ $jugada->streaming_key ?? '••••••••••••' }}" readonly id="streamKey">
+                                <button class="btn btn-outline-secondary btn-sm" onclick="let x = document.getElementById('streamKey'); x.type = x.type==='password'?'text':'password';"><i class="bi bi-eye"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5 text-end">
+                    <button class="btn btn-outline-info rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalStreaming">
+                        <i class="bi bi-gear-fill me-2"></i> Configurar Canal Bunny
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- MODAL CONFIGURACIÓN STREAMING --}}
+<div class="modal fade" id="modalStreaming" tabindex="-1" data-bs-theme="dark">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="POST" action="{{ route('admin.jugadas.streaming.update', $jugada->id) }}">
+            @csrf
+            <div class="modal-content" style="background: #0d0d0d; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;">
+                <div class="modal-header border-bottom border-secondary pt-4 px-4">
+                    <h5 class="modal-title fw-bold" style="font-family: 'Outfit'; color: var(--neon-blue);"><i class="bi bi-broadcast-pin me-2"></i>Ajustes de Transmisión</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label text-white-50 small fw-bold">URL DE REPRODUCCIÓN (IFRAME/HLS)</label>
+                        <input type="text" name="streaming_url" class="form-control bg-dark text-white border-secondary" value="{{ $jugada->streaming_url }}" placeholder="URL de YouTube, Vimeo o ID de Bunny">
+                        <div class="form-text small text-muted">Si usas Bunny, pon solo el ID del video si prefieres.</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-white-50 small fw-bold">RTMP SERVER (Para OBS)</label>
+                        <input type="text" name="streaming_server" class="form-control bg-dark text-white border-secondary" value="{{ $jugada->streaming_server }}" placeholder="rtmp://video.bunny.net/live">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-white-50 small fw-bold">STREAM KEY (Para OBS)</label>
+                        <input type="text" name="streaming_key" class="form-control bg-dark text-white border-secondary" value="{{ $jugada->streaming_key }}" placeholder="Tu clave de flujo">
+                    </div>
+
+                    <hr class="border-secondary my-4">
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="form-label text-white-50 small fw-bold">BUNNY LIBRARY ID</label>
+                            <input type="text" name="bunny_library_id" class="form-control bg-dark text-white border-secondary" value="{{ $jugada->bunny_library_id }}">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label text-white-50 small fw-bold">BUNNY STREAM ID</label>
+                            <input type="text" name="bunny_live_stream_id" class="form-control bg-dark text-white border-secondary" value="{{ $jugada->bunny_live_stream_id }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-top border-secondary px-4 py-3">
+                    <button type="button" class="btn text-white-50" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-info rounded-pill px-4">Guardar Cambios</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 {{-- TABLA DE LOTES (ÓRDENES DE EXTRACCIÓN DEL ESTANQUE) --}}
 <div class="glass-card mb-4" style="border-radius: 20px;">
     <div class="card-header border-bottom border-secondary d-flex justify-content-between align-items-center p-4 bg-transparent">

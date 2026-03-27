@@ -216,4 +216,33 @@ class JugadaController extends Controller
             ->route('admin.jugadas.show', $jugada->id)
             ->with('success', 'Cartones asignados automáticamente a todos los participantes.');
     }
+
+    /**
+     * =====================================================
+     * ACTUALIZAR CONFIGURACIÓN DE STREAMING (BUNNY/OBS)
+     * =====================================================
+     */
+    public function updateStreaming(Request $request, $id)
+    {
+        $jugada = Jugada::findOrFail($id);
+
+        $request->validate([
+            'streaming_url' => 'nullable|string|max:255',
+            'streaming_server' => 'nullable|string|max:255',
+            'streaming_key' => 'nullable|string|max:255',
+            'bunny_library_id' => 'nullable|string|max:20',
+            'bunny_live_stream_id' => 'nullable|string|max:50',
+        ]);
+
+        $jugada->update($request->only([
+            'streaming_url',
+            'streaming_server',
+            'streaming_key',
+            'bunny_library_id',
+            'bunny_live_stream_id'
+        ]));
+
+        return redirect()->route('admin.jugadas.show', $id)
+            ->with('success', 'Configuración de Streaming actualizada correctamente.');
+    }
 }

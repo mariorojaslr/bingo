@@ -30,7 +30,12 @@ class Jugada extends Model
         'cantidad_cartones',
         'cantidad_hojas',
         'precio_hoja',
-        'total'
+        'total',
+        'streaming_url',
+        'streaming_server',
+        'streaming_key',
+        'bunny_library_id',
+        'bunny_live_stream_id'
     ];
 
     public function organizador()

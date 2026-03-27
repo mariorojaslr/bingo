@@ -3,227 +3,280 @@
 @section('content')
 <div class="top-header">
     <div>
-        <h2 class="fw-bold mb-1">Visión Panorámica</h2>
-        <p class="text-muted mb-0">Monitor de Sistema Global - Servidor Central</p>
+        <h1 class="fw-bold mb-1 text-white" style="font-size: 2.2rem;">Panel de Control Galáctico</h1>
+        <p class="text-muted mb-0" style="letter-spacing: 1px; font-size: 0.9rem;">SISTEMA MULTI-TENANT BINGO INFINITY &bull; ESTADO: <span class="text-success fw-bold">OPERATIVO</span></p>
     </div>
     
-    <div class="d-flex align-items-center gap-3">
-        <span class="owner-badge"><i class="bi bi-shield-check me-2"></i>OWNER SUPREMO</span>
-        <button class="btn btn-dark" style="background: var(--bg-panel); border: 1px solid var(--border-glass);">
-            <i class="bi bi-bell"></i>
+    <div class="d-flex align-items-center gap-4">
+        <div class="text-end d-none d-xl-block">
+            <div class="text-white-50 small mb-1">LATENCIA GLOBAL</div>
+            <div class="text-success fw-bold" style="font-family: monospace;">12ms <i class="bi bi-broadcast"></i></div>
+        </div>
+        <div class="owner-badge"><i class="bi bi-shield-lock-fill"></i> Nivel de Acceso: <strong>OWNER SUPREMO</strong></div>
+        <button class="btn btn-dark rounded-circle p-2" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); width: 45px; height: 45px;">
+            <i class="bi bi-gear-fill"></i>
         </button>
     </div>
 </div>
 
 <div class="row g-4 mb-5">
-    <!-- Stat 1 -->
+    <!-- Stat 1: Empresas -->
     <div class="col-md-6 col-lg-3">
         <div class="glass-card h-100">
-            <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="d-flex justify-content-between align-items-start mb-4">
                 <div class="icon-box gold">
                     <i class="bi bi-buildings"></i>
                 </div>
-                <span class="badge" style="background: rgba(0, 255, 136, 0.1); color: #00FF88;">+2 esta sem.</span>
+                <div class="text-end">
+                    <span class="badge-neon">+12.5%</span>
+                </div>
             </div>
-            <p class="text-muted small fw-bold mb-1 text-uppercase">Empresas Activas (SaaS)</p>
-            <div class="stat-value">14</div>
+            <p class="text-muted small fw-bold mb-1 text-uppercase" style="letter-spacing: 2px;">Empresas Activas</p>
+            <div class="stat-value">{{ $organizadores->count() }}</div>
+            <div class="progress mt-3" style="height: 4px; background: rgba(255,255,255,0.05);">
+                <div class="progress-bar bg-warning" role="progressbar" style="width: 75%"></div>
+            </div>
         </div>
     </div>
     
-    <!-- Stat 2 -->
+    <!-- Stat 2: Streaming -->
     <div class="col-md-6 col-lg-3">
         <div class="glass-card h-100">
-            <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="d-flex justify-content-between align-items-start mb-4">
                 <div class="icon-box emerald">
                     <i class="bi bi-broadcast"></i>
                 </div>
-                <span class="badge" style="background: rgba(0, 255, 136, 0.1); color: #00FF88;">Estable</span>
+                <div class="text-end">
+                    <div class="spinner-grow spinner-grow-sm text-success" role="status"></div>
+                </div>
             </div>
-            <p class="text-muted small fw-bold mb-1 text-uppercase">Streaming Activos (Bunny)</p>
-            <div class="stat-value">3</div>
+            <p class="text-muted small fw-bold mb-1 text-uppercase" style="letter-spacing: 2px;">Bunny Streamings</p>
+            <div class="stat-value">08</div>
+            <div class="mt-2 text-white-50 small"><i class="bi bi-check2-circle text-success me-1"></i> Ancho de banda: 4.2TB</div>
         </div>
     </div>
     
-    <!-- Stat 3 -->
+    <!-- Stat 3: Storage -->
     <div class="col-md-6 col-lg-3">
         <div class="glass-card h-100">
-            <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="d-flex justify-content-between align-items-start mb-4">
                 <div class="icon-box blue">
-                    <i class="bi bi-hdd-network"></i>
+                    <i class="bi bi-cloud-check"></i>
                 </div>
             </div>
-            <p class="text-muted small fw-bold mb-1 text-uppercase">Almacenamiento Global</p>
-            <div class="d-flex align-items-baseline gap-2">
-                <div class="stat-value" style="font-size: 2rem;">245</div>
-                <span class="text-white-50">GB / 1 TB</span>
-            </div>
+            <p class="text-muted small fw-bold mb-1 text-uppercase" style="letter-spacing: 2px;">Bunny Storage</p>
+            <div class="stat-value">412<span style="font-size: 1.2rem; margin-left: 5px;">GB</span></div>
+            <div class="mt-2 text-white-50 small">Capacidad total: 2TB</div>
         </div>
     </div>
     
-    <!-- Stat 4 -->
+    <!-- Stat 4: Revenue -->
     <div class="col-md-6 col-lg-3">
-        <div class="glass-card h-100">
-            <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="glass-card h-100" style="border-left: 2px solid var(--accent-gold);">
+            <div class="d-flex justify-content-between align-items-start mb-4">
                 <div class="icon-box purple">
-                    <i class="bi bi-people"></i>
+                    <i class="bi bi-cash-stack"></i>
                 </div>
+                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-1 small">SaaS Revenue</span>
             </div>
-            <p class="text-muted small fw-bold mb-1 text-uppercase">Usuarios Totales (Jugadores)</p>
-            <div class="stat-value" style="font-size: 2rem;">12.4K</div>
+            <p class="text-muted small fw-bold mb-1 text-uppercase" style="letter-spacing: 2px;">Facturación Mensual</p>
+            <div class="stat-value">$325.0K</div>
+            <div class="mt-2 text-muted small">Próximo cobro: 01/04/2026</div>
         </div>
     </div>
 </div>
 
 <div class="row g-4">
-    <!-- Main Panel: Lista de Tenants -->
+    <!-- Main Panel: Lista de Tenants con diseño PREMIUM -->
     <div class="col-lg-8">
-        <div class="glass-card h-100 p-0" style="overflow: hidden;">
-            <div class="p-4 border-bottom" style="border-color: var(--border-glass) !important;">
-                <h5 class="fw-bold mb-0">Empresas Cliente Recientes</h5>
+        <div class="glass-card h-100 p-0 overflow-hidden">
+            <div class="p-4 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0 text-white" style="font-family: 'Outfit';">Central de Franquicias (Tenants)</h5>
+                <div class="d-flex gap-2">
+                    <input type="text" class="form-control bg-dark border-secondary text-white-50 px-3 py-2 rounded-pill small" placeholder="Buscar empresa..." style="width: 200px; font-size: 0.8rem;">
+                    <button class="btn btn-neon rounded-pill px-4" style="background: var(--accent-gold); color: #000; font-weight: 700; font-size: 0.8rem; border: none;">
+                        <i class="bi bi-plus-lg me-1"></i> NUEVA EMPRESA
+                    </button>
+                </div>
             </div>
             
             <div class="table-responsive">
-                <table class="table table-dark table-hover mb-0" style="background: transparent;">
-                    <thead style="background: rgba(255,255,255,0.02);">
+                <table class="table table-dark table-hover mb-0 align-middle">
+                    <thead style="background: rgba(255,255,255,0.01);">
                         <tr>
-                            <th class="py-3 px-4 fw-normal text-muted border-0 small">CLIENTE / DOMINIO</th>
-                            <th class="py-3 px-4 fw-normal text-muted border-0 small text-center">PLAN</th>
-                            <th class="py-3 px-4 fw-normal text-muted border-0 small text-center">ESTADO</th>
-                            <th class="py-3 px-4 fw-normal border-0"></th>
+                            <th class="py-4 px-4 text-muted small fw-bold border-0">CLIENTE / INFRAESTRUCTURA</th>
+                            <th class="py-4 text-muted small fw-bold border-0 text-center">LICENCIA SaaS</th>
+                            <th class="py-4 text-muted small fw-bold border-0 text-center">ESTADO</th>
+                            <th class="py-4 px-4 border-0"></th>
                         </tr>
                     </thead>
-                    <tbody style="border-top: none;">
+                    <tbody class="border-0">
                         @forelse($organizadores as $org)
-                        <tr style="border-color: rgba(255,255,255,0.05);">
-                            <td class="py-3 px-4 align-middle">
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                            <td class="px-4 py-4">
                                 <div class="d-flex align-items-center gap-3">
-                                    <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(0, 168, 255, 0.1); color: #00A8FF; display: flex; align-items: center; justify-content: center;"><i class="bi bi-building"></i></div>
+                                    <div class="avatar shadow-sm" style="background: linear-gradient(135deg, #121212, #000); border: 1px solid var(--border-glass);">
+                                        <span class="text-white-50 fw-bold">{{ substr($org->nombre_fantasia, 0, 1) }}</span>
+                                    </div>
                                     <div>
-                                        <div class="fw-bold">{{ mb_strtoupper($org->nombre_fantasia) }}</div>
-                                        <div class="small text-muted">{{ $org->email_contacto ?? 'sin-correo@sistema.com' }}</div>
+                                        <div class="text-white fw-bold" style="letter-spacing: 0.5px;">{{ mb_strtoupper($org->nombre_fantasia) }}</div>
+                                        <div class="text-muted" style="font-size: 0.75rem;">ID: {{ str_pad($org->id, 5, '0', STR_PAD_LEFT) }} &bull; {{ $org->email_contacto }}</div>
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-3 px-4 align-middle text-center"><span class="badge bg-dark border" style="border-color: var(--accent-gold) !important; color: var(--accent-gold);">Pro Max ($50k)</span></td>
-                            <td class="py-3 px-4 align-middle text-center">
+                            <td class="text-center">
+                                <span class="badge border border-warning text-warning bg-transparent rounded-pill px-3 py-2" style="font-size: 0.7rem; background: rgba(212, 175, 55, 0.05) !important;">
+                                    <i class="bi bi-gem me-1"></i> PLAN PRO GOLD
+                                </span>
+                            </td>
+                            <td class="text-center">
                                 @if($org->activo)
-                                    <span class="text-success small fw-bold"><i class="bi bi-circle-fill me-1" style="font-size: 0.5rem;"></i> ACTIVO</span>
+                                    <div class="d-flex align-items-center justify-content-center gap-2">
+                                        <span class="position-relative d-flex" style="width: 8px; height: 8px;">
+                                            <span class="animate-ping position-absolute h-100 w-100 rounded-full bg-success opacity-75" style="border-radius: 50%; width: 8px; height: 8px; background: rgba(0,255,0,0.5);"></span>
+                                            <span class="position-relative rounded-full bg-success" style="border-radius: 50%; width: 8px; height: 8px; background: #00FF88;"></span>
+                                        </span>
+                                        <span class="text-success small fw-bold">ONLINE</span>
+                                    </div>
                                 @else
-                                    <span class="text-danger small fw-bold"><i class="bi bi-circle-fill me-1" style="font-size: 0.5rem;"></i> MOROSO</span>
+                                    <span class="badge border border-danger text-danger bg-transparent rounded-pill px-3">BLOQUEADO</span>
                                 @endif
                             </td>
-                            <td class="py-3 px-4 align-middle text-end">
-                                <!-- BOTÓN DE PARAMETRIZACIÓN (MÓDULOS) -->
-                                <button class="btn btn-sm btn-outline-secondary border-0 me-2" data-bs-toggle="modal" data-bs-target="#configModal{{ $org->id }}">
-                                    <i class="bi bi-sliders text-warning"></i> Licencias
-                                </button>
-
-                                <!-- BOTON MÁGICO DE TELETRANSPORTE -->
-                                <a href="{{ route('admin.impersonate', $org->id) }}" class="btn btn-sm btn-outline-light border-0">
-                                    <i class="bi bi-box-arrow-in-right text-success"></i> Entrar
-                                </a>
+                            <td class="px-4 text-end">
+                                <div class="btn-group gap-2">
+                                    <button class="btn btn-sm btn-outline-secondary border-0" title="Configurar Módulos" data-bs-toggle="modal" data-bs-target="#configModal{{ $org->id }}">
+                                        <i class="bi bi-sliders fs-5"></i>
+                                    </button>
+                                    <a href="{{ route('admin.impersonate', $org->id) }}" class="btn btn-outline-light rounded-pill px-4 py-2" style="font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.1); font-weight: 600;">
+                                        <i class="bi bi-lightning-charge-fill text-warning me-1"></i> VISIÓN OMNISCIENTE
+                                    </a>
+                                </div>
                             </td>
                         </tr>
 
-                        <!-- MODAL DE PARAMETRIZACION SAAS PARA ESTE CLIENTE -->
-                        <div class="modal fade" id="configModal{{ $org->id }}" tabindex="-1" aria-hidden="true" data-bs-theme="dark">
+                        {{-- MODAL PARAMETRIC --}}
+                        <div class="modal fade" id="configModal{{ $org->id }}" tabindex="-1" data-bs-theme="dark">
                             <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content" style="background: #0d0d0d; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;">
-                                    <div class="modal-header border-bottom border-secondary pt-4 px-4">
-                                        <h5 class="modal-title fw-bold" style="font-family: 'Outfit'; color: var(--neon-gold);">Parametrización de Módulos</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <div class="modal-content" style="background: #080808; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; box-shadow: 0 0 50px #000;">
+                                    <div class="modal-header border-0 pt-4 px-4 pb-2">
+                                        <h5 class="modal-title fw-bold text-white">Gestión de Licencias: <span class="text-warning">{{ $org->nombre_fantasia }}</span></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
                                     <div class="modal-body p-4">
-                                        <p class="text-muted small mb-4">Configura qué herramientas de software activas o bloqueas para <strong>{{ mb_strtoupper($org->nombre_fantasia) }}</strong> según lo que hayan pagado.</p>
+                                        <p class="text-muted small mb-4">Activa o restringe módulos específicos para esta empresa. Los cambios se aplican en tiempo real.</p>
                                         
-                                        <div class="form-check form-switch mb-3" style="font-size: 1.1rem;">
-                                            <input class="form-check-input" type="checkbox" id="modTalonarios{{ $org->id }}" checked>
-                                            <label class="form-check-label text-white" for="modTalonarios{{ $org->id }}">
-                                                <i class="bi bi-printer text-white-50 me-2"></i> Fotocopia/Láser (Cartones Físicos)
-                                            </label>
+                                        @php $modulos = [
+                                            ['icon' => 'printer', 'title' => 'Talonarios Físicos', 'desc' => 'PDF de alta resolución para imprenta.'],
+                                            ['icon' => 'joystick', 'title' => 'Sorteador Operativo', 'desc' => 'Control de mesa y bolillero virtual.'],
+                                            ['icon' => 'display', 'title' => 'Monitor TV Sala', 'desc' => 'Interface para proyectores y pantallas.'],
+                                            ['icon' => 'camera-video', 'title' => 'Streaming Bunny', 'desc' => 'Transmisión en vivo integrada.'],
+                                            ['icon' => 'globe', 'title' => 'Lobby Telebingo', 'desc' => 'Interface B2C para jugadores online.']
+                                        ]; @endphp
+
+                                        @foreach($modulos as $mod)
+                                        <div class="d-flex align-items-center justify-content-between p-3 rounded-4 mb-2" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03);">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="icon-box" style="width: 40px; height: 40px; font-size: 1.2rem; background: rgba(255,255,255,0.03);">
+                                                    <i class="bi bi-{{ $mod['icon'] }}"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="text-white small fw-bold">{{ $mod['title'] }}</div>
+                                                    <div class="text-muted" style="font-size: 0.65rem;">{{ $mod['desc'] }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" checked>
+                                            </div>
                                         </div>
-                                        <div class="form-check form-switch mb-3" style="font-size: 1.1rem;">
-                                            <input class="form-check-input" type="checkbox" id="modSorteador{{ $org->id }}" checked>
-                                            <label class="form-check-label text-white" for="modSorteador{{ $org->id }}">
-                                                <i class="bi bi-joystick text-white-50 me-2"></i> Visor Operativo (Sorteador)
-                                            </label>
-                                        </div>
-                                        <div class="form-check form-switch mb-3" style="font-size: 1.1rem;">
-                                            <input class="form-check-input" type="checkbox" id="modMonitor{{ $org->id }}">
-                                            <label class="form-check-label text-white" for="modMonitor{{ $org->id }}">
-                                                <i class="bi bi-display text-white-50 me-2"></i> Monitor TV 1-90 (Proyector Local)
-                                            </label>
-                                        </div>
-                                        <div class="form-check form-switch mb-3" style="font-size: 1.1rem;">
-                                            <input class="form-check-input" type="checkbox" id="modVirtual{{ $org->id }}">
-                                            <label class="form-check-label text-white" for="modVirtual{{ $org->id }}">
-                                                <i class="bi bi-globe text-white-50 me-2"></i> Telebingo (Lobby Virtual Público)
-                                            </label>
-                                        </div>
-                                        <div class="form-check form-switch mb-3" style="font-size: 1.1rem;">
-                                            <input class="form-check-input" type="checkbox" id="modStream{{ $org->id }}">
-                                            <label class="form-check-label text-white" for="modStream{{ $org->id }}">
-                                                <i class="bi bi-camera-video text-white-50 me-2"></i> Streaming Bunny.net Limitless
-                                            </label>
-                                        </div>
+                                        @endforeach
                                     </div>
-                                    <div class="modal-footer border-top border-secondary px-4 py-3">
-                                        <button type="button" class="btn text-white-50" data-bs-dismiss="modal">Cancelar</button>
-                                        <button type="button" class="btn btn-success rounded-pill px-4" data-bs-dismiss="modal">Guardar Licencia</button>
+                                    <div class="modal-footer border-0 p-4">
+                                        <button type="button" class="btn btn-dark w-100 rounded-pill py-3 fw-bold" style="background: var(--accent-gold); color: #000;" data-bs-dismiss="modal">ACTUALIZAR LICENCIAS</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         @empty
                         <tr>
-                            <td colspan="4" class="text-center py-4 text-muted small">
-                                <i class="bi bi-inboxes mb-2 d-block" style="font-size: 2rem; color: rgba(255,255,255,0.1);"></i>
-                                No hay franquicias registradas en la Base de Datos.
+                            <td colspan="4" class="text-center py-5">
+                                <div class="text-muted py-5">
+                                    <i class="bi bi-box-seam fs-1 opacity-25 mb-3 d-block"></i>
+                                    No se encontraron empresas registradas.
+                                </div>
                             </td>
                         </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-            <div class="p-3 text-center border-top" style="border-color: var(--border-glass) !important; background: rgba(255,255,255,0.01);">
-                <a href="#" class="text-decoration-none text-muted small hover-white">Ver todas las empresas <i class="bi bi-arrow-right"></i></a>
+            <div class="p-4 text-center">
+                <a href="#" class="text-muted text-decoration-none small hover-white">Ver reporte completo de la red <i class="bi bi-arrow-right ms-1"></i></a>
             </div>
         </div>
     </div>
     
-    <!-- Sidebar Panel: Actividad -->
+    <!-- Sidebar Panel: Actividad con Estética OLED -->
     <div class="col-lg-4">
         <div class="glass-card h-100">
-            <h5 class="fw-bold border-bottom pb-3 mb-4" style="border-color: var(--border-glass) !important;">Actividad del Clúster</h5>
+            <h5 class="fw-bold mb-4 text-white" style="font-family: 'Outfit';">Log de Actividad Global</h5>
             
-            <div class="d-flex gap-3 mb-4">
-                <div style="color: #00FF88;"><i class="bi bi-check-circle-fill"></i></div>
-                <div>
-                    <div class="text-white small fw-bold">Migración de Cartones completada</div>
-                    <div class="text-muted" style="font-size: 0.8rem;">Bingo del Norte generó 50K cartones sin colisión.</div>
-                    <div class="text-muted mt-1" style="font-size: 0.7rem;">Hace 12 min</div>
+            <div class="activity-timeline">
+                <div class="d-flex gap-3 mb-4 position-relative">
+                    <div style="z-index: 1;"><i class="bi bi-check-circle-fill text-success fs-5"></i></div>
+                    <div class="pb-4 border-start border-secondary px-3 position-absolute" style="left: 10px; top: 25px; height: 80%;"></div>
+                    <div>
+                        <div class="text-white fs-6 fw-bold">Sorteo Finalizado</div>
+                        <div class="text-muted small"><strong>Bingo Central</strong> cerró jugada con 1.5M en premios.</div>
+                        <div class="text-info mt-1" style="font-size: 0.65rem; font-family: monospace;">Hace 4 min</div>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-3 mb-4 position-relative">
+                    <div style="z-index: 1;"><i class="bi bi-cloud-plus-fill text-info fs-5"></i></div>
+                    <div class="pb-4 border-start border-secondary px-3 position-absolute" style="left: 10px; top: 25px; height: 80%;"></div>
+                    <div>
+                        <div class="text-white fs-6 fw-bold">Nuevos Cartones (CDN)</div>
+                        <div class="text-muted small"><strong>Club Social</strong> subió 5,000 cartones a Bunny.net.</div>
+                        <div class="text-info mt-1" style="font-size: 0.65rem; font-family: monospace;">Hace 2 horas</div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3 mb-4">
+                    <div style="z-index: 1;"><i class="bi bi-incognito text-warning fs-5"></i></div>
+                    <div>
+                        <div class="text-white fs-6 fw-bold">Acceso Omnisciente</div>
+                        <div class="text-muted small">El administrador entró a <strong>Casino Royal</strong>.</div>
+                        <div class="text-info mt-1" style="font-size: 0.65rem; font-family: monospace;">Ayer a las 23:15</div>
+                    </div>
                 </div>
             </div>
-            
-            <div class="d-flex gap-3 mb-4">
-                <div style="color: #00A8FF;"><i class="bi bi-cloud-arrow-up-fill"></i></div>
-                <div>
-                    <div class="text-white small fw-bold">Sincronización Bunny.net</div>
-                    <div class="text-muted" style="font-size: 0.8rem;">4 nuevos assets publicitarios subidos a CDN.</div>
-                    <div class="text-muted mt-1" style="font-size: 0.7rem;">Hace 2 horas</div>
+
+            <div class="glass-card mt-5 p-3" style="background: rgba(0,210,255,0.05); border-color: rgba(0,210,255,0.1);">
+                <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-info-circle text-info fs-4"></i>
+                    <div class="small text-white-50">Próximo mantenimiento programado: <strong>01/04 - 03:00 AM</strong></div>
                 </div>
             </div>
-            
-            <div class="d-flex gap-3">
-                <div style="color: var(--accent-gold);"><i class="bi bi-currency-dollar"></i></div>
-                <div>
-                    <div class="text-white small fw-bold">Facturación Automática</div>
-                    <div class="text-muted" style="font-size: 0.8rem;">Cargo de $25.000 procesado (Sorteos Solidarios).</div>
-                    <div class="text-muted mt-1" style="font-size: 0.7rem;">Hace 5 horas</div>
-                </div>
-            </div>
-            
         </div>
     </div>
 </div>
+
+<style>
+    .avatar {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+    }
+    .hover-white:hover {
+        color: white !important;
+    }
+    .btn-neon:hover {
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        transform: scale(1.05);
+    }
+</style>
+@endsection
 @endsection

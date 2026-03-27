@@ -70,32 +70,46 @@ class Sorteo extends Model
      */
     public function evaluarGanadores(): array
     {
-        $bolillas = $this->getBolillas();
+        $bolillas = $this->getMemoryBolillas();
         if (count($bolillas) < 5) return ['lineas' => [], 'bingos' => []];
 
         $lineas = [];
         $bingos = [];
 
-        // Obtener cartones de prueba (si los hay)
-        $cartonesPrueba = \App\Models\ParticipanteCartonPrueba::where('jugada_id', $this->jugada_id)
-                            ->with('carton')->get()->pluck('carton');
+        // Obtener relaciones completas (con participantes)
+        $relaciones = \App\Models\ParticipanteCartonPrueba::where('jugada_id', $this->jugada_id)
+                        ->with(['carton', 'participante'])
+                        ->get();
                             
-        // TODO: Agregar consulta de cartones reales impresos si interfiere el modelo
-        
-        foreach ($cartonesPrueba as $c) {
+        foreach ($relaciones as $rel) {
+            $c = $rel->carton;
             if (!$c) continue;
             
             // Verificar bingo primero
             if ($c->esBingo($bolillas)) {
-                $bingos[] = $c->numero_carton;
+                $bingos[] = [
+                    'numero' => $c->numero_carton,
+                    'nombre' => $rel->participante->nombre ?? 'Anónimo'
+                ];
             } elseif ($c->tieneLinea($bolillas)) {
-                $lineas[] = $c->numero_carton;
+                $lineas[] = [
+                    'numero' => $c->numero_carton,
+                    'nombre' => $rel->participante->nombre ?? 'Anónimo'
+                ];
             }
         }
 
         return [
-            'lineas' => array_unique($lineas),
-            'bingos' => array_unique($bingos)
+            'lineas' => $lineas,
+            'bingos' => $bingos
         ];
+    }
+
+    /**
+     * Cache local de bolillas para no parsear JSON mil veces por segundo
+     */
+    private function getMemoryBolillas(): array
+    {
+        return $this->bolillas ?? [];
     }
 }

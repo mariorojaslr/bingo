@@ -203,8 +203,15 @@ body {
 
 @php
     $bolillasIniciales = $bolillasMarcadas ?? [];
-    $streamUrl = $jugada->streaming_url ?? 'https://www.youtube.com/embed/live_stream?channel=UC4R8DWoMoI7CAwX8_LjQHig';
     
+    // Prioridad: 1. URL de la jugada, 2. Default YouTube
+    $streamUrl = $jugada->streaming_url ?? 'https://www.youtube.com/embed/live_stream?channel=UC4R8DWoMoI7CAwX8_LjQHig'; 
+    
+    // Formato Bunny Stream (si solo es el ID)
+    if (is_numeric($streamUrl)) {
+        $streamUrl = "https://iframe.mediadelivery.net/embed/" . ($jugada->bunny_library_id ?? 'default') . "/" . $streamUrl;
+    }
+
     // REGLA DE JUEGO: Limitamos visualmente a un máximo de 4 cartones simultáneos en pantalla.
     $cartonesVisibles = $cartones->take(4);
 @endphp

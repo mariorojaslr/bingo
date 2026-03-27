@@ -12,77 +12,100 @@
     <style>
         :root {
             --bg-dark: #020202;
-            --bg-panel: #0a0a0a;
-            --border-glass: rgba(255, 255, 255, 0.05);
+            --bg-panel: #080808;
+            --border-glass: rgba(255, 255, 255, 0.08); /* Crystalline borders */
             --text-primary: #ffffff;
-            --text-muted: #888888;
-            --accent-gold: #D4AF37;
-            --accent-emerald: #00FF88;
+            --text-muted: #71717a;
+            --accent-gold: #d4af37;
+            --accent-emerald: #00ff88;
+            --neon-blue: #00d2ff;
+            --neon-purple: #9d50bb;
+            --font-main: 'Inter', sans-serif;
+            --font-headings: 'Outfit', sans-serif;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-main);
             background-color: var(--bg-dark);
             color: var(--text-primary);
             overflow-x: hidden;
             display: flex;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
         }
 
         h1, h2, h3, h4, .brand-font {
-            font-family: 'Outfit', sans-serif;
+            font-family: var(--font-headings);
+            letter-spacing: -0.02em;
         }
 
         /* Lateral Menu (Sidebar) Rolls Royce */
         .sidebar {
             width: 280px;
-            background: rgba(5, 5, 5, 0.8);
+            background: rgba(5, 5, 5, 0.95);
             border-right: 1px solid var(--border-glass);
-            backdrop-filter: blur(20px);
-            padding: 2rem 1.5rem;
+            backdrop-filter: blur(40px);
+            padding: 2.5rem 1.7rem;
             display: flex;
             flex-direction: column;
             position: fixed;
             height: 100vh;
             z-index: 100;
+            box-shadow: 20px 0 50px rgba(0,0,0,0.5);
         }
 
         .brand-logo svg {
-            width: 45px; height: 45px;
-            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
+            width: 50px; height: 50px;
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4));
         }
 
         .nav-item {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
         
         .nav-link {
             color: var(--text-muted);
-            padding: 0.8rem 1rem;
-            border-radius: 10px;
+            padding: 0.9rem 1.2rem;
+            border-radius: 12px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             font-weight: 500;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border: 1px solid transparent;
         }
 
-        .nav-link:hover, .nav-link.active {
+        .nav-link i {
+            font-size: 1.25rem;
+            opacity: 0.7;
+        }
+
+        .nav-link:hover {
             color: var(--text-primary);
-            background: rgba(255, 255, 255, 0.03);
-            border-left: 3px solid var(--accent-gold);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
         }
 
-        .nav-link.emerald-glow:hover, .nav-link.emerald-glow.active {
+        .nav-link.active {
+            color: var(--text-primary);
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.1), transparent);
+            border-left: 4px solid var(--accent-gold);
+            border-color: var(--border-glass);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-link.emerald-glow.active {
             border-left-color: var(--accent-emerald);
+            background: linear-gradient(90deg, rgba(0, 255, 136, 0.05), transparent);
         }
 
         /* Main Content Area */
         .main-content {
             flex-grow: 1;
             margin-left: 280px;
-            padding: 2rem 3rem;
+            padding: 3rem 4rem;
             min-height: 100vh;
+            background: radial-gradient(circle at top right, rgba(20, 20, 30, 0.4), transparent);
         }
 
         /* Header Top */
@@ -90,75 +113,124 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 3rem;
-            padding-bottom: 1.5rem;
+            margin-bottom: 4rem;
+            padding-bottom: 2rem;
             border-bottom: 1px solid var(--border-glass);
         }
 
         .owner-badge {
-            background: rgba(212, 175, 55, 0.1);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            color: var(--accent-gold);
-            padding: 6px 15px;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            letter-spacing: 1px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .avatar {
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, var(--bg-panel), #1a1a1a);
-            border: 1px solid var(--border-glass);
-            display: flex; align-items: center; justify-content: center;
+        .owner-badge i {
+            color: var(--accent-gold);
+            filter: drop-shadow(0 0 5px var(--accent-gold));
         }
 
         /* Widget Cards (Glassmorphism) */
         .glass-card {
-            background: var(--bg-panel);
+            background: linear-gradient(135deg, rgba(15, 15, 20, 0.8), rgba(5, 5, 5, 0.9));
             border: 1px solid var(--border-glass);
-            border-radius: 16px;
-            padding: 1.5rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 24px;
+            padding: 2rem;
+            transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+            overflow: hidden;
         }
+        
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        }
+
         .glass-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border-color: rgba(255,255,255,0.1);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            border-color: rgba(255,255,255,0.15);
         }
 
         .stat-value {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             font-weight: 800;
-            font-family: 'Outfit', sans-serif;
-            background: linear-gradient(90deg, #fff, #999);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-family: var(--font-headings);
+            letter-spacing: -1px;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255,255,255,0.1);
         }
 
         .icon-box {
-            width: 50px; height: 50px;
-            border-radius: 12px;
+            width: 56px; height: 56px;
+            border-radius: 16px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
+            border: 1px solid rgba(255,255,255,0.05);
         }
-        .icon-box.gold { background: rgba(212, 175, 55, 0.1); color: var(--accent-gold); }
-        .icon-box.emerald { background: rgba(0, 255, 136, 0.1); color: var(--accent-emerald); }
-        .icon-box.blue { background: rgba(0, 168, 255, 0.1); color: #00A8FF; }
-        .icon-box.purple { background: rgba(162, 0, 255, 0.1); color: #A200FF; }
+        .icon-box.gold { background: rgba(212, 175, 55, 0.1); color: var(--accent-gold); box-shadow: 0 0 20px rgba(212, 175, 55, 0.1); }
+        .icon-box.emerald { background: rgba(0, 255, 136, 0.1); color: var(--accent-emerald); box-shadow: 0 0 20px rgba(0, 255, 136, 0.1); }
+        .icon-box.blue { background: rgba(0, 210, 255, 0.1); color: var(--neon-blue); box-shadow: 0 0 20px rgba(0, 210, 255, 0.1); }
+        .icon-box.purple { background: rgba(157, 80, 187, 0.1); color: var(--neon-purple); box-shadow: 0 0 20px rgba(157, 80, 187, 0.1); }
 
         .btn-logout {
             background: transparent;
-            color: #ff4757;
-            border: 1px solid rgba(255, 71, 87, 0.3);
-            border-radius: 8px;
-            padding: 8px 20px;
+            color: #ff4d4d;
+            border: 1px solid rgba(255, 77, 77, 0.2);
+            border-radius: 12px;
+            padding: 10px 20px;
             transition: all 0.3s;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
         .btn-logout:hover {
-            background: rgba(255, 71, 87, 0.1);
-            color: #ff4757;
+            background: rgba(255, 77, 77, 0.1);
+            border-color: #ff4d4d;
+            box-shadow: 0 0 15px rgba(255, 77, 77, 0.2);
         }
+
+        .badge-neon {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-glass);
+            color: var(--text-muted);
+            border-radius: 50px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Estilos de tabla premium */
+        .table thead th {
+            font-family: var(--font-headings);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--border-glass) !important;
+        }
+
+        .table tbody tr {
+            transition: background 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(255,255,255,0.02) !important;
+        }
+
+        /* Scrollbar Personalizado */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #333; }
+    </style>
     </style>
 </head>
 <body>

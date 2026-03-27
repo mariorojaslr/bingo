@@ -302,9 +302,15 @@
             </div>`;
             
             if (data.ganadores.bingos.length > 0) {
-                 content += `<p class="small text-danger fw-bold mb-2">POSIBLE BINGO ENCONTRADO EN PRUEBA</p><div class="p-2 rounded bg-dark border border-danger text-center font-monospace small text-white mb-2">Cartones: ${data.ganadores.bingos.join(', ')}</div>`;
+                 content += `<p class="small text-danger fw-bold mb-2">¡BINGO DETECTADO!</p>`;
+                 data.ganadores.bingos.forEach(g => {
+                     content += `<div class="p-2 rounded bg-dark border border-danger text-center font-monospace small text-white mb-2">Cartón: ${g.numero} <br> <span class="text-danger">${g.nombre}</span></div>`;
+                 });
             } else if (data.ganadores.lineas.length > 0) {
-                 content += `<p class="small text-info fw-bold mb-2">POSIBLE LÍNEA ENCONTRADA EN PRUEBA</p><div class="p-2 rounded bg-dark border border-info text-center font-monospace small text-white mb-2">Cartones: ${data.ganadores.lineas.join(', ')}</div>`;
+                 content += `<p class="small text-info fw-bold mb-2">LÍNEA DETECTADA</p>`;
+                 data.ganadores.lineas.forEach(g => {
+                     content += `<div class="p-2 rounded bg-dark border border-info text-center font-monospace small text-white mb-2">Cartón: ${g.numero} <br> <span class="text-info">${g.nombre}</span></div>`;
+                 });
             } else {
                  content += `<p class="small text-white-50 mb-2">Estado pausado manualmente. Esperando resolución de sala.</p>`;
             }
