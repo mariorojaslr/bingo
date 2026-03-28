@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\PruebaParticipante;
+use App\Models\Jugada;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -39,6 +40,7 @@ class PruebasController extends Controller
 
     public function jugadas()
     {
-        return view('admin.pruebas.jugadas');
+        $jugadas = Jugada::all();
+        return view('admin.pruebas.jugadas', compact('jugadas'));
     }
 }

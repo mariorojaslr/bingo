@@ -1,6 +1,6 @@
 @extends('admin.layout')
 
-@section('content')
+@section('contenido')
 <div class="container-fluid">
 
     <h1 class="mb-4">🧪 Centro de Control — Pruebas Internas</h1>
