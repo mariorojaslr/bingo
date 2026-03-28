@@ -159,7 +159,7 @@
     </style>
 </head>
 @php
-    $bolillas = $sorteo->getMemoryBolillas();
+    $bolillas = $sorteo->getBolillas();
     $ultimas = array_slice(array_reverse($bolillas), 0, 8);
     
     // Prioridad: 1. URL de la jugada, 2. Default YouTube

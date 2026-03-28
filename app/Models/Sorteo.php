@@ -108,7 +108,7 @@ class Sorteo extends Model
     /**
      * Cache local de bolillas para no parsear JSON mil veces por segundo
      */
-    private function getMemoryBolillas(): array
+    public function getMemoryBolillas(): array
     {
         return $this->bolillas ?? [];
     }
