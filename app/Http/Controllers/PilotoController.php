@@ -19,7 +19,7 @@ class PilotoController extends Controller
         $participante = PruebaParticipante::where('token', $token)->firstOrFail();
 
         // 2. Buscar jugada activa (O la jugada donde el participante tenga cartones)
-        $relacion = ParticipanteCartonPrueba::where('participante_id', $participante->id)->latest()->first();
+        $relacion = ParticipanteCartonPrueba::where('participante_prueba_id', $participante->id)->latest()->first();
         
         $jugadaId = $relacion ? $relacion->jugada_id : null;
         if (!$jugadaId) {
@@ -48,7 +48,7 @@ class PilotoController extends Controller
         }
 
         // 4. Cartones asignados al participante
-        $cartones = ParticipanteCartonPrueba::where('participante_id', $participante->id)
+        $cartones = ParticipanteCartonPrueba::where('participante_prueba_id', $participante->id)
             ->where('jugada_id', $jugadaId)
             ->with('carton')
             ->get();

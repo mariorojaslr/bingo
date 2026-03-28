@@ -9,7 +9,7 @@ class ParticipanteCartonPrueba extends Model
     protected $table = 'participante_carton_prueba';
 
     protected $fillable = [
-        'participante_id',   // <- ESTE es el nombre real de la FK
+        'participante_prueba_id',
         'jugada_id',
         'carton_id',
     ];
@@ -18,7 +18,7 @@ class ParticipanteCartonPrueba extends Model
     {
         return $this->belongsTo(
             \App\Models\PruebaParticipante::class,
-            'participante_id'
+            'participante_prueba_id'
         );
     }
 
