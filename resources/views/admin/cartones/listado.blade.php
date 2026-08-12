@@ -2,33 +2,33 @@
 
 @section('contenido')
 
-<h2 class="mb-3">Visor Profesional de Cartones</h2>
+<h2 class="mb-1">Visor Profesional de Cartones</h2>
 
-<div class="card p-4 mb-4 border-0 shadow" style="background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);">
+<div class="card p-3 mb-2 border-0 shadow" style="background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);">
     <div class="row align-items-center text-center text-md-start">
         <div class="col-md-7">
-            <h1 class="text-uppercase mb-2" style="color: #00a8ff; font-weight: 900; letter-spacing: 2px;">
+            <h2 class="text-uppercase mb-1" style="color: #00a8ff; font-weight: 900; letter-spacing: 2px;">
                 Infinity Bingo <span class="text-white">PRO</span>
-            </h1>
-            <p class="mb-0 text-white" style="font-size: 1.05rem; line-height: 1.6;">
-                En esta serie se han pre-computado los cartones con <strong>validación matemática estricta</strong> y algoritmo <em>Antibombas</em> para garantizar cero colisiones (cartones únicos garantizados).
+            </h2>
+            <p class="mb-0 text-white" style="font-size: 0.95rem; line-height: 1.4;">
+                En esta serie se han pre-computado los cartones con <strong>validación matemática estricta</strong> y algoritmo <em>Antibombas</em> para garantizar cero colisiones.
             </p>
-            <p class="text-muted mt-2 mb-0" style="font-size: 0.85rem;">
-                * La arquitectura <em>Elastic-Pool</em> permite escalar la generación a 1.000.000 de cartones simultáneos sin tiempos de espera.
+            <p class="text-muted mt-1 mb-0" style="font-size: 0.8rem;">
+                * La arquitectura <em>Elastic-Pool</em> permite escalar a 1.000.000 de cartones simultáneos.
             </p>
         </div>
-        <div class="col-md-5 text-center mt-4 mt-md-0 d-flex flex-column gap-2">
-            <div class="p-2 border rounded d-flex justify-content-between align-items-center px-3" style="background: rgba(0, 168, 255, 0.05); border-color: rgba(0,168,255,0.3) !important;">
-                <span class="text-uppercase text-muted" style="letter-spacing: 1px; font-size: 0.8rem; font-weight: bold;">Lote N°</span>
-                <span class="text-white fw-bold" style="letter-spacing: 1px;">{{ $serieFiltro }}</span>
+        <div class="col-md-5 text-center mt-3 mt-md-0 d-flex flex-column gap-1">
+            <div class="py-1 px-3 border rounded d-flex justify-content-between align-items-center" style="background: rgba(0, 168, 255, 0.05); border-color: rgba(0,168,255,0.3) !important;">
+                <span class="text-uppercase text-muted" style="letter-spacing: 1px; font-size: 0.75rem; font-weight: bold;">Lote N°</span>
+                <span class="text-white fw-bold" style="letter-spacing: 1px; font-size: 0.9rem;">{{ $serieFiltro }}</span>
             </div>
-            <div class="p-2 border rounded d-flex justify-content-between align-items-center px-3" style="background: rgba(0, 168, 255, 0.1); border-color: #00a8ff !important; box-shadow: 0 0 15px rgba(0,168,255,0.1);">
-                <span class="text-uppercase text-white" style="letter-spacing: 1px; font-size: 0.85rem; font-weight: bold;">Cartones Generados</span>
-                <span style="color: #00a8ff; font-weight: 900; font-size: 1.4rem;">{{ number_format($totalCartones, 0, ',', '.') }}</span>
+            <div class="py-1 px-3 border rounded d-flex justify-content-between align-items-center" style="background: rgba(0, 168, 255, 0.1); border-color: #00a8ff !important; box-shadow: 0 0 10px rgba(0,168,255,0.1);">
+                <span class="text-uppercase text-white" style="letter-spacing: 1px; font-size: 0.75rem; font-weight: bold;">Cartones Generados</span>
+                <span style="color: #00a8ff; font-weight: 900; font-size: 1.1rem;">{{ number_format($totalCartones, 0, ',', '.') }}</span>
             </div>
-            <div class="p-2 border rounded d-flex justify-content-between align-items-center px-3" style="background: rgba(40, 167, 69, 0.1); border-color: rgba(40,167,69,0.5) !important;">
-                <span class="text-uppercase text-white" style="letter-spacing: 1px; font-size: 0.8rem; font-weight: bold;">Tiempo Récord</span>
-                <span class="text-success fw-bold" style="font-size: 1.1rem; letter-spacing: 1px;">
+            <div class="py-1 px-3 border rounded d-flex justify-content-between align-items-center" style="background: rgba(40, 167, 69, 0.1); border-color: rgba(40,167,69,0.5) !important;">
+                <span class="text-uppercase text-white" style="letter-spacing: 1px; font-size: 0.75rem; font-weight: bold;">Tiempo Récord</span>
+                <span class="text-success fw-bold" style="font-size: 0.95rem; letter-spacing: 1px;">
                     @if($totalCartones >= 50000)
                         17.32 Segundos
                     @else
@@ -40,7 +40,7 @@
     </div>
 </div>
 
-<form method="GET" action="{{ route('admin.cartones.listado') }}" class="row g-3 mb-4 align-items-end">
+<form method="GET" action="{{ route('admin.cartones.listado') }}" class="row g-2 mb-2 align-items-end">
 
     <div class="col-auto">
         <label class="form-label">Columnas</label>
@@ -71,7 +71,7 @@
 
 </form>
 
-<div class="d-flex justify-content-center mb-3">
+<div class="d-flex justify-content-center mb-2">
     {{ $cartones->withQueryString()->links() }}
 </div>
 
@@ -81,7 +81,7 @@
 
     @php $grilla = is_array($carton->grilla) ? $carton->grilla : json_decode($carton->grilla, true); @endphp
 
-    <div class="col-md-{{ 12 / $columnas }} mb-4">
+    <div class="col-md-{{ 12 / $columnas }} mb-2">
 
         <div class="border p-2 bg-white shadow-sm">
 
@@ -129,11 +129,11 @@
 
 .tabla-bingo td {
     border: 1px solid #000;
-    height: 42px;
+    height: 32px;
     text-align: center;
     vertical-align: middle;
     font-family: Helvetica, Arial, sans-serif;
-    font-size: 22px;
+    font-size: 19px;
     font-weight: bold;
 }
 
