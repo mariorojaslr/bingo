@@ -33,14 +33,17 @@ class CartonController extends Controller
         $generados = 0;
         $colisiones_evitadas = 0;
 
-        // Caché en RAM de todos los hashes de esta serie para validación O(1)
+        // Caché en RAM para hashes y evitar matemáticas idénticas
         $hashesExistentes = Carton::where('serie', $serie)->pluck('hash')->toArray();
         $hashesSet = array_flip($hashesExistentes);
+
+        // Caché en RAM para números de suerte y garantizar 100% de unicidad
+        $suertesExistentes = Carton::where('serie', $serie)->pluck('numero_suerte')->toArray();
+        $suertesSet = array_flip($suertesExistentes);
 
         DB::beginTransaction();
         try {
             $cartonesToInsert = [];
-            // Para mantener el consecutivo
             $lastNumero = Carton::where('serie', $serie)->max('numero_carton') ?? 0;
 
             $bingoService = new BingoCardService();
@@ -49,33 +52,37 @@ class CartonController extends Controller
                 
                 // 1. Crear matriz matemática
                 $grilla = $bingoService->generarGrilla();
-                
-                // 2. Serializar a Hash
                 $hash = md5(json_encode($grilla));
 
-                // 3. Antibombas: Validar si la combinatoria ya existe en todo el universo
+                // 2. Antibombas matemático
                 if (isset($hashesSet[$hash])) {
                     $colisiones_evitadas++;
-                    continue; // Matemática idéntica detectada. Desechar este cartón.
+                    continue; 
                 }
 
-                $hashesSet[$hash] = true; // Lo registramos temporalmente
+                // 3. Generar Número de Suerte único (7 dígitos)
+                do {
+                    $suerte = (string) mt_rand(1000000, 9999999);
+                } while (isset($suertesSet[$suerte]));
+                
+                $suertesSet[$suerte] = true;
+                $hashesSet[$hash] = true;
                 $lastNumero++;
                 $generados++;
 
                 $cartonesToInsert[] = [
                     'serie' => $serie,
                     'numero_carton' => $lastNumero,
+                    'numero_suerte' => $suerte,
                     'formato' => 'ARG',
                     'estado' => 'disponible',
                     'grilla' => json_encode($grilla),
                     'hash' => $hash,
-                    // 'organizador_id' => ... -> PRÓXIMAMENTE EN INYECCIÓN TENANT
                     'created_at' => now(),
                     'updated_at' => now()
                 ];
 
-                // Chunking automático para no reventar la RAM del servidor
+                // Chunking de 500 para RAM
                 if (count($cartonesToInsert) === 500) {
                     Carton::insert($cartonesToInsert);
                     $cartonesToInsert = [];
@@ -88,10 +95,21 @@ class CartonController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', "¡Éxito nivel Dios! Se generaron $generados cartones perfectos. Colisiones matemáticas idénticas bloqueadas: $colisiones_evitadas.");
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'generados' => $generados,
+                    'colisiones' => $colisiones_evitadas
+                ]);
+            }
+
+            return redirect()->back()->with('success', "¡Éxito nivel Dios! Se generaron $generados cartones. Colisiones evitadas: $colisiones_evitadas.");
 
         } catch (Exception $e) {
             DB::rollBack();
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            }
             return redirect()->back()->with('error', 'Fallo Crítico: ' . $e->getMessage());
         }
     }
@@ -131,4 +149,42 @@ class CartonController extends Controller
         ));
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | VISOR DEMO (MARKETING)
+    |--------------------------------------------------------------------------
+    */
+    public function demoVisor(Request $request)
+    {
+        // Simple password protection
+        if ($request->get('pwd') !== 'infinity2026') {
+            if ($request->get('pwd')) {
+                return response('Contraseña incorrecta', 403);
+            }
+            return response('<form><input type="password" name="pwd" placeholder="Contraseña"><button>Entrar</button></form>');
+        }
+
+        $columnas = 3;
+        $filas = 4;
+        $porPagina = $columnas * $filas;
+        $pagina = $request->get('page', 1);
+
+        $serieFiltro = Carton::orderBy('id', 'desc')->value('serie') ?? 'LR-2026-08';
+        $totalCartones = Carton::where('serie', $serieFiltro)->count();
+
+        $cartones = Carton::where('serie', $serieFiltro)
+            ->orderBy('numero_carton')
+            ->paginate($porPagina, ['*'], 'page', $pagina);
+            
+        // Maintain password in pagination links
+        $cartones->appends(['pwd' => 'infinity2026']);
+
+        return view('admin.cartones.demo', compact(
+            'cartones',
+            'columnas',
+            'filas',
+            'serieFiltro',
+            'totalCartones'
+        ));
+    }
 }

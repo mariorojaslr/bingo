@@ -94,6 +94,8 @@ Route::prefix('admin')->group(function () {
         [InstitucionController::class, 'toggle']
     )->name('instituciones.toggle');
 
+    Route::get('/demo/visor', [CartonController::class, 'demoVisor'])->name('demo.visor');
+
     // Cartones
     Route::get('/cartones/generar', fn() =>
         view('admin.cartones.generar')
