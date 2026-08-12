@@ -107,6 +107,8 @@ class CartonController extends Controller
 
         } catch (Exception $e) {
             DB::rollBack();
+            \Illuminate\Support\Facades\Log::error('Error generando cartones: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+            
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
             }

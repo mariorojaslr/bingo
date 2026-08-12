@@ -105,11 +105,17 @@
                     })
                 });
 
-                if (!response.ok) {
-                    throw new Error('Error en el servidor');
+                let data;
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    throw new Error('El servidor devolvió una respuesta inválida (Error 500).');
                 }
 
-                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.message || 'Error desconocido del servidor');
+                }
+
                 if (data.success) {
                     totalGenerados += data.generados;
                     updateProgressUI();
