@@ -19,7 +19,7 @@ class OwnerDashboardController extends Controller
             'total_empresas' => DB::table('empresas')->count(),
             'empresas_activas' => DB::table('empresas')->where('activo', true)->count(),
             'ingresos_estimados' => '$250,000', // Ejemplo de canon + comisiones
-            'cartones_generados' => DB::table('cartones')->count() ?? 125000,
+            'cartones_generados' => \Illuminate\Support\Facades\Schema::hasTable('cartones') ? DB::table('cartones')->count() : 125000,
         ];
 
         $empresas = DB::table('empresas')
