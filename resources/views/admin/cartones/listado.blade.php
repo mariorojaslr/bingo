@@ -77,7 +77,7 @@
 
     @php $grilla = is_array($carton->grilla) ? $carton->grilla : json_decode($carton->grilla, true); @endphp
 
-    <div class="col-md-{{ 12 / $columnas }} mb-2">
+    <div class="col-{{ 12 / $columnas }} mb-4">
 
         <div class="border p-2 bg-white shadow-sm">
 

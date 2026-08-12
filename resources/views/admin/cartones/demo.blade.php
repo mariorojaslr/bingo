@@ -34,8 +34,9 @@
             text-align: center;
             vertical-align: middle;
             font-family: Helvetica, Arial, sans-serif;
-            font-size: 19px;
+            font-size: clamp(10px, 3vw, 19px);
             font-weight: bold;
+            padding: 0;
         }
         .tabla-bingo td.numero {
             background: #ffffff;
@@ -130,7 +131,7 @@
     <div class="row">
         @foreach($cartones as $carton)
             @php $grilla = is_array($carton->grilla) ? $carton->grilla : json_decode($carton->grilla, true); @endphp
-            <div class="col-md-{{ 12 / $columnas }} mb-2">
+            <div class="col-{{ 12 / $columnas }} mb-2">
                 <div class="border p-2 bg-white shadow-sm">
                     <div class="d-flex justify-content-between align-items-center mb-2 px-1">
                         <div style="font-size: 0.75rem; color: #666;">
