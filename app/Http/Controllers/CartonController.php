@@ -172,10 +172,23 @@ class CartonController extends Controller
             return view('admin.cartones.demo_login');
         }
 
-        $columnas = 3;
-        $filas = 4;
+        $columnas = (int) $request->get('columnas', 3);
+        $filas = (int) $request->get('filas', 2);
+        
+        $columnas = max(1, min(4, $columnas));
+        $filas = max(1, min(4, $filas));
+
         $porPagina = $columnas * $filas;
-        $pagina = $request->get('page', 1);
+
+        if ($request->filled('numero')) {
+            $numero = $request->numero;
+            // Sorting by ID means pos is determined by count of IDs <= target ID
+            $posicion = Carton::where('serie', 'LR-2026-08')
+                ->where('numero_carton', '<=', $numero)->count();
+            $pagina = (int) ceil($posicion / $porPagina);
+        } else {
+            $pagina = $request->get('page', 1);
+        }
 
         $serieFiltro = Carton::orderBy('id', 'desc')->value('serie') ?? 'LR-2026-08';
         $totalCartones = Carton::where('serie', $serieFiltro)->count();
@@ -184,8 +197,13 @@ class CartonController extends Controller
             ->orderBy('id')
             ->paginate($porPagina, ['*'], 'page', $pagina);
             
-        // Maintain password in pagination links
-        $cartones->appends(['pwd' => 'infinity2026']);
+        // Maintain password and filters in pagination links
+        $cartones->appends([
+            'pwd' => 'infinity2026',
+            'columnas' => $columnas,
+            'filas' => $filas,
+            'numero' => $request->numero
+        ]);
 
         return view('admin.cartones.demo', compact(
             'cartones',
