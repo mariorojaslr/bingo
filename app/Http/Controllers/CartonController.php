@@ -255,7 +255,7 @@ class CartonController extends Controller
             ]);
         }
 
-        return view('admin.demo.monitor', compact('jugada', 'sorteo'));
+        return view('monitor.monitor-tv', compact('jugada', 'sorteo'));
     }
 
     public function demoSorteador(Request $request)

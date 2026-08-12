@@ -1,328 +1,348 @@
 <!DOCTYPE html>
-<html lang="es" data-bs-theme="dark">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Monitor TV | {{ $sorteo->jugada->nombre_jugada ?? 'Evento' }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor TV - Infinity Bingo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --neon-green: #00FF88;
-            --neon-blue: #00A8FF;
-            --neon-gold: #D4AF37;
-            --neon-red: #FF0055;
-            --bg-dark: #020202;
-            --border-glass: rgba(255, 255, 255, 0.05);
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: transparent; /* Transparente para OBS/Vmix */
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden; /* Evitar scroll */
         }
 
-        body {
-            margin: 0; padding: 0;
-            background: var(--bg-dark);
-            color: white;
-            font-family: 'Inter', sans-serif;
-            height: 100vh;
-            overflow: hidden; /* Fundamental para un Monitor TV */
+        /* --- CONTENEDOR PRINCIPAL --- */
+        .tv-container {
             display: flex;
+            width: 100%;
+            height: 100vh;
+            flex-direction: column;
         }
 
-        .monitor-wrapper {
-            display: grid;
-            grid-template-columns: 420px 1fr;
-            width: 100%; height: 100%;
-        }
-
-        /* =======================================================
-           1. BARRA LATERAL IZQUIERDA (Bolillero y Matriz)
-        ======================================================= */
+        /* --- BARRA LATERAL (Panel Izquierdo) --- */
         .sidebar {
-            background: rgba(10, 10, 12, 0.95);
-            border-right: 1px solid var(--border-glass);
+            width: 320px;
+            height: calc(100vh - 60px); /* Restando el zócalo */
+            background-color: #0f1115; /* Fondo muy oscuro */
+            border-right: 2px solid #1a1d24;
             display: flex;
             flex-direction: column;
-            padding: 20px;
-            box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+            align-items: center;
+            padding: 20px 15px;
+            box-shadow: 5px 0 25px rgba(0,0,0,0.8);
+            position: absolute;
+            left: 0;
+            top: 0;
             z-index: 10;
         }
 
-        .panel-title {
-            font-family: 'Outfit'; font-size: 0.85rem; color: #888;
-            text-transform: uppercase; letter-spacing: 2px;
-            text-align: center; border-bottom: 1px dashed rgba(255,255,255,0.1);
-            padding-bottom: 10px; margin-bottom: 20px;
+        /* --- BOLILLA PRINCIPAL --- */
+        .header-title {
+            color: #00ff88;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-
-        /* Bolilla Mestra */
-        .bolilla-box {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--border-glass);
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .orb-gigante {
-            width: 220px; height: 220px; margin: 0 auto;
-            background: radial-gradient(circle at 30% 30%, var(--neon-green), #004422);
+        .header-title::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background-color: #00ff88;
             border-radius: 50%;
-            color: #000; font-family: 'Outfit'; font-weight: 900; font-size: 110px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 50px rgba(0, 255, 136, 0.4), inset -10px -10px 25px rgba(0,0,0,0.5);
-            transition: 0.3s;
+            box-shadow: 0 0 10px #00ff88;
         }
-        .orb-gigante.pop { animation: popOrb 0.5s ease-out; }
-        @keyframes popOrb { 0% { transform: scale(1); } 50% { transform: scale(1.15); box-shadow: 0 0 80px #00FF88; } 100% { transform: scale(1); } }
 
-        /* Historial de Bolillas */
+        .main-ball {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #00ff88, #009955);
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.5), inset -10px -10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        .main-number {
+            font-size: 6rem;
+            font-weight: 900;
+            color: #111;
+            line-height: 1;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.3);
+        }
+
+        /* --- HISTORIAL DE BOLILLAS (4x2) --- */
         .history-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+            width: 100%;
         }
-        .history-item {
-            aspect-ratio: 1; border-radius: 50%; background: #111; color: #555;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 900; font-size: 1.5rem; font-family: 'Outfit';
-            border: 2px solid #222;
-        }
-        .history-item.hi {
-            background: var(--neon-blue); color: #fff; border-color: transparent;
-            box-shadow: 0 0 20px rgba(0, 168, 255, 0.5);
-        }
-
-        /* Matriz Sorteador (Abajo a la izquierda) */
-        .matriz-box {
-            flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass);
-            border-radius: 20px; padding: 20px;
-            display: flex; flex-direction: column;
-        }
-        .matrix-grid {
-            display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; flex: 1;
-            align-content: start;
-        }
-        .matrix-num {
-            aspect-ratio: 1; background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.15);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.9rem; font-weight: 900; border-radius: 4px;
-        }
-        .matrix-num.drawn { background: var(--neon-red); color: #fff; box-shadow: 0 0 10px rgba(255, 0, 85, 0.5); }
-
-
-        /* =======================================================
-           2. ÁREA PRINCIPAL DERECHA (Transmisión y Footer)
-        ======================================================= */
-        .main-stage {
-            display: flex; flex-direction: column; position: relative;
+        .history-ball {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #00a8ff, #005f99);
+            box-shadow: 0 0 15px rgba(0, 168, 255, 0.4), inset -5px -5px 15px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #fff;
         }
 
-        .tv-container {
-            flex: 1; background: #000; position: relative;
+        /* --- TABLERO CENTRAL (90 Números) --- */
+        .board-title {
+            color: #888;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-align: center;
         }
-        .tv-container iframe {
-            width: 100%; height: 100%; border: none; object-fit: cover;
+        .board-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 3px;
+            width: 100%;
+            margin-top: 5px;
         }
-        .live-badge {
-            position: absolute; top: 30px; right: 30px;
-            background: rgba(255, 0, 85, 0.2); color: var(--neon-red);
-            border: 1px solid var(--neon-red); padding: 8px 20px; border-radius: 30px;
-            font-family: 'Outfit'; font-weight: 800; letter-spacing: 2px;
-            animation: blinkLive 2s infinite; z-index: 10;
+        .board-cell {
+            aspect-ratio: 1;
+            background: #15181d;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+        .board-cell.active {
+            background: #ff0055;
+            color: #fff;
+            box-shadow: 0 0 10px #ff0055;
         }
 
-        /* Footer Info */
-        .info-footer {
-            height: 90px; background: rgba(10, 10, 12, 0.95);
-            border-top: 1px solid var(--border-glass);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 50px; box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+        /* --- ZÓCALO INFERIOR --- */
+        .bottom-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: #0b0c0f;
+            border-top: 2px solid #1a1d24;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 10;
+        }
+        .bottom-bar .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #888;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .bottom-bar .info-value {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 900;
+        }
+        .bottom-bar .sponsor {
+            color: #ffd700; /* Dorado para destacar el sponsor */
         }
 
-        .data-item { display: flex; align-items: center; gap: 15px; }
-        .data-label { color: #888; font-family: 'Outfit'; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; }
-        .data-value { color: #fff; font-family: 'Outfit'; font-weight: 900; font-size: 1.8rem; }
-        .data-value.gold { color: var(--neon-gold); }
-
-        /* OVERLAYS de PREMIO */
-        .overlay-premio {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999;
-            display: flex; align-items: center; justify-content: center; flex-direction: column;
-            opacity: 0; pointer-events: none; transition: 0.4s;
+        /* --- BOTÓN EN VIVO --- */
+        .live-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: rgba(255, 0, 85, 0.15);
+            border: 1px solid #ff0055;
+            color: #ff0055;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
         }
-        .overlay-premio.activo { opacity: 1; pointer-events: all; }
-        .texto-premio { font-size: 15rem; font-weight: 900; font-family: 'Outfit'; animation: pulseText 1s infinite alternate; }
-        .premio-linea { color: var(--neon-blue); text-shadow: 0 0 80px var(--neon-blue); }
-        .premio-bingo { color: var(--neon-red); text-shadow: 0 0 80px var(--neon-red); }
-        @keyframes pulseText { from { transform: scale(0.95); } to { transform: scale(1.05); } }
-        
+        .live-btn::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background-color: #ff0055;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ff0055;
+            animation: blink 1.5s infinite;
+        }
+
+        /* --- OVERLAYS --- */
+        #takeover-ad, #winner-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background: rgba(0,0,0,0.95);
+        }
+        .winner-text {
+            font-size: 8rem;
+            font-weight: 900;
+            color: #ffd700;
+            text-transform: uppercase;
+            text-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
     </style>
 </head>
-@php
-    $bolillas = $sorteo->getBolillas();
-    $ultimas = array_slice(array_reverse($bolillas), 0, 8);
-    
-    // Configuración exclusiva de Bunny.net Stream (Eliminando YouTube)
-    $libraryId = $sorteo->jugada->bunny_library_id ?? env('BUNNY_LIBRARY_ID', 'default_library');
-    $videoId = $sorteo->jugada->bunny_video_id ?? $sorteo->jugada->streaming_url ?? env('BUNNY_VIDEO_ID', 'demo_video');
-    
-    // URL nativa de Bunny.net HLS Player
-    $streamUrl = "https://iframe.mediadelivery.net/embed/{$libraryId}/{$videoId}?autoplay=true&loop=false&muted=false&preload=true&responsive=true";
-@endphp
-
 <body>
 
-<!-- OVERLAYS DE PREMIO -->
-<div id="overlay-linea" class="overlay-premio">
-    <div class="texto-premio premio-linea">¡LÍNEA!</div>
-    <div class="h3 text-white-50 mt-4 font-monospace">VERIFICANDO GANADORES EN SALA...</div>
-    <div id="winner-linea-name" class="mt-2 fs-1 fw-bold text-info"></div>
-</div>
-<div id="overlay-bingo" class="overlay-premio">
-    <div class="texto-premio premio-bingo">¡BINGO!</div>
-    <div class="h3 text-white-50 mt-4 font-monospace">SORTEO EXTRAORDINARIO FINALIZADO</div>
-    <div id="winner-bingo-name" class="mt-2 fs-1 fw-bold text-danger"></div>
-</div>
+    <!-- Botón En Vivo (Esquina Superior Derecha) -->
+    <div class="live-btn">EN VIVO</div>
 
-<div class="monitor-wrapper">
-
-    <!-- ================= 1. SIDEBAR IZQUIERDA ================= -->
+    <!-- BARRA LATERAL -->
     <div class="sidebar">
+        <div class="header-title">BOLILLA PRINCIPAL</div>
         
-        <!-- Extracción Actual -->
-        <div class="bolilla-box">
-            <div class="panel-title text-success"><i class="bi bi-circle-fill me-1"></i> BOLILLA PRINCIPAL</div>
-            <div class="orb-gigante" id="bolillaActual">
-                {{ $sorteo->bolilla_actual ?? '—' }}
-            </div>
-            
-            <div class="history-grid" id="historialCinta">
-                @for($i=0; $i<8; $i++)
-                    <div class="history-item {{ isset($ultimas[$i]) ? 'hi' : '' }}">{{ $ultimas[$i] ?? '' }}</div>
-                @endfor
-            </div>
+        <div class="main-ball">
+            <span class="main-number" id="last-number">--</span>
         </div>
 
-        <!-- Sorteador Matriz 1-90 -->
-        <div class="matriz-box">
-            <div class="panel-title"><i class="bi bi-grid-3x3-gap-fill me-1"></i> TABLERO CENTRAL (SORTEADOR)</div>
-            <div class="matrix-grid">
-                @for($i=1; $i<=90; $i++)
-                    <div class="matrix-num {{ in_array($i, $bolillas) ? 'drawn' : '' }}" id="mat-{{$i}}">{{ $i }}</div>
-                @endfor
-            </div>
+        <div class="history-grid" id="history-box">
+            <!-- Bolillas del historial (últimas 8) se cargan con JS -->
         </div>
 
+        <div class="board-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-grid-3x3-gap-fill" viewBox="0 0 16 16">
+              <path d="M1 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1zM1 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1zM1 12a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"/>
+            </svg>
+            TABLERO CENTRAL
+        </div>
+        <div class="board-grid">
+            @for($i = 1; $i <= 90; $i++)
+                <div class="board-cell" id="cell-{{ $i }}">{{ $i }}</div>
+            @endfor
+        </div>
     </div>
 
-
-    <!-- ================= 2. ESCENARIO PRINCIPAL ================= -->
-    <div class="main-stage">
-        
-        <!-- Transmisión de TV (Bunny.net Stream) -->
-        <div class="tv-container">
-            <div class="live-badge">🔴 EN VIVO</div>
-            <iframe 
-                src="{{ $streamUrl }}" 
-                loading="lazy" 
-                style="border:0;position:absolute;top:0;height:100%;width:100%;" 
-                allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" 
-                allowfullscreen="true">
-            </iframe>
+    <!-- ZÓCALO INFERIOR -->
+    <div class="bottom-bar">
+        <div class="info-item">
+            EVENTO <span class="info-value">JUGADA DE PRUEBA</span>
         </div>
-
-        <!-- Footer / Ticker de Información -->
-        <div class="info-footer">
-            <div class="data-item">
-                <div class="data-label"><i class="bi bi-box me-1"></i> EVENTO</div>
-                <div class="data-value">{{ mb_strtoupper($sorteo->jugada->nombre_jugada) }}</div>
-            </div>
-            <div class="data-item">
-                <div class="data-label"><i class="bi bi-building me-1"></i> AUSPICIA</div>
-                <div class="data-value gold">{{ mb_strtoupper($sorteo->jugada->institucion->nombre ?? 'CLUB OFICIAL') }}</div>
-            </div>
-            <div class="data-item">
-                <div class="data-label"><i class="bi bi-hash me-1"></i> EXTRACCIÓN</div>
-                <div class="data-value text-white" id="conteoBolas">{{ count($bolillas) }} / 90</div>
-            </div>
+        <div class="info-item">
+            AUSPICIA <span class="info-value sponsor">CLUB DE PRUEBA</span>
         </div>
-
+        <div class="info-item">
+            EXTRACCIÓN <span class="info-value"><span id="extract-count">0</span>/90</span>
+        </div>
     </div>
 
-</div>
+    <!-- Overlay Ganador -->
+    <div id="winner-overlay">
+        <div class="winner-text" id="winner-type">¡GANADOR!</div>
+    </div>
 
-<!-- ================= SCRIPTS PUSHER ================= -->
-<script src="https://js.pusher.com/8.2/pusher.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
+    <!-- Overlay Publicidad -->
+    <div id="takeover-ad">
+        <img src="https://via.placeholder.com/1920x1080/000000/00bfa5?text=ESPACIO+PUBLICITARIO" style="max-width:100%; max-height:100%;">
+    </div>
 
-    const pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
-        cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
-        forceTLS: window.location.protocol === 'https:',
-        enabledTransports: ['ws', 'wss']
-    });
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    const channel = pusher.subscribe('jugada.{{ $jugadaId ?? $sorteo->jugada_id }}');
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const bolillas = @json($sorteo->getBolillas() ?? []);
+            const estado = "{{ $sorteo->estado ?? 'en_curso' }}";
 
-    channel.bind('SorteoActualizado', data => {
-        
-        // REINICIO
-        if(data.bolilla === null) {
-            document.getElementById('bolillaActual').innerText = '—';
-            document.getElementById('historialCinta').innerHTML = '';
-            document.querySelectorAll('.matrix-num').forEach(c => c.classList.remove('drawn'));
-            document.getElementById('conteoBolas').innerText = "0 / 90";
-            document.getElementById('overlay-linea').classList.remove('activo');
-            document.getElementById('overlay-bingo').classList.remove('activo');
-            return;
-        }
+            function renderizar(bolillas) {
+                document.getElementById('extract-count').innerText = bolillas.length;
 
-        // 1. Efecto en la bolilla principal
-        const bActual = document.getElementById('bolillaActual');
-        bActual.innerText = data.bolilla;
-        bActual.classList.remove('pop');
-        void bActual.offsetWidth; // Reflow
-        bActual.classList.add('pop');
+                if(bolillas.length > 0) {
+                    const ultima = bolillas[bolillas.length - 1];
+                    document.getElementById('last-number').innerText = ultima;
+                    
+                    // Pintar grilla
+                    bolillas.forEach(num => {
+                        const cell = document.getElementById('cell-' + num);
+                        if(cell && !cell.classList.contains('active')) {
+                            cell.classList.add('active');
+                        }
+                    });
 
-        // 2. Historial Top Left
-        const cinta = document.getElementById('historialCinta');
-        cinta.innerHTML = '';
-        data.ultimas.slice(0, 8).forEach((num, i) => {
-            const orb = document.createElement('div');
-            orb.className = 'history-item ' + (i === 0 ? 'hi' : '');
-            orb.innerText = num;
-            cinta.appendChild(orb);
+                    // Historial (últimas 8 sin contar la actual, en reverso)
+                    const historial = bolillas.slice(0, -1).slice(-8).reverse();
+                    const historyBox = document.getElementById('history-box');
+                    historyBox.innerHTML = '';
+                    historial.forEach(num => {
+                        historyBox.innerHTML += `<div class="history-ball">${num}</div>`;
+                    });
+                }
+            }
+
+            renderizar(bolillas);
+
+            // WebSockets
+            setTimeout(() => {
+                if(window.Echo) {
+                    window.Echo.channel('jugada.{{ $jugada->id ?? ($jugadaId ?? 1) }}')
+                        .listen('.SorteoActualizado', (e) => {
+                            console.log("Evento recibido:", e);
+                            renderizar(e.bolillas);
+
+                            const winnerOverlay = document.getElementById('winner-overlay');
+                            if(e.estado === 'linea') {
+                                document.getElementById('winner-type').innerText = '¡HAY LÍNEA!';
+                                winnerOverlay.style.display = 'flex';
+                            } else if(e.estado === 'bingo') {
+                                document.getElementById('winner-type').innerText = '¡BINGO!';
+                                winnerOverlay.style.display = 'flex';
+                            } else if(e.estado === 'publicidad') {
+                                document.getElementById('takeover-ad').style.display = 'flex';
+                            } else {
+                                winnerOverlay.style.display = 'none';
+                                document.getElementById('takeover-ad').style.display = 'none';
+                            }
+                        });
+                }
+            }, 1000);
         });
-
-        // 3. Marcar Tablero (Sorteador 1-90)
-        const mat = document.getElementById('mat-' + data.bolilla);
-        if(mat) mat.classList.add('drawn');
-
-        // 4. Datos Inferiores
-        document.getElementById('conteoBolas').innerText = data.bolillas.length + " / 90";
-
-        // 5. Overlays
-        const lOverlay = document.getElementById('overlay-linea');
-        const bOverlay = document.getElementById('overlay-bingo');
-        
-        lOverlay.classList.remove('activo');
-        bOverlay.classList.remove('activo');
-
-        if (data.estado === 'linea') {
-            lOverlay.classList.add('activo');
-            let txt = data.ganadores.lineas.map(g => g.nombre + ' (#' + g.numero + ')').join(' | ');
-            document.getElementById('winner-linea-name').innerText = txt;
-        }
-        
-        if (data.estado === 'bingo') {
-            bOverlay.classList.add('activo');
-            let txt = data.ganadores.bingos.map(g => g.nombre + ' (#' + g.numero + ')').join(' | ');
-            document.getElementById('winner-bingo-name').innerText = txt;
-        }
-    });
-
-});
-</script>
-
+    </script>
 </body>
 </html>
