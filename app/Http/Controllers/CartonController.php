@@ -95,7 +95,7 @@ class CartonController extends Controller
 
             DB::commit();
 
-            if ($request->ajax()) {
+            if ($request->wantsJson() || $request->ajax()) {
                 return response()->json([
                     'success' => true,
                     'generados' => $generados,
@@ -107,7 +107,7 @@ class CartonController extends Controller
 
         } catch (Exception $e) {
             DB::rollBack();
-            if ($request->ajax()) {
+            if ($request->wantsJson() || $request->ajax()) {
                 return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
             }
             return redirect()->back()->with('error', 'Fallo Crítico: ' . $e->getMessage());
