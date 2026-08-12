@@ -186,7 +186,7 @@
     <div class="glass-panel text-center">
         <h6 class="text-white-50 fw-bold mb-4" style="font-size: 0.8rem; letter-spacing: 2px;"><i class="bi bi-sliders"></i> CONSOLA DE MANDOS</h6>
         
-        <button id="btnSacar" class="btn-launch mb-3" style="margin-bottom: 0.5rem;"><i class="bi bi-cpu-fill me-1"></i> EXTRAER AUTO</button>
+        <button id="btnExtraerAhora" class="btn-launch mb-3" style="margin-bottom: 0.5rem;"><i class="bi bi-play-circle-fill me-1"></i> EXTRAER AHORA</button>
         
         <div class="input-group mb-4" style="box-shadow: 0 0 20px rgba(0,0,0,0.5); border-radius: 12px; overflow: hidden;">
             <input type="number" id="inputManual" class="form-control bg-dark text-white border-0 text-center fw-bold font-monospace fs-3" placeholder="Nº (1-90)" min="1" max="90" style="font-family: 'Outfit';">
@@ -199,12 +199,22 @@
         </div>
         
         <!-- MÓDULO AD-SERVER -->
-        <h6 class="text-white-50 fw-bold mb-3 mt-4" style="font-size: 0.8rem; letter-spacing: 2px;"><i class="bi bi-megaphone-fill"></i> AD-SERVER (PUBLICIDAD)</h6>
+        <h6 class="text-white-50 fw-bold mb-3 mt-4" style="font-size: 0.8rem; letter-spacing: 2px;"><i class="bi bi-robot"></i> MODO AUTOMÁTICO (TANDAS)</h6>
+        
         <div class="d-flex gap-2 mb-3">
-            <button id="btnPublicidad" class="btn-action w-100" style="background: var(--neon-purple); border-color: var(--neon-purple);"><i class="bi bi-badge-ad-fill"></i> LANZAR TANDA (10s)</button>
+            <select id="selectIntervalo" class="form-select bg-dark text-white border-secondary" style="width: 120px; font-weight: bold; font-family: 'Outfit';">
+                <option value="3000">Cada 3s</option>
+                <option value="5000">Cada 5s</option>
+                <option value="10000" selected>Cada 10s</option>
+                <option value="15000">Cada 15s</option>
+            </select>
+            <button id="btnTandas" class="btn btn-outline-info w-100 fw-bold" style="font-family: 'Outfit'; letter-spacing: 1px;"><i class="bi bi-play-btn-fill"></i> INICIAR TANDAS</button>
         </div>
 
-        <button id="btnReiniciar" class="btn-action text-white-50 border-secondary mt-3"><i class="bi bi-arrow-counterclockwise"></i> Reiniciar Mesa</button>
+        <h6 class="text-white-50 fw-bold mb-3 mt-4" style="font-size: 0.8rem; letter-spacing: 2px;"><i class="bi bi-megaphone"></i> PUBLICIDAD (TV)</h6>
+        <button id="btnPublicidad" class="btn btn-outline-warning w-100 fw-bold mb-3" style="font-family: 'Outfit'; letter-spacing: 1px;"><i class="bi bi-tv"></i> LANZAR PUBLICIDAD (10s)</button>
+
+        <button id="btnReiniciar" class="btn btn-outline-danger w-100 fw-bold mt-4" style="font-family: 'Outfit'; letter-spacing: 1px;"><i class="bi bi-arrow-counterclockwise"></i> Reiniciar Mesa</button>
 
         <!-- CAJA DE REPORTE AUTOMATICO DEL SISTEMA -->
         <div class="winner-box" id="winnerBox">
@@ -251,20 +261,32 @@
     }
 
     let autoExtraerInterval = null;
-    const btnSacar = document.getElementById('btnSacar');
+    const btnExtraerAhora = document.getElementById('btnExtraerAhora');
+    const btnTandas = document.getElementById('btnTandas');
+    const selectIntervalo = document.getElementById('selectIntervalo');
 
     function toggleAutoExtraer() {
         if (autoExtraerInterval) {
             stopAutoExtraer();
         } else {
-            postCall('{{ route("sorteador.extraer", $jugadaId) }}');
+            // Start automatic mode
+            const ms = parseInt(selectIntervalo.value);
+            postCall('{{ route("sorteador.extraer", $jugadaId) }}'); // Extract first immediately
             autoExtraerInterval = setInterval(() => {
                 postCall('{{ route("sorteador.extraer", $jugadaId) }}');
-            }, 10000); // 10 segundos
-            btnSacar.innerHTML = '<i class="bi bi-stop-circle me-1"></i> DETENER AUTO';
-            btnSacar.style.background = 'var(--neon-red)';
-            btnSacar.style.color = '#fff';
-            btnSacar.style.boxShadow = '0 0 20px var(--neon-red)';
+            }, ms);
+            
+            // Update UI
+            btnExtraerAhora.innerHTML = '<i class="bi bi-cpu-fill me-1"></i> EXTRACCIÓN AUTOMÁTICA';
+            btnExtraerAhora.style.background = '#333';
+            btnExtraerAhora.style.color = '#fff';
+            btnExtraerAhora.style.boxShadow = 'none';
+            btnExtraerAhora.disabled = true; // Disable manual clicking while in auto mode
+            
+            btnTandas.innerHTML = '<i class="bi bi-stop-btn-fill"></i> DETENER TANDAS';
+            btnTandas.classList.remove('btn-outline-info');
+            btnTandas.classList.add('btn-danger');
+            selectIntervalo.disabled = true;
         }
     }
 
@@ -272,14 +294,24 @@
         if (autoExtraerInterval) {
             clearInterval(autoExtraerInterval);
             autoExtraerInterval = null;
-            btnSacar.innerHTML = '<i class="bi bi-cpu-fill me-1"></i> EXTRAER AUTO';
-            btnSacar.style.background = 'var(--neon-green)';
-            btnSacar.style.color = '#000';
-            btnSacar.style.boxShadow = 'none';
+            
+            // Revert UI
+            btnExtraerAhora.innerHTML = '<i class="bi bi-play-circle-fill me-1"></i> EXTRAER AHORA';
+            btnExtraerAhora.style.background = 'var(--neon-green)';
+            btnExtraerAhora.style.color = '#000';
+            btnExtraerAhora.disabled = false;
+            
+            btnTandas.innerHTML = '<i class="bi bi-play-btn-fill"></i> INICIAR TANDAS';
+            btnTandas.classList.remove('btn-danger');
+            btnTandas.classList.add('btn-outline-info');
+            selectIntervalo.disabled = false;
         }
     }
 
-    btnSacar.onclick = toggleAutoExtraer;
+    btnTandas.onclick = toggleAutoExtraer;
+    btnExtraerAhora.onclick = () => {
+        if(!autoExtraerInterval) postCall('{{ route("sorteador.extraer", $jugadaId) }}');
+    };
     
     // Ingreso Manual
     document.getElementById('btnManual').onclick = () => {
