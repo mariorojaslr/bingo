@@ -61,8 +61,8 @@
     </div>
 
     <div class="col-auto">
-        <label class="form-label">Ir al cartón Nº</label>
-        <input type="number" name="numero" class="form-control form-control-sm" placeholder="Ej: 322">
+        <label class="form-label text-white" style="font-size: 0.85rem;">Ir al cartón Nº</label>
+        <input type="number" name="numero" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Ej: 322" value="{{ request('numero') }}">
     </div>
 
     <div class="col-auto">

@@ -120,7 +120,7 @@
 
         <div class="col-auto">
             <label class="form-label" style="font-size: 0.85rem;">Ir al cartón Nº</label>
-            <input type="number" name="numero" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Ej: 322">
+            <input type="number" name="numero" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Ej: 322" value="{{ request('numero') }}">
         </div>
 
         <div class="col-auto">
