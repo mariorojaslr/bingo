@@ -27,7 +27,7 @@
                 <span style="color: var(--accent); font-weight: 900; font-size: 1.4rem;">{{ number_format($totalCartones, 0, ',', '.') }}</span>
             </div>
             <div class="p-2 border rounded d-flex justify-content-between align-items-center px-3" style="background: rgba(40, 167, 69, 0.1); border-color: rgba(40,167,69,0.5) !important;">
-                <span class="text-uppercase text-white" style="letter-spacing: 1px; font-size: 0.8rem; font-weight: bold;">Tiempo Récord</span>
+                <span class="text-uppercase text-white" style="letter-spacing: 1px; font-size: 0.8rem; font-weight: bold;">Tiempo de Generación</span>
                 <span class="text-success fw-bold" style="font-size: 1.1rem; letter-spacing: 1px;">
                     @if($totalCartones >= 50000)
                         17.32 Segundos
