@@ -115,6 +115,23 @@ class SorteoController extends Controller
     }
 
     /**
+     * 广告 Lanza publicidad
+     */
+    public function publicidad($jugadaId)
+    {
+        $sorteo = Sorteo::where('jugada_id', $jugadaId)
+            ->latest()
+            ->firstOrFail();
+
+        $sorteo->estado = 'publicidad';
+        $sorteo->save();
+
+        event(new SorteoActualizado($sorteo));
+
+        return response()->noContent();
+    }
+
+    /**
      * 🟥 Confirmar Bingo (manual)
      */
     public function confirmarBingo(Request $request, $jugadaId)

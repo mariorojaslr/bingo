@@ -50,6 +50,7 @@ Route::get('/admin', function () {
 Route::get('/login', [\App\Http\Controllers\AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+Route::get('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
 
 Route::get('/auth/biometric', [\App\Http\Controllers\AuthController::class, 'showBiometric'])->name('auth.biometric');
 Route::post('/auth/biometric/verify', [\App\Http\Controllers\AuthController::class, 'verifyBiometric'])->name('auth.biometric.verify');
@@ -73,7 +74,10 @@ Route::get('/tienda/{jugada}', [\App\Http\Controllers\UserStoreController::class
 Route::post('/tienda/{jugada}', [\App\Http\Controllers\UserStoreController::class, 'procesarCompra'])->name('tienda.procesar');
 Route::get('/tienda/gracias/{token}', [\App\Http\Controllers\UserStoreController::class, 'gracias'])->name('tienda.gracias');
 
-Route::get('/demo/visor', [\App\Http\Controllers\CartonController::class, 'demoVisor'])->name('demo.visor');
+// Public Marketing / Demo Routes
+Route::get('demo/visor', [App\Http\Controllers\CartonController::class, 'demoVisor'])->name('demo.visor');
+Route::get('demo/monitor-tv', [App\Http\Controllers\CartonController::class, 'demoMonitorTV'])->name('demo.monitor_tv');
+Route::get('demo/sorteador', [App\Http\Controllers\CartonController::class, 'demoSorteador'])->name('demo.sorteador');
 
 /*
 |--------------------------------------------------------------------------
@@ -166,6 +170,7 @@ Route::prefix('sorteador')->name('sorteador.')->group(function () {
     Route::post('/jugada/{jugada}/confirmar-linea', [SorteoController::class, 'confirmarLinea'])->name('confirmar.linea');
     Route::post('/jugada/{jugada}/reanudar', [SorteoController::class, 'reanudar'])->name('reanudar');
     Route::post('/jugada/{jugada}/confirmar-bingo', [SorteoController::class, 'confirmarBingo'])->name('confirmar.bingo');
+    Route::post('/jugada/{jugada}/publicidad', [SorteoController::class, 'publicidad'])->name('publicidad');
     Route::post('/jugada/{jugada}/finalizar', [SorteoController::class, 'finalizar'])->name('finalizar');
     Route::post('/jugada/{jugada}/reiniciar', [SorteoController::class, 'reiniciar'])->name('reiniciar');
 });

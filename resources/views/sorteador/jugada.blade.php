@@ -197,6 +197,12 @@
             <button id="btnLinea" class="btn-action linea"><i class="bi bi-pause"></i> PAUSA LÍNEA</button>
             <button id="btnBingo" class="btn-action bingo"><i class="bi bi-stop"></i> BINGO FINAL</button>
         </div>
+        
+        <!-- MÓDULO AD-SERVER -->
+        <h6 class="text-white-50 fw-bold mb-3 mt-4" style="font-size: 0.8rem; letter-spacing: 2px;"><i class="bi bi-megaphone-fill"></i> AD-SERVER (PUBLICIDAD)</h6>
+        <div class="d-flex gap-2 mb-3">
+            <button id="btnPublicidad" class="btn-action w-100" style="background: var(--neon-purple); border-color: var(--neon-purple);"><i class="bi bi-badge-ad-fill"></i> LANZAR TANDA (10s)</button>
+        </div>
 
         <button id="btnReiniciar" class="btn-action text-white-50 border-secondary mt-3"><i class="bi bi-arrow-counterclockwise"></i> Reiniciar Mesa</button>
 
@@ -258,6 +264,14 @@
     document.getElementById('btnLinea').onclick     = () => postCall('{{ route("sorteador.confirmar.linea", $jugadaId) }}');
     document.getElementById('btnBingo').onclick     = () => postCall('{{ route("sorteador.confirmar.bingo", $jugadaId) }}');
     document.getElementById('btnReiniciar').onclick = () => postCall('{{ route("sorteador.reiniciar", $jugadaId) }}');
+
+    document.getElementById('btnPublicidad').onclick = () => {
+        postCall('{{ route("sorteador.publicidad", $jugadaId) }}');
+        // Auto resume after 10 seconds
+        setTimeout(() => {
+            postCall('{{ route("sorteador.reanudar", $jugadaId) }}');
+        }, 10000);
+    };
 
     const pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
         cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
