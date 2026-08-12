@@ -145,32 +145,37 @@
                 </a>
             </li>
 
-            <div class="section-title">Logística & Físicos</div>
-
+            <!-- HERRAMIENTAS FÍSICAS (OCULTAS POR DEFECTO PARA EL REGULADOR) -->
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.jugadas.index') }}">
-                    <i class="bi bi-calendar-event"></i> Jugadas (Eventos)
+                <a class="nav-link collapsed" data-bs-toggle="collapse" href="#collapseLegacy" role="button" aria-expanded="false" aria-controls="collapseLegacy">
+                    <i class="bi bi-archive"></i> Herramientas Físicas (Legacy) <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
                 </a>
-            </li>
-            
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('organizadores.index') }}">
-                    <i class="bi bi-buildings"></i> Organizadores
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('instituciones.index') }}">
-                    <i class="bi bi-bank"></i> Instituciones (Premios)
-                </a>
-            </li>
-
-            <div class="section-title">Producción</div>
-
-            <li class="nav-item">
-                <a class="nav-link" href="/admin/impresion">
-                    <i class="bi bi-printer"></i> Lotes de Impresión
-                </a>
+                <div class="collapse" id="collapseLegacy">
+                    <ul class="nav flex-column ms-3 mt-1" style="border-left: 1px solid var(--border-glass);">
+                        <div class="section-title mt-2">Logística & Físicos</div>
+                        <li class="nav-item">
+                            <a class="nav-link text-muted" href="{{ route('admin.jugadas.index') }}">
+                                <i class="bi bi-calendar-event"></i> Jugadas (Eventos)
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-muted" href="{{ route('organizadores.index') }}">
+                                <i class="bi bi-buildings"></i> Organizadores
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-muted" href="{{ route('instituciones.index') }}">
+                                <i class="bi bi-bank"></i> Instituciones (Premios)
+                            </a>
+                        </li>
+                        <div class="section-title">Producción</div>
+                        <li class="nav-item">
+                            <a class="nav-link text-muted" href="/admin/impresion">
+                                <i class="bi bi-printer"></i> Lotes de Impresión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </li>
 
             <!-- PRUEBAS INTERNAS -->
