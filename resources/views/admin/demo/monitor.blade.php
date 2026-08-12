@@ -32,7 +32,7 @@
             background: #111;
             border-radius: 20px;
             padding: 20px;
-            border: 1px solid #333;
+            border: 2px solid #fff;
         }
         .last-number-box {
             background: radial-gradient(circle, #004d40 0%, #00251a 100%);
@@ -65,7 +65,7 @@
             background: #111;
             border-radius: 20px;
             padding: 20px;
-            border: 1px solid #333;
+            border: 2px solid #fff;
             height: 150px;
             display: flex;
             gap: 10px;
@@ -83,8 +83,8 @@
             justify-content: center;
             font-size: 2rem;
             font-weight: 700;
-            border: 2px solid #444;
-            color: #888;
+            border: 2px solid #fff;
+            color: #fff;
         }
         
         .grid-90 {
@@ -96,14 +96,14 @@
         }
         .grid-cell {
             background: #1a1a1a;
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.5rem;
             font-weight: 700;
-            color: #888;
+            color: #ccc;
             transition: all 0.3s ease;
         }
         .grid-cell.active {
