@@ -49,7 +49,7 @@
 
         .left-panel {
             background: var(--panel-bg);
-            border: 1px solid var(--border-glass);
+            border: 2px solid #fff;
             backdrop-filter: blur(10px);
             border-radius: 20px;
             display: flex;
@@ -106,7 +106,7 @@
 
         .matrix-panel {
             background: var(--panel-bg);
-            border: 1px solid var(--border-glass);
+            border: 2px solid #fff;
             border-radius: 20px;
             padding: 2rem;
             display: grid;
@@ -120,12 +120,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.4);
             border-radius: 8px;
             font-size: 2.2rem;
             font-weight: 800;
-            color: rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.6);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
