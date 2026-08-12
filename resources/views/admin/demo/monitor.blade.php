@@ -96,7 +96,7 @@
         }
         .grid-cell {
             background: #1a1a1a;
-            border: 1px solid #333;
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 10px;
             display: flex;
             align-items: center;
