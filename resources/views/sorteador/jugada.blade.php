@@ -247,7 +247,17 @@
                     let msg = res.status;
                     try { const data = await res.json(); msg += ' - ' + (data.error || JSON.stringify(data)); } catch(e){}
                     alert('Error: ' + msg);
+                    if (typeof stopAutoExtraer === 'function') stopAutoExtraer();
                 } else {
+                    const data = await res.json().catch(() => ({}));
+                    if (data.success === false) {
+                        if (data.error && data.error.includes('90 bolillas')) {
+                            console.log('Límite de 90 bolillas alcanzado.');
+                            if (typeof stopAutoExtraer === 'function') stopAutoExtraer();
+                        } else {
+                            alert('Aviso: ' + (data.error || 'Operación no completada.'));
+                        }
+                    }
                     if (document.getElementById('inputManual')) {
                         document.getElementById('inputManual').value = '';
                         document.getElementById('inputManual').focus();
@@ -256,9 +266,34 @@
             })
             .catch(err => {
                 console.error('Fetch error:', err);
-                alert('No se pudo comunicar con el servidor.');
+                // Si estamos en automático, no molestamos con alertas bloqueantes si fue un micro-corte.
+                const toast = document.createElement('div');
+                toast.style.cssText = 'position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:rgba(255,0,0,0.8); color:white; padding:10px 20px; border-radius:10px; z-index:9999; font-weight:bold; pointer-events:none;';
+                toast.innerText = 'Reconectando con el servidor...';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
             });
     }
+
+    // WAKE LOCK API para evitar que el celular se apague
+    let wakeLock = null;
+    const requestWakeLock = async () => {
+        try {
+            if ('wakeLock' in navigator) {
+                wakeLock = await navigator.wakeLock.request('screen');
+                wakeLock.addEventListener('release', () => { console.log('Wake Lock liberado'); });
+                console.log('Pantalla encendida (Wake Lock activo)');
+            }
+        } catch (err) { console.error(`${err.name}, ${err.message}`); }
+    };
+    document.addEventListener('visibilitychange', async () => {
+        if (wakeLock !== null && document.visibilityState === 'visible') { requestWakeLock(); }
+    });
+    // Solicitar al tocar cualquier parte de la pantalla (requerido por navegadores)
+    document.body.addEventListener('click', () => {
+        if(!wakeLock) requestWakeLock();
+    }, { once: true });
+    requestWakeLock(); // Intento inicial
 
     let autoExtraerInterval = null;
     const btnExtraerAhora = document.getElementById('btnExtraerAhora');
