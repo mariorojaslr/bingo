@@ -44,7 +44,11 @@ class CartonController extends Controller
         DB::beginTransaction();
         try {
             $cartonesToInsert = [];
-            $lastNumero = Carton::where('serie', $serie)->max('numero_carton') ?? 0;
+            
+            // Solución al bug de VARCHAR: Si la columna es texto en DB, max() devuelve "999" en vez de "1000".
+            // Ordenar por ID nos da el último real de forma segura.
+            $lastCarton = Carton::where('serie', $serie)->orderBy('id', 'desc')->first();
+            $lastNumero = $lastCarton ? (int) $lastCarton->numero_carton : 0;
 
             $bingoService = new BingoCardService();
 
@@ -140,7 +144,7 @@ class CartonController extends Controller
             $pagina = $request->get('page', 1);
         }
 
-        $cartones = Carton::orderBy('numero_carton')
+        $cartones = Carton::orderBy('id')
             ->paginate($porPagina, ['*'], 'page', $pagina);
 
         return view('admin.cartones.listado', compact(
@@ -174,8 +178,8 @@ class CartonController extends Controller
         $serieFiltro = Carton::orderBy('id', 'desc')->value('serie') ?? 'LR-2026-08';
         $totalCartones = Carton::where('serie', $serieFiltro)->count();
 
-        $cartones = Carton::where('serie', $serieFiltro)
-            ->orderBy('numero_carton')
+        $cartones = Carton::where('serie', 'LR-2026-08')
+            ->orderBy('id')
             ->paginate($porPagina, ['*'], 'page', $pagina);
             
         // Maintain password in pagination links
