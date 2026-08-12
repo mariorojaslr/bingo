@@ -30,11 +30,11 @@
         }
         .tabla-bingo td {
             border: 1px solid #000;
-            height: 32px;
+            height: 42px;
             text-align: center;
             vertical-align: middle;
             font-family: Helvetica, Arial, sans-serif;
-            font-size: clamp(10px, 3vw, 19px);
+            font-size: clamp(12px, 3vw, 22px);
             font-weight: bold;
             padding: 0;
         }
