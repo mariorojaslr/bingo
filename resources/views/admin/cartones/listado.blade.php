@@ -49,7 +49,7 @@
                 <div style="font-size: 0.75rem; color: #666;">
                     ID: {{ $carton->numero_carton }}
                 </div>
-                <div class="fw-bold fs-5" style="letter-spacing: 2px;">
+                <div class="fw-bold fs-5 text-dark" style="letter-spacing: 2px;">
                     {{ $carton->numero_suerte ?? '0000000' }}
                 </div>
             </div>
