@@ -162,14 +162,12 @@
     $bolillas = $sorteo->getBolillas();
     $ultimas = array_slice(array_reverse($bolillas), 0, 8);
     
-    // Prioridad: 1. URL de la jugada, 2. Default YouTube
-    $streamUrl = $sorteo->jugada->streaming_url ?? 'https://www.youtube.com/embed/live_stream?channel=UC4R8DWoMoI7CAwX8_LjQHig'; 
+    // Configuración exclusiva de Bunny.net Stream (Eliminando YouTube)
+    $libraryId = $sorteo->jugada->bunny_library_id ?? env('BUNNY_LIBRARY_ID', 'default_library');
+    $videoId = $sorteo->jugada->bunny_video_id ?? $sorteo->jugada->streaming_url ?? env('BUNNY_VIDEO_ID', 'demo_video');
     
-    // Si es una URL de Bunny (solo ID), la convertimos en iframe URL
-    if (is_numeric($streamUrl)) {
-        // Ejemplo de Bunny Stream: https://iframe.mediadelivery.net/embed/LIBRARY_ID/VIDEO_ID
-        $streamUrl = "https://iframe.mediadelivery.net/embed/" . ($sorteo->jugada->bunny_library_id ?? 'default') . "/" . $streamUrl;
-    }
+    // URL nativa de Bunny.net HLS Player
+    $streamUrl = "https://iframe.mediadelivery.net/embed/{$libraryId}/{$videoId}?autoplay=true&loop=false&muted=false&preload=true&responsive=true";
 @endphp
 
 <body>
@@ -221,10 +219,16 @@
     <!-- ================= 2. ESCENARIO PRINCIPAL ================= -->
     <div class="main-stage">
         
-        <!-- Transmisión de TV -->
+        <!-- Transmisión de TV (Bunny.net Stream) -->
         <div class="tv-container">
             <div class="live-badge">🔴 EN VIVO</div>
-            <iframe src="{{ $streamUrl }}?autoplay=1&mute=0&controls=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <iframe 
+                src="{{ $streamUrl }}" 
+                loading="lazy" 
+                style="border:0;position:absolute;top:0;height:100%;width:100%;" 
+                allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" 
+                allowfullscreen="true">
+            </iframe>
         </div>
 
         <!-- Footer / Ticker de Información -->

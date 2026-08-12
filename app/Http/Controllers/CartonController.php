@@ -7,6 +7,7 @@ use App\Models\Carton;
 use App\Services\PdfService;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use App\Services\BingoCardService;
 
 class CartonController extends Controller
 {
@@ -42,10 +43,12 @@ class CartonController extends Controller
             // Para mantener el consecutivo
             $lastNumero = Carton::where('serie', $serie)->max('numero_carton') ?? 0;
 
+            $bingoService = new BingoCardService();
+
             while ($generados < $cantidad) {
                 
                 // 1. Crear matriz matemática
-                $grilla = $this->generarGrillaArgentina();
+                $grilla = $bingoService->generarGrilla();
                 
                 // 2. Serializar a Hash
                 $hash = md5(json_encode($grilla));
@@ -128,78 +131,5 @@ class CartonController extends Controller
         ));
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | GENERADOR MATEMÁTICO PURO - ALGORITMO ROLLS-ROYCE
-    |--------------------------------------------------------------------------
-    */
-
-    private function generarGrillaArgentina()
-    {
-        // 1. GENERAR MAPA DE HUECOS (MÁSCARA 3x9)
-        // Reglas estrictas: Exactamente 5 números por fila. Mínimo 1 número por columna.
-        $valido = false;
-        while (!$valido) {
-            $patrones = [
-                array_fill(0, 9, 0),
-                array_fill(0, 9, 0),
-                array_fill(0, 9, 0)
-            ];
-            
-            for ($f = 0; $f < 3; $f++) {
-                // Elegir aleatoriamente 5 columnas para esta fila
-                $indices = array_rand(range(0, 8), 5);
-                foreach ($indices as $col) {
-                    $patrones[$f][$col] = 1;
-                }
-            }
-
-            // Chequeo de seguridad: asegurar que toda columna tenga al menos un número y no más de 3
-            $valido = true;
-            for ($c = 0; $c < 9; $c++) {
-                $sumaCol = $patrones[0][$c] + $patrones[1][$c] + $patrones[2][$c];
-                if ($sumaCol === 0) {
-                    $valido = false;
-                    break;
-                }
-            }
-        }
-
-        // 2. INYECCIÓN DE NÚMEROS Y ORDENAMIENTO ESTRICTO
-        $rangos = [
-            range(1, 9), range(10, 19), range(20, 29),
-            range(30, 39), range(40, 49), range(50, 59),
-            range(60, 69), range(70, 79), range(80, 90)
-        ];
-
-        $grilla = [
-            array_fill(0, 9, 0),
-            array_fill(0, 9, 0),
-            array_fill(0, 9, 0)
-        ];
-
-        for ($c = 0; $c < 9; $c++) {
-            $necesarios = $patrones[0][$c] + $patrones[1][$c] + $patrones[2][$c];
-            if ($necesarios > 0) {
-                // Seleccionar $necesarios números de este rango columna
-                $pool = $rangos[$c];
-                shuffle($pool);
-                $seleccionados = array_slice($pool, 0, $necesarios);
-                
-                // => AQUI SUCEDE LA MAGIA DE LA REGLA DE ORO <=
-                sort($seleccionados); 
-
-                // Injectarlos de arriba abajo
-                $idxDato = 0;
-                for ($f = 0; $f < 3; $f++) {
-                    if ($patrones[$f][$c] === 1) {
-                        $grilla[$f][$c] = $seleccionados[$idxDato];
-                        $idxDato++;
-                    }
-                }
-            }
-        }
-
-        return $grilla;
     }
 }

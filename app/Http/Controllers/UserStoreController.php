@@ -8,6 +8,7 @@ use App\Models\Carton;
 use App\Models\PruebaParticipante;
 use App\Models\ParticipanteCartonPrueba;
 use Illuminate\Support\Str;
+use App\Services\BingoCardService;
 
 class UserStoreController extends Controller
 {
@@ -49,7 +50,10 @@ class UserStoreController extends Controller
             $carton->serie = 'DIGITAL-' . date('ym');
             $carton->numero_carton = mt_rand(100000, 999999);
             $carton->formato = 'digital_online';
-            $carton->grilla = $this->generarGrillaBingo();
+            
+            $bingoService = new BingoCardService();
+            $carton->grilla = $bingoService->generarGrilla();
+            
             $carton->estado = 'activo';
             $carton->save();
 
@@ -82,34 +86,5 @@ class UserStoreController extends Controller
         return view('tienda.gracias', compact('participante', 'jugada', 'comprados'));
     }
 
-    /**
-     * Helper Matemático para crear el 3x9 Matrix de Bingo Clásico On-The-Fly
-     */
-    private function generarGrillaBingo()
-    {
-        $grilla = [];
-        for($r=0; $r<3; $r++) {
-            $fila = array_fill(0, 9, 0);
-            $indices = (array) array_rand(range(0, 8), 5); // 5 huecos llenos por fila
-            foreach($indices as $idx) {
-                $min = ($idx == 0) ? 1 : $idx * 10;
-                $max = ($idx == 8) ? 90 : ($idx * 10) + 9;
-                
-                // Evitamos duplicados verticales asegurándonos de probar hasta encontrar uno libre
-                do {
-                    $numero = mt_rand($min, $max);
-                    $duplicado = false;
-                    foreach ($grilla as $fila_anterior) {
-                        if ($fila_anterior[$idx] === $numero) {
-                            $duplicado = true; break;
-                        }
-                    }
-                } while ($duplicado);
-
-                $fila[$idx] = $numero;
-            }
-            $grilla[] = $fila;
-        }
-        return $grilla;
     }
 }
