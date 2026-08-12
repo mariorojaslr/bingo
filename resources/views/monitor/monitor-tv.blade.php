@@ -28,14 +28,14 @@
 
         /* --- BARRA LATERAL (Panel Izquierdo) --- */
         .sidebar {
-            width: 420px;
-            height: calc(100vh - 60px); /* Restando el zócalo */
+            width: 40vh;
+            height: calc(100vh - 7vh); /* Restando el zócalo */
             background-color: #0f1115; /* Fondo muy oscuro */
             border-right: 2px solid #1a1d24;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px 15px;
+            padding: 2vh 1.5vh;
             box-shadow: 5px 0 25px rgba(0,0,0,0.8);
             position: absolute;
             left: 0;
@@ -46,36 +46,36 @@
         /* --- BOLILLA PRINCIPAL --- */
         .header-title {
             color: #00ff88;
-            font-size: 0.75rem;
+            font-size: 1.2vh;
             letter-spacing: 2px;
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: 1.5vh;
             display: flex;
             align-items: center;
             gap: 8px;
         }
         .header-title::before {
             content: '';
-            width: 8px;
-            height: 8px;
+            width: 0.8vh;
+            height: 0.8vh;
             background-color: #00ff88;
             border-radius: 50%;
             box-shadow: 0 0 10px #00ff88;
         }
 
         .main-ball {
-            width: 220px;
-            height: 220px;
+            width: 55%;
+            aspect-ratio: 1;
             border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, #00ff88, #009955);
             box-shadow: 0 0 40px rgba(0, 255, 136, 0.5), inset -10px -10px 30px rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 25px;
+            margin-bottom: 2.5vh;
         }
         .main-number {
-            font-size: 7.5rem;
+            font-size: 8vh;
             font-weight: 900;
             color: #111;
             line-height: 1;
@@ -86,8 +86,8 @@
         .history-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 30px;
+            gap: 0.8vh;
+            margin-bottom: 3vh;
             width: 100%;
         }
         .history-ball {
@@ -98,7 +98,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 2.2vh;
             font-weight: 900;
             color: #fff;
         }
@@ -106,10 +106,10 @@
         /* --- TABLERO CENTRAL (90 Números) --- */
         .board-title {
             color: #888;
-            font-size: 0.7rem;
+            font-size: 1.1vh;
             letter-spacing: 1px;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 1vh;
             display: flex;
             align-items: center;
             gap: 5px;
@@ -118,9 +118,9 @@
         .board-grid {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
-            gap: 4px;
+            gap: 0.4vh;
             width: 100%;
-            margin-top: 10px;
+            margin-top: 1vh;
         }
         .board-cell {
             aspect-ratio: 1;
@@ -130,7 +130,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
+            font-size: 1.4vh;
             font-weight: 700;
             color: #aaa;
             transition: all 0.3s ease;
@@ -147,27 +147,27 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 60px;
+            height: 7vh;
             background-color: #0b0c0f;
             border-top: 2px solid #1a1d24;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 30px;
+            padding: 0 2vh;
             z-index: 10;
         }
         .bottom-bar .info-item {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 1vh;
             color: #888;
-            font-size: 0.8rem;
+            font-size: 1.5vh;
             font-weight: 700;
             letter-spacing: 1px;
         }
         .bottom-bar .info-value {
             color: #fff;
-            font-size: 1.2rem;
+            font-size: 2vh;
             font-weight: 900;
         }
         .bottom-bar .sponsor {
