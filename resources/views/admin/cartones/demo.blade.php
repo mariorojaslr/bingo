@@ -70,21 +70,21 @@
                 <p class="mb-0 text-white" style="font-size: 0.95rem; line-height: 1.4;">
                     En esta serie se han pre-computado los cartones con <strong>validación matemática estricta</strong> y algoritmo <em>Antibombas</em> para garantizar cero colisiones.
                 </p>
-                <p class="text-muted mt-1 mb-0" style="font-size: 0.8rem;">
-                    * La arquitectura <em>Elastic-Pool</em> permite escalar a 1.000.000 de cartones simultáneos.
+                <p class="mb-0 mt-2" style="font-size: 0.85rem; color: #74b9ff;">
+                    <i class="bi bi-info-circle me-1"></i> La arquitectura <em>Elastic-Pool</em> permite escalar a 1.000.000 de cartones simultáneos.
                 </p>
             </div>
-            <div class="col-md-5 text-center mt-3 mt-md-0 d-flex flex-column gap-1">
-                <div class="py-1 px-3 border rounded d-flex justify-content-between align-items-center" style="background: rgba(0, 168, 255, 0.05); border-color: rgba(0,168,255,0.3) !important;">
-                    <span class="text-uppercase text-muted" style="letter-spacing: 1px; font-size: 0.75rem; font-weight: bold;">Lote N°</span>
-                    <span class="text-white fw-bold" style="letter-spacing: 1px; font-size: 0.9rem;">{{ $serieFiltro }}</span>
+            <div class="col-md-5 text-center mt-3 mt-md-0 d-flex flex-column gap-2">
+                <div class="py-2 px-3 border rounded d-flex justify-content-between align-items-center" style="background: rgba(255, 255, 255, 0.05); border-color: rgba(255,255,255,0.2) !important;">
+                    <span class="text-uppercase" style="letter-spacing: 1px; font-size: 0.8rem; font-weight: bold; color: #e0e0e0;">Lote N°</span>
+                    <span class="text-white fw-bold" style="letter-spacing: 1px; font-size: 0.95rem;">{{ $serieFiltro }}</span>
                 </div>
-                <div class="py-1 px-3 border rounded d-flex justify-content-between align-items-center" style="background: rgba(0, 168, 255, 0.1); border-color: #00a8ff !important; box-shadow: 0 0 10px rgba(0,168,255,0.1);">
-                    <span class="text-uppercase text-white" style="letter-spacing: 1px; font-size: 0.75rem; font-weight: bold;">Cartones Generados</span>
-                    <span style="color: #00a8ff; font-weight: 900; font-size: 1.1rem;">{{ number_format($totalCartones, 0, ',', '.') }}</span>
+                <div class="py-2 px-3 border rounded d-flex justify-content-between align-items-center" style="background: rgba(0, 168, 255, 0.1); border-color: #00a8ff !important; box-shadow: 0 0 10px rgba(0,168,255,0.2);">
+                    <span class="text-uppercase text-white" style="letter-spacing: 1px; font-size: 0.8rem; font-weight: bold;">Cartones Generados</span>
+                    <span style="color: #00a8ff; font-weight: 900; font-size: 1.2rem;">{{ number_format($totalCartones, 0, ',', '.') }}</span>
                 </div>
-                <div class="py-1 px-3 border rounded d-flex justify-content-between align-items-center" style="background: rgba(40, 167, 69, 0.1); border-color: rgba(40,167,69,0.5) !important;">
-                    <span class="text-uppercase text-white" style="letter-spacing: 1px; font-size: 0.75rem; font-weight: bold;">Tiempo de Generación</span>
+                <div class="py-2 px-3 border rounded d-flex justify-content-between align-items-center" style="background: rgba(40, 167, 69, 0.1); border-color: #28a745 !important; box-shadow: 0 0 10px rgba(40,167,69,0.2);">
+                    <span class="text-uppercase text-white" style="letter-spacing: 1px; font-size: 0.8rem; font-weight: bold;">Tiempo de Generación</span>
                     <span class="text-success fw-bold" style="font-size: 0.95rem; letter-spacing: 1px;">
                         @if($totalCartones >= 50000)
                             17.32 Segundos

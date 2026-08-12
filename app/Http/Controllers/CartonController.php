@@ -169,10 +169,7 @@ class CartonController extends Controller
     {
         // Simple password protection
         if ($request->get('pwd') !== 'infinity2026') {
-            if ($request->get('pwd')) {
-                return response('Contraseña incorrecta', 403);
-            }
-            return response('<form><input type="password" name="pwd" placeholder="Contraseña"><button>Entrar</button></form>');
+            return view('admin.cartones.demo_login');
         }
 
         $columnas = 3;
