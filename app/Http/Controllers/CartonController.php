@@ -136,10 +136,23 @@ class CartonController extends Controller
 
         $porPagina = $columnas * $filas;
 
+        $serieFiltro = Carton::orderBy('id', 'desc')->value('serie') ?? 'LR-2026-08';
+        $totalCartones = Carton::where('serie', $serieFiltro)->count();
+
         if ($request->filled('numero')) {
             $numero = $request->numero;
-            $posicion = Carton::where('numero_carton', '<=', $numero)->count();
-            $pagina = (int) ceil($posicion / $porPagina);
+            $targetCarton = Carton::where('serie', $serieFiltro)
+                ->where('numero_carton', $numero)
+                ->first();
+                
+            if ($targetCarton) {
+                $posicion = Carton::where('serie', $serieFiltro)
+                    ->where('id', '<=', $targetCarton->id)
+                    ->count();
+                $pagina = (int) ceil($posicion / $porPagina);
+            } else {
+                $pagina = 1;
+            }
         } else {
             $pagina = $request->get('page', 1);
         }
@@ -147,8 +160,7 @@ class CartonController extends Controller
         $cartones = Carton::orderBy('id')
             ->paginate($porPagina, ['*'], 'page', $pagina);
 
-        $serieFiltro = Carton::orderBy('id', 'desc')->value('serie') ?? 'LR-2026-08';
-        $totalCartones = Carton::where('serie', $serieFiltro)->count();
+
 
         return view('admin.cartones.listado', compact(
             'cartones',
@@ -180,18 +192,26 @@ class CartonController extends Controller
 
         $porPagina = $columnas * $filas;
 
+        $serieFiltro = Carton::orderBy('id', 'desc')->value('serie') ?? 'LR-2026-08';
+        $totalCartones = Carton::where('serie', $serieFiltro)->count();
+
         if ($request->filled('numero')) {
             $numero = $request->numero;
-            // Sorting by ID means pos is determined by count of IDs <= target ID
-            $posicion = Carton::where('serie', 'LR-2026-08')
-                ->where('numero_carton', '<=', $numero)->count();
-            $pagina = (int) ceil($posicion / $porPagina);
+            $targetCarton = Carton::where('serie', $serieFiltro)
+                ->where('numero_carton', $numero)
+                ->first();
+                
+            if ($targetCarton) {
+                $posicion = Carton::where('serie', $serieFiltro)
+                    ->where('id', '<=', $targetCarton->id)
+                    ->count();
+                $pagina = (int) ceil($posicion / $porPagina);
+            } else {
+                $pagina = 1;
+            }
         } else {
             $pagina = $request->get('page', 1);
         }
-
-        $serieFiltro = Carton::orderBy('id', 'desc')->value('serie') ?? 'LR-2026-08';
-        $totalCartones = Carton::where('serie', $serieFiltro)->count();
 
         $cartones = Carton::where('serie', 'LR-2026-08')
             ->orderBy('id')
