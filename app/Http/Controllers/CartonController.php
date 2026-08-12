@@ -131,5 +131,4 @@ class CartonController extends Controller
         ));
     }
 
-    }
 }
