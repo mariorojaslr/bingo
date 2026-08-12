@@ -147,11 +147,16 @@ class CartonController extends Controller
         $cartones = Carton::orderBy('id')
             ->paginate($porPagina, ['*'], 'page', $pagina);
 
+        $serieFiltro = Carton::orderBy('id', 'desc')->value('serie') ?? 'LR-2026-08';
+        $totalCartones = Carton::where('serie', $serieFiltro)->count();
+
         return view('admin.cartones.listado', compact(
             'cartones',
             'columnas',
             'filas',
-            'porPagina'
+            'porPagina',
+            'serieFiltro',
+            'totalCartones'
         ));
     }
 
