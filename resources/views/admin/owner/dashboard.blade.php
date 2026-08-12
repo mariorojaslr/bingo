@@ -21,8 +21,8 @@
             <i class="bi bi-globe text-info me-2"></i> Infinity SaaS <span class="text-white-50 fs-5 fw-light">/ Owner Dashboard</span>
         </h2>
         <div>
-            <button class="btn btn-outline-info rounded-pill px-4"><i class="bi bi-plus-circle me-1"></i> Nueva Empresa</button>
-            <button class="btn btn-outline-warning rounded-pill px-4 ms-2"><i class="bi bi-tags me-1"></i> Gestionar Tarifas</button>
+            <button class="btn btn-outline-info rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalEmpresa"><i class="bi bi-plus-circle me-1"></i> Nueva Empresa</button>
+            <button class="btn btn-outline-warning rounded-pill px-4 ms-2" data-bs-toggle="modal" data-bs-target="#modalTarifa"><i class="bi bi-tags me-1"></i> Gestionar Tarifas</button>
         </div>
     </div>
 
@@ -106,7 +106,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <button class="btn btn-sm btn-outline-light"><i class="bi bi-eye"></i> Entrar como Admin</button>
+                                    <a href="/demo/empresa/{{ $emp->id }}?pwd=infinity2026" class="btn btn-sm btn-outline-light" target="_blank"><i class="bi bi-eye"></i> Entrar como Admin</a>
                                 </td>
                             </tr>
                             @endforeach
@@ -144,5 +144,88 @@
         </div>
     </div>
 </div>
+
+<!-- MODAL NUEVA EMPRESA -->
+<div class="modal fade" id="modalEmpresa" tabindex="-1" data-bs-theme="dark">
+  <div class="modal-dialog">
+    <div class="modal-content glass-panel text-white border-secondary">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title"><i class="bi bi-building"></i> Registrar Nueva Empresa</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="/demo/owner/empresas" method="POST">
+      @csrf
+      <div class="modal-body">
+        <div class="mb-3">
+            <label class="form-label">Nombre de la Empresa / Cliente</label>
+            <input type="text" name="nombre" class="form-control bg-dark text-white border-secondary" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Plan Comercial Asociado</label>
+            <select name="tarifa_id" class="form-select bg-dark text-white border-secondary">
+                <option value="">-- Sin Plan (Prueba) --</option>
+                @foreach($tarifas as $tarifa)
+                    <option value="{{ $tarifa->id }}">{{ $tarifa->nombre }} - ${{ number_format($tarifa->canon_mensual, 0) }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Color Principal (Marca)</label>
+            <input type="color" name="color_primario" class="form-control form-control-color w-100 bg-dark border-secondary" value="#00ff88">
+        </div>
+      </div>
+      <div class="modal-footer border-secondary">
+        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-info fw-bold">Guardar Empresa</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NUEVA TARIFA -->
+<div class="modal fade" id="modalTarifa" tabindex="-1" data-bs-theme="dark">
+  <div class="modal-dialog">
+    <div class="modal-content glass-panel text-white border-secondary">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title"><i class="bi bi-tags"></i> Definir Plan Comercial</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="/demo/owner/tarifas" method="POST">
+      @csrf
+      <div class="modal-body">
+        <div class="mb-3">
+            <label class="form-label">Nombre del Plan (Ej: Básico, Elite)</label>
+            <input type="text" name="nombre" class="form-control bg-dark text-white border-secondary" required>
+        </div>
+        <div class="row">
+            <div class="col-6 mb-3">
+                <label class="form-label">Canon Mensual ($)</label>
+                <input type="number" step="0.01" name="canon_mensual" class="form-control bg-dark text-white border-secondary" value="0">
+            </div>
+            <div class="col-6 mb-3">
+                <label class="form-label">Comisión x Cartón ($)</label>
+                <input type="number" step="0.01" name="comision_por_carton" class="form-control bg-dark text-white border-secondary" value="0">
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Límite de Cartones (Dejar vacío para ilimitado)</label>
+            <input type="number" name="max_cartones" class="form-control bg-dark text-white border-secondary">
+        </div>
+        <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" name="streaming_incluido" id="streamCheck" value="1">
+            <label class="form-check-label" for="streamCheck">Incluir acceso a Streaming Video (Bunny.net)</label>
+        </div>
+      </div>
+      <div class="modal-footer border-secondary">
+        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-warning fw-bold text-dark">Crear Tarifa</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
