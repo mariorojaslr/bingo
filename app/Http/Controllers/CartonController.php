@@ -258,6 +258,28 @@ class CartonController extends Controller
         return view('monitor.monitor-tv', compact('jugada', 'sorteo'));
     }
 
+    public function demoMonitorComun(Request $request)
+    {
+        if ($request->get('pwd') !== 'infinity2026') {
+            return view('admin.cartones.demo_login');
+        }
+        
+        $jugada = Jugada::first();
+        if(!$jugada) abort(404, "No hay jugada creada");
+        
+        $sorteo = Sorteo::where('jugada_id', $jugada->id)->latest()->first();
+        if(!$sorteo) {
+            $sorteo = Sorteo::create([
+                'jugada_id' => $jugada->id,
+                'estado' => 'en_curso',
+                'bolillas_extraidas' => '[]',
+                'ganadores' => '[]'
+            ]);
+        }
+
+        return view('admin.demo.monitor', compact('jugada', 'sorteo'));
+    }
+
     public function demoSorteador(Request $request)
     {
         if ($request->get('pwd') !== 'infinity2026') {

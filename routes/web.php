@@ -77,6 +77,7 @@ Route::get('/tienda/gracias/{token}', [\App\Http\Controllers\UserStoreController
 // Public Marketing / Demo Routes
 Route::get('demo/visor', [App\Http\Controllers\CartonController::class, 'demoVisor'])->name('demo.visor');
 Route::get('demo/monitor-tv', [App\Http\Controllers\CartonController::class, 'demoMonitorTV'])->name('demo.monitor_tv');
+Route::get('demo/monitor-comun', [App\Http\Controllers\CartonController::class, 'demoMonitorComun'])->name('demo.monitor_comun');
 Route::get('demo/sorteador', [App\Http\Controllers\CartonController::class, 'demoSorteador'])->name('demo.sorteador');
 
 /*
