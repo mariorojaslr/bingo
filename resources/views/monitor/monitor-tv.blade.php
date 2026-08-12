@@ -28,7 +28,7 @@
 
         /* --- BARRA LATERAL (Panel Izquierdo) --- */
         .sidebar {
-            width: 320px;
+            width: 420px;
             height: calc(100vh - 60px); /* Restando el zócalo */
             background-color: #0f1115; /* Fondo muy oscuro */
             border-right: 2px solid #1a1d24;
@@ -64,8 +64,8 @@
         }
 
         .main-ball {
-            width: 180px;
-            height: 180px;
+            width: 220px;
+            height: 220px;
             border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, #00ff88, #009955);
             box-shadow: 0 0 40px rgba(0, 255, 136, 0.5), inset -10px -10px 30px rgba(0,0,0,0.5);
@@ -75,7 +75,7 @@
             margin-bottom: 25px;
         }
         .main-number {
-            font-size: 6rem;
+            font-size: 7.5rem;
             font-weight: 900;
             color: #111;
             line-height: 1;
@@ -98,7 +98,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: 900;
             color: #fff;
         }
@@ -118,20 +118,21 @@
         .board-grid {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
-            gap: 3px;
+            gap: 4px;
             width: 100%;
-            margin-top: 5px;
+            margin-top: 10px;
         }
         .board-cell {
             aspect-ratio: 1;
-            background: #15181d;
-            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.65rem;
+            font-size: 1rem;
             font-weight: 700;
-            color: #333;
+            color: #aaa;
             transition: all 0.3s ease;
         }
         .board-cell.active {
