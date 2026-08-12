@@ -96,14 +96,14 @@
         }
         .grid-cell {
             background: #1a1a1a;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.6);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.5rem;
             font-weight: 700;
-            color: #444;
+            color: #888;
             transition: all 0.3s ease;
         }
         .grid-cell.active {
