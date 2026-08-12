@@ -250,20 +250,61 @@
             });
     }
 
-    document.getElementById('btnSacar').onclick     = () => postCall('{{ route("sorteador.extraer", $jugadaId) }}');
+    let autoExtraerInterval = null;
+    const btnSacar = document.getElementById('btnSacar');
+
+    function toggleAutoExtraer() {
+        if (autoExtraerInterval) {
+            stopAutoExtraer();
+        } else {
+            postCall('{{ route("sorteador.extraer", $jugadaId) }}');
+            autoExtraerInterval = setInterval(() => {
+                postCall('{{ route("sorteador.extraer", $jugadaId) }}');
+            }, 10000); // 10 segundos
+            btnSacar.innerHTML = '<i class="bi bi-stop-circle me-1"></i> DETENER AUTO';
+            btnSacar.style.background = 'var(--neon-red)';
+            btnSacar.style.color = '#fff';
+            btnSacar.style.boxShadow = '0 0 20px var(--neon-red)';
+        }
+    }
+
+    function stopAutoExtraer() {
+        if (autoExtraerInterval) {
+            clearInterval(autoExtraerInterval);
+            autoExtraerInterval = null;
+            btnSacar.innerHTML = '<i class="bi bi-cpu-fill me-1"></i> EXTRAER AUTO';
+            btnSacar.style.background = 'var(--neon-green)';
+            btnSacar.style.color = '#000';
+            btnSacar.style.boxShadow = 'none';
+        }
+    }
+
+    btnSacar.onclick = toggleAutoExtraer;
     
     // Ingreso Manual
     document.getElementById('btnManual').onclick = () => {
         let num = document.getElementById('inputManual').value;
-        if(num) postCall('{{ route("sorteador.extraer", $jugadaId) }}', { numero: num });
+        if(num) {
+            stopAutoExtraer();
+            postCall('{{ route("sorteador.extraer", $jugadaId) }}', { numero: num });
+        }
     };
     document.getElementById('inputManual').addEventListener('keypress', function(e) {
         if(e.key === 'Enter') document.getElementById('btnManual').click();
     });
 
-    document.getElementById('btnLinea').onclick     = () => postCall('{{ route("sorteador.confirmar.linea", $jugadaId) }}');
-    document.getElementById('btnBingo').onclick     = () => postCall('{{ route("sorteador.confirmar.bingo", $jugadaId) }}');
-    document.getElementById('btnReiniciar').onclick = () => postCall('{{ route("sorteador.reiniciar", $jugadaId) }}');
+    document.getElementById('btnLinea').onclick = () => {
+        stopAutoExtraer();
+        postCall('{{ route("sorteador.confirmar.linea", $jugadaId) }}');
+    };
+    document.getElementById('btnBingo').onclick = () => {
+        stopAutoExtraer();
+        postCall('{{ route("sorteador.confirmar.bingo", $jugadaId) }}');
+    };
+    document.getElementById('btnReiniciar').onclick = () => {
+        stopAutoExtraer();
+        postCall('{{ route("sorteador.reiniciar", $jugadaId) }}');
+    };
 
     document.getElementById('btnPublicidad').onclick = () => {
         postCall('{{ route("sorteador.publicidad", $jugadaId) }}');
