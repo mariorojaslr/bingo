@@ -73,6 +73,8 @@ Route::get('/tienda/{jugada}', [\App\Http\Controllers\UserStoreController::class
 Route::post('/tienda/{jugada}', [\App\Http\Controllers\UserStoreController::class, 'procesarCompra'])->name('tienda.procesar');
 Route::get('/tienda/gracias/{token}', [\App\Http\Controllers\UserStoreController::class, 'gracias'])->name('tienda.gracias');
 
+Route::get('/demo/visor', [\App\Http\Controllers\CartonController::class, 'demoVisor'])->name('demo.visor');
+
 /*
 |--------------------------------------------------------------------------
 | Panel de Administración
@@ -93,8 +95,6 @@ Route::prefix('admin')->group(function () {
     Route::put('instituciones/{institucion}/toggle',
         [InstitucionController::class, 'toggle']
     )->name('instituciones.toggle');
-
-    Route::get('/demo/visor', [CartonController::class, 'demoVisor'])->name('demo.visor');
 
     // Cartones
     Route::get('/cartones/generar', fn() =>
