@@ -79,6 +79,7 @@ Route::get('demo/visor', [App\Http\Controllers\CartonController::class, 'demoVis
 Route::get('demo/monitor-tv', [App\Http\Controllers\CartonController::class, 'demoMonitorTV'])->name('demo.monitor_tv');
 Route::get('demo/monitor-comun', [App\Http\Controllers\CartonController::class, 'demoMonitorComun'])->name('demo.monitor_comun');
 Route::get('demo/sorteador', [App\Http\Controllers\CartonController::class, 'demoSorteador'])->name('demo.sorteador');
+Route::get('demo/owner', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'index'])->name('demo.owner');
 
 /*
 |--------------------------------------------------------------------------

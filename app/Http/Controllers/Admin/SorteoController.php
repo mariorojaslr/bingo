@@ -40,7 +40,7 @@ class SorteoController extends Controller
         try {
             // 🛑 Corte si ya salieron 90 bolillas
             if (count($sorteo->getBolillas()) >= 90) {
-                return response()->json(['success' => false, 'error' => 'Ya salieron 90 bolillas'], 400);
+                return response()->json(['success' => false, 'error' => 'Ya salieron 90 bolillas'], 200);
             }
 
             $numeroManual = $request->input('numero');
