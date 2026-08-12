@@ -71,10 +71,6 @@
 
 </form>
 
-<div class="d-flex justify-content-center mb-2">
-    {{ $cartones->withQueryString()->links() }}
-</div>
-
 <div class="row">
 
 @foreach($cartones as $carton)
