@@ -60,33 +60,31 @@
 <body>
 
 <div class="container-fluid">
-    <h2 class="mb-1">Visor Profesional de Cartones</h2>
-
-    <div class="card p-3 mb-2 border-0 shadow" style="background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);">
+    <div class="card p-2 mb-2 border-0 shadow" style="background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);">
         <div class="row align-items-center text-center text-md-start">
             <div class="col-md-7">
-                <h2 class="text-uppercase mb-1" style="color: #00a8ff; font-weight: 900; letter-spacing: 2px;">
+                <h4 class="text-uppercase mb-1" style="color: #00a8ff; font-weight: 900; letter-spacing: 2px;">
                     Infinity Bingo <span class="text-white">PRO</span>
-                </h2>
-                <p class="mb-0 text-white" style="font-size: 0.95rem; line-height: 1.4;">
+                </h4>
+                <p class="mb-0 text-white" style="font-size: 0.85rem; line-height: 1.2;">
                     En esta serie se han pre-computado los cartones con <strong>validación matemática estricta</strong> y algoritmo <em>Antibombas</em> para garantizar cero colisiones.
                 </p>
                 <p class="mb-0 mt-2" style="font-size: 0.85rem; color: #74b9ff;">
                     <i class="bi bi-info-circle me-1"></i> La arquitectura <em>Elastic-Pool</em> permite escalar a 1.000.000 de cartones simultáneos.
                 </p>
             </div>
-            <div class="col-md-5 text-center mt-3 mt-md-0 d-flex flex-column gap-2">
-                <div class="py-2 px-3 border rounded d-flex justify-content-between align-items-center" style="background: rgba(255, 255, 255, 0.05); border-color: rgba(255,255,255,0.2) !important;">
-                    <span class="text-uppercase" style="letter-spacing: 1px; font-size: 0.8rem; font-weight: bold; color: #e0e0e0;">Lote N°</span>
-                    <span class="text-white fw-bold" style="letter-spacing: 1px; font-size: 0.95rem;">{{ $serieFiltro }}</span>
+            <div class="col-md-5 text-center mt-2 mt-md-0 d-flex flex-column gap-1">
+                <div class="py-1 px-2 border rounded d-flex justify-content-between align-items-center" style="background: rgba(255, 255, 255, 0.05); border-color: rgba(255,255,255,0.2) !important;">
+                    <span class="text-uppercase" style="letter-spacing: 1px; font-size: 0.7rem; font-weight: bold; color: #e0e0e0;">Lote N°</span>
+                    <span class="text-white fw-bold" style="letter-spacing: 1px; font-size: 0.85rem;">{{ $serieFiltro }}</span>
                 </div>
-                <div class="py-2 px-3 border rounded d-flex justify-content-between align-items-center" style="background: rgba(0, 168, 255, 0.1); border-color: #00a8ff !important; box-shadow: 0 0 10px rgba(0,168,255,0.2);">
-                    <span class="text-uppercase text-white" style="letter-spacing: 1px; font-size: 0.8rem; font-weight: bold;">Cartones Generados</span>
-                    <span style="color: #00a8ff; font-weight: 900; font-size: 1.2rem;">{{ number_format($totalCartones, 0, ',', '.') }}</span>
+                <div class="py-1 px-2 border rounded d-flex justify-content-between align-items-center" style="background: rgba(0, 168, 255, 0.1); border-color: #00a8ff !important; box-shadow: 0 0 10px rgba(0,168,255,0.2);">
+                    <span class="text-uppercase text-white" style="letter-spacing: 1px; font-size: 0.7rem; font-weight: bold;">Cartones</span>
+                    <span style="color: #00a8ff; font-weight: 900; font-size: 1rem;">{{ number_format($totalCartones, 0, ',', '.') }}</span>
                 </div>
-                <div class="py-2 px-3 border rounded d-flex justify-content-between align-items-center" style="background: rgba(40, 167, 69, 0.1); border-color: #28a745 !important; box-shadow: 0 0 10px rgba(40,167,69,0.2);">
-                    <span class="text-uppercase text-white" style="letter-spacing: 1px; font-size: 0.8rem; font-weight: bold;">Tiempo de Generación</span>
-                    <span class="text-success fw-bold" style="font-size: 0.95rem; letter-spacing: 1px;">
+                <div class="py-1 px-2 border rounded d-flex justify-content-between align-items-center" style="background: rgba(40, 167, 69, 0.1); border-color: #28a745 !important; box-shadow: 0 0 10px rgba(40,167,69,0.2);">
+                    <span class="text-uppercase text-white" style="letter-spacing: 1px; font-size: 0.7rem; font-weight: bold;">Tiempo</span>
+                    <span class="text-success fw-bold" style="font-size: 0.85rem; letter-spacing: 1px;">
                         @if($totalCartones >= 50000)
                             17.32 Segundos
                         @else
