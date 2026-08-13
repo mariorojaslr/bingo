@@ -76,12 +76,25 @@ class Sorteo extends Model
         $lineas = [];
         $bingos = [];
 
-        // Obtener relaciones reales de la jugada
-        $relaciones = \App\Models\JugadaCarton::where('jugada_id', $this->jugada_id)
+        // 1. Obtener cartones fsicos
+        $relacionesFisicas = \App\Models\JugadaCarton::where('jugada_id', $this->jugada_id)
                         ->with(['carton'])
                         ->get();
                             
-        foreach ($relaciones as $rel) {
+        // 2. Obtener cartones digitales de jugadores reales
+        $relacionesDigitales = \App\Models\ParticipanteCarton::where('jugada_id', $this->jugada_id)
+                        ->with(['carton'])
+                        ->get();
+                        
+        // 3. Obtener cartones digitales del piloto de prueba
+        $relacionesPrueba = \App\Models\ParticipanteCartonPrueba::where('jugada_id', $this->jugada_id)
+                        ->with(['carton'])
+                        ->get();
+                        
+        // Juntar todos los cartones vendidos en esta jugada
+        $todasLasRelaciones = $relacionesFisicas->concat($relacionesDigitales)->concat($relacionesPrueba);
+        
+        foreach ($todasLasRelaciones as $rel) {
             $c = $rel->carton;
             if (!$c) continue;
             
@@ -89,7 +102,7 @@ class Sorteo extends Model
             if ($c->esBingo($bolillas)) {
                 $bingos[] = [
                     'numero' => $c->numero_carton,
-                    'nombre' => 'Jugador #' . $c->numero_carton // En el futuro se puede mapear a un usuario real
+                    'nombre' => 'Jugador #' . $c->numero_carton // En el futuro se puede mapear al nombre del participante si existe
                 ];
             } elseif ($c->tieneLinea($bolillas)) {
                 $lineas[] = [

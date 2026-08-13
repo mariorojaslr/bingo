@@ -204,8 +204,8 @@ body {
 @php
     $bolillasIniciales = $bolillasMarcadas ?? [];
     
-    // Prioridad: 1. URL de la jugada, 2. Default YouTube
-    $streamUrl = $jugada->streaming_url ?? 'https://www.youtube.com/embed/live_stream?channel=UC4R8DWoMoI7CAwX8_LjQHig'; 
+    // En modo prueba o si no hay URL, usamos la imagen estática de IA
+    $streamUrl = $jugada->streaming_url ?? null; 
     
     // Formato Bunny Stream (si solo es el ID)
     if (is_numeric($streamUrl)) {
@@ -269,7 +269,11 @@ body {
         <div class="glass-panel p-1">
             <div class="tv-container">
                 <div class="live-tag">🔴 EN DIRECTO</div>
-                <iframe src="{{ $streamUrl }}?autoplay=1&mute=0&controls=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                @if($streamUrl)
+                    <iframe src="{{ $streamUrl }}?autoplay=1&mute=0&controls=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                @else
+                    <img src="/images/live_placeholder.jpg" alt="Sorteo en vivo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" />
+                @endif
             </div>
         </div>
     </div>
