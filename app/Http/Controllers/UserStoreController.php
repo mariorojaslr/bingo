@@ -41,8 +41,19 @@ class UserStoreController extends Controller
                 'nombre' => mb_strtoupper($request->nombre),
                 'token' => (string) Str::uuid(),
                 'codigo_acceso' => strtoupper(Str::random(6)),
+                'saldo' => 0,
+                'es_prueba' => false
             ]
         );
+
+        // Si es el piloto de prueba, descontamos el saldo ficticio
+        if ($participante->es_prueba) {
+            $costoTotal = $request->cantidad * 5000; // Asumimos 5000 por cartón por ahora
+            if ($participante->saldo >= $costoTotal) {
+                $participante->saldo -= $costoTotal;
+                $participante->save();
+            }
+        }
 
         // Generar la cantidad de cartones 100% digitales On-The-Fly para esta jugada
         for($i = 0; $i < $request->cantidad; $i++) {
@@ -55,6 +66,7 @@ class UserStoreController extends Controller
             $carton->grilla = $bingoService->generarGrilla();
             
             $carton->estado = 'activo';
+            $carton->es_prueba = $participante->es_prueba; // Hereda el estado de prueba
             $carton->save();
 
             // Asignarlo al jugador vinculado a esta jugada
