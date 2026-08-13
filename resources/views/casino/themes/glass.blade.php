@@ -108,7 +108,7 @@
                 </a>
             </div>
             <div class="col-6 col-md-4">
-                <a href="#" class="game-card text-center p-4">
+                <a href="/demo/mockups/ruleta" class="game-card text-center p-4">
                     <i class="bi bi-circle-fill text-danger mb-3 d-block" style="font-size: 3rem;"></i>
                     <h3 class="fs-4">Ruleta</h3>
                 </a>

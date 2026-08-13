@@ -97,7 +97,7 @@
             </div>
             
             <div class="col-6 col-md-4">
-                <a href="#" class="game-card p-4 text-center">
+                <a href="/demo/mockups/ruleta" class="game-card p-4 text-center">
                     <i class="bi bi-circle-fill fs-1 mb-3 d-block text-danger"></i>
                     <h3 class="fs-5">RULETA</h3>
                 </a>

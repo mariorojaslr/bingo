@@ -145,7 +145,7 @@
             </div>
 
             <div class="col-6 col-md-4 col-lg-3">
-                <a href="#" class="game-card text-center p-4">
+                <a href="/demo/mockups/ruleta" class="game-card text-center p-4">
                     <div class="mx-auto mb-3" style="border: 4px dashed #fff; border-radius: 50%; width: 60px; height: 60px; display:flex; align-items:center; justify-content:center;">
                         <i class="bi bi-circle-fill fs-2 text-danger"></i>
                     </div>
