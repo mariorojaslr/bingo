@@ -128,6 +128,32 @@ body {
 }
 @keyframes blinkLive { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
+/* OVERLAY ESPERANDO INICIO */
+.tv-waiting-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 5;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: opacity 0.5s;
+}
+.tv-waiting-overlay h3 {
+    font-family: 'Outfit'; font-weight: 900; color: #D4AF37; letter-spacing: 3px;
+    animation: blinkLive 2s infinite;
+}
+
+/* ANIMACION BOLILLA (Simula el giro del bolillero) */
+@keyframes shakeBolillero {
+    0% { transform: scale(1) translate(0, 0); }
+    20% { transform: scale(1.02) translate(-2px, 2px); }
+    40% { transform: scale(1.02) translate(2px, -2px); }
+    60% { transform: scale(1.02) translate(-2px, -2px); }
+    80% { transform: scale(1.02) translate(2px, 2px); }
+    100% { transform: scale(1) translate(0, 0); }
+}
+.bolillero-active img {
+    animation: shakeBolillero 0.8s ease-out;
+}
+
 /* ===== 3. ZONA DE CARTONES (MÁXIMO 4) ===== */
 .zona-cartones-title {
     font-family: 'Outfit'; font-weight: 800; font-size: 1.2rem;
@@ -272,12 +298,17 @@ body {
 
         <!-- Derecha: TV Transmisión -->
         <div class="glass-panel p-1">
-            <div class="tv-container">
+            <div class="tv-container" id="tvContainer">
+                <div class="tv-waiting-overlay" id="tvWaiting" style="{{ count($bolillasIniciales) > 0 ? 'display: none;' : '' }}">
+                    <i class="bi bi-hourglass-split text-white-50" style="font-size: 3rem; margin-bottom: 10px;"></i>
+                    <h3>INICIAMOS PRÓXIMAMENTE</h3>
+                    <div class="text-white-50">Esperando al locutor...</div>
+                </div>
                 <div class="live-tag">🔴 EN DIRECTO</div>
                 @if($streamUrl)
                     <iframe src="{{ $streamUrl }}?autoplay=1&mute=0&controls=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 @else
-                    <img src="/images/live_placeholder.jpg" alt="Sorteo en vivo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" />
+                    <img src="/images/live_placeholder.jpg" alt="Sorteo en vivo" id="liveImage" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" />
                 @endif
             </div>
         </div>
@@ -402,6 +433,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 // NUEVA BOLILLA DETECTADA
                 if (data.bolilla !== lastBolilla) {
                     lastBolilla = data.bolilla;
+                    
+                    // Quitar cartel de espera si aparece la primera bolilla
+                    document.getElementById('tvWaiting').style.opacity = '0';
+                    setTimeout(() => { document.getElementById('tvWaiting').style.display = 'none'; }, 500);
+
+                    // Animar la imagen del bolillero para sincronizar!
+                    let tv = document.getElementById('tvContainer');
+                    tv.classList.remove('bolillero-active');
+                    void tv.offsetWidth; // trigger reflow
+                    tv.classList.add('bolillero-active');
 
                     // BOLILLA PRINCIPAL
                     const bActual = document.getElementById('bolillaActual');
