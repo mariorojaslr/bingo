@@ -70,6 +70,9 @@ Route::get('/', function () {
 
 Route::get('/salas', [\App\Http\Controllers\LobbyController::class, 'index'])->name('lobby.index');
 
+// El HUB de Casino Marca Blanca para el jugador final
+Route::get('/c/{subdominio}', [\App\Http\Controllers\CasinoLobbyController::class, 'index'])->name('casino.lobby');
+
 Route::get('/tienda/{jugada}', [\App\Http\Controllers\UserStoreController::class, 'showTienda'])->name('tienda.show');
 Route::post('/tienda/{jugada}', [\App\Http\Controllers\UserStoreController::class, 'procesarCompra'])->name('tienda.procesar');
 Route::get('/tienda/gracias/{token}', [\App\Http\Controllers\UserStoreController::class, 'gracias'])->name('tienda.gracias');
