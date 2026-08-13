@@ -96,24 +96,13 @@ class Carton extends Model
     }
 
     /**
-     * ¿Este cartón tiene al menos una LÍNEA?
+     * ¿Este cartón tiene al menos una LÍNEA? (En Bingo 90, la línea siempre es horizontal)
      */
     public function tieneLinea(array $bolillas): bool
     {
-        // filas
+        // filas (horizontales)
         foreach ($this->grilla as $fila) {
             if ($this->lineaCompleta($fila, $bolillas)) {
-                return true;
-            }
-        }
-
-        // columnas
-        for ($c = 0; $c < 9; $c++) {
-            $columna = [];
-            foreach ($this->grilla as $fila) {
-                $columna[] = $fila[$c];
-            }
-            if ($this->lineaCompleta($columna, $bolillas)) {
                 return true;
             }
         }

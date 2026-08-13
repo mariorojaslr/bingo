@@ -62,13 +62,31 @@ class SorteoController extends Controller
                 } while (!$sorteo->agregarBolilla($nueva));
             }
 
-            // $sorteo->evaluarGanadores(); // TODO: Implementar logica de ganadores despues
+            // Evaluar Ganadores
+            $ganadores = $sorteo->evaluarGanadores();
+            
+            // Lógica de transición de estado basada en los ganadores
+            // Solo pausamos automáticamente si acabamos de descubrir la línea/bingo en ESTA bolilla.
+            $estadoPrevio = $sorteo->estado;
+            if (count($ganadores['bingos']) > 0 && $estadoPrevio !== 'bingo') {
+                $sorteo->estado = 'bingo';
+                $sorteo->save();
+            } elseif (count($ganadores['lineas']) > 0 && $estadoPrevio === 'en_curso') {
+                // Asumimos que si el estado es 'linea', ya fue cantada, no volvemos a pausar por línea
+                $sorteo->estado = 'linea';
+                $sorteo->save();
+            }
 
             // 📡 Evento ÚNICO (todas las pantallas escuchan)
+            // Se puede enviar la info de los ganadores en el evento si es necesario
             event(new SorteoActualizado($sorteo));
 
             // 🚀 Tecnología rápida (sin redirect)
-            return response()->json(['success' => true]);
+            return response()->json([
+                'success' => true,
+                'ganadores' => $ganadores,
+                'estado' => $sorteo->estado
+            ]);
         } catch (\Throwable $e) {
             return response()->json([
                 'error' => $e->getMessage(),
