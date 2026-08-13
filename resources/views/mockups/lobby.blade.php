@@ -97,9 +97,9 @@
                     </a>
                     
                     <a href="#" class="game-card">
-                        <i class="bi bi-suit-diamond text-danger fs-2 mb-2 d-block"></i>
-                        <h3 class="text-light fs-5">Póker Texas</h3>
-                        <p class="text-white-50 small mb-0">Mesas Cash</p>
+                        <i class="bi bi-circle-fill text-danger fs-2 mb-2 d-block" style="border: 4px dashed #fff; border-radius: 50%; width: 40px; height: 40px; display:flex; align-items:center; justify-content:center;"></i>
+                        <h3 class="text-light fs-5">Ruleta Europea</h3>
+                        <p class="text-white-50 small mb-0">Mesas VIP</p>
                     </a>
 
                     <a href="#" class="game-card">
@@ -141,10 +141,10 @@
                     </a>
                     
                     <a href="#" class="game-card">
-                        <i class="bi bi-suit-club fs-3 me-3 text-white-50"></i>
+                        <i class="bi bi-circle-fill fs-3 me-3 text-white-50"></i>
                         <div>
-                            <h3 class="fs-6">Póker</h3>
-                            <small class="text-white-50">Texas Hold'em</small>
+                            <h3 class="fs-6">Ruleta</h3>
+                            <small class="text-white-50">Europea VIP</small>
                         </div>
                     </a>
 
@@ -193,8 +193,8 @@
                         </div>
                         <div class="col-6">
                             <a href="#" class="game-card h-100 text-center">
-                                <i class="bi bi-dice-5 fs-2 mb-2 d-block"></i>
-                                <h6>Dados</h6>
+                                <i class="bi bi-circle-fill fs-2 mb-2 d-block text-white-50"></i>
+                                <h6>Ruleta</h6>
                             </a>
                         </div>
                         <div class="col-12">
