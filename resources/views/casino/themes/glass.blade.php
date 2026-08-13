@@ -31,62 +31,86 @@
         .badge-live { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: #fff; padding: 4px 10px; border-radius: 50px; font-size: 0.7rem; font-weight: bold; float: right; }
         
         /* Pilar 1: Diseño Adaptativo Inteligente */
-        .app-container { max-width: 100%; margin: 0 auto; min-height: 100vh; position: relative; z-index: 1;}
+        .app-container { width: 100%; min-height: 100vh; position: relative; z-index: 1;}
         @media (min-width: 768px) {
             body { background: #000; }
-            .app-container { max-width: 480px; margin-top: 4vh; margin-bottom: 4vh; min-height: 92vh; border-radius: 40px; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.8), 0 0 0 10px #111; background: linear-gradient(135deg, #1e003b, #001233); }
+            .app-container { background: linear-gradient(135deg, #1e003b, #001233); }
+            .game-card { height: 100%; }
         }
     </style>
 </head>
 <body>
 <div class="app-container">
-    <div class="header">
+    <div class="header d-flex justify-content-between align-items-center px-4 py-3 border-bottom border-secondary" style="background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);">
         <div class="d-flex align-items-center">
-            <img src="https://ui-avatars.com/api/?name={{ urlencode($empresa->nombre) }}&background=random" class="rounded-circle me-2" width="40">
+            <img src="https://ui-avatars.com/api/?name={{ urlencode($empresa->nombre) }}&background=random" class="rounded-circle me-3" width="45">
             <div>
-                <h6 class="mb-0 fw-bold">{{ mb_strtoupper($empresa->nombre) }}</h6>
-                <small class="text-white-50">Saldo: $0.00</small>
+                <h6 class="mb-0 fw-bold fs-5">{{ mb_strtoupper($empresa->nombre) }}</h6>
+            </div>
+        </div>
+        
+        <div class="d-flex gap-3 align-items-center">
+            <!-- Selector de Moneda y Lenguaje -->
+            <select class="form-select form-select-sm bg-transparent text-white border-light" style="width: auto;">
+                <option value="es_ARS">🇪🇸 ARS ($)</option>
+                <option value="en_USD">🇺🇸 USD ($)</option>
+                <option value="pt_BRL">🇧🇷 BRL (R$)</option>
+            </select>
+            
+            <div class="px-3 py-1 rounded text-white fw-bold" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                $0.00
             </div>
         </div>
     </div>
     
-    <div class="container p-3">
-        @if($sorteoActivo)
-            <a href="{{ route('tienda.show', $sorteoActivo->jugada_id) }}" class="game-card">
-                <span class="badge-live">EN VIVO</span>
-                <div class="mt-4 mb-2">
-                    <i class="bi bi-play-circle text-white fs-1"></i>
-                </div>
-                <h3 class="fs-2">Bingo</h3>
-                <p class="text-white-50 small mb-0">Sala Activa - Participa ahora</p>
-            </a>
-        @else
-            <div class="game-card" style="opacity: 0.5;">
-                <div class="mt-4 mb-2">
-                    <i class="bi bi-calendar-x text-white fs-1"></i>
-                </div>
-                <h3 class="fs-2">Bingo</h3>
-                <p class="text-white-50 small mb-0">No hay sorteos en vivo</p>
+    <div class="container-fluid px-4 py-4">
+        
+        <div class="row g-4 mb-5">
+            <div class="col-12 col-lg-8">
+                @if($sorteoActivo)
+                    <a href="{{ route('tienda.show', $sorteoActivo->jugada_id) }}" class="game-card" style="padding: 40px; background: rgba(0, 212, 255, 0.1); border-color: rgba(0, 212, 255, 0.3);">
+                        <span class="badge-live mb-4 d-inline-block position-static float-none">EN VIVO</span>
+                        <div class="d-flex align-items-center h-100 mt-2">
+                            <i class="bi bi-play-circle text-info me-4" style="font-size: 5rem;"></i>
+                            <div>
+                                <h3 class="fs-1 text-info">BINGO TOTAL</h3>
+                                <p class="text-white-50 mb-0 mt-2 fs-5">Participa en el sorteo ahora</p>
+                            </div>
+                        </div>
+                    </a>
+                @else
+                    <div class="game-card" style="opacity: 0.5; padding: 40px;">
+                        <div class="d-flex align-items-center h-100">
+                            <i class="bi bi-calendar-x text-secondary me-4" style="font-size: 5rem;"></i>
+                            <div>
+                                <h3 class="fs-1 text-secondary">BINGO</h3>
+                                <p class="text-white-50 mb-0 mt-2 fs-5">No hay sorteos en vivo</p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
-        @endif
+            
+            <div class="col-12 col-lg-4">
+                <a href="#" class="game-card p-4">
+                    <i class="bi bi-trophy text-warning mb-3 d-block" style="font-size: 3rem;"></i>
+                    <h3 class="fs-3 mb-2">Deportes</h3>
+                    <p class="text-white-50 mb-0">Fútbol, Tenis, NBA</p>
+                </a>
+            </div>
+        </div>
 
-        <div class="row g-3">
-            <div class="col-6">
-                <a href="#" class="game-card h-100 text-center">
-                    <i class="bi bi-suit-spade fs-2 mb-2 d-block text-white-50"></i>
-                    <h6>Blackjack</h6>
+        <div class="row g-4">
+            <div class="col-6 col-md-4">
+                <a href="#" class="game-card text-center p-4">
+                    <i class="bi bi-suit-spade text-white-50 mb-3 d-block" style="font-size: 3rem;"></i>
+                    <h3 class="fs-4">Blackjack</h3>
                 </a>
             </div>
-            <div class="col-6">
-                <a href="#" class="game-card h-100 text-center">
-                    <i class="bi bi-circle-fill fs-2 mb-2 d-block text-white-50"></i>
-                    <h6>Ruleta</h6>
-                </a>
-            </div>
-            <div class="col-12">
-                <a href="#" class="game-card text-center">
-                    <i class="bi bi-trophy fs-2 mb-2 d-block text-white-50"></i>
-                    <h6>Apuestas Deportivas</h6>
+            <div class="col-6 col-md-4">
+                <a href="#" class="game-card text-center p-4">
+                    <i class="bi bi-circle-fill text-danger mb-3 d-block" style="font-size: 3rem;"></i>
+                    <h3 class="fs-4">Ruleta</h3>
                 </a>
             </div>
         </div>

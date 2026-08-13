@@ -71,7 +71,13 @@
                 <div class="header">
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="fs-4 fw-bold">INFINITY</span>
-                        <div class="bg-dark px-3 py-1 rounded-pill border border-secondary text-info"><i class="bi bi-wallet2"></i> $4.500</div>
+                        <div class="d-flex gap-2">
+                            <select class="form-select form-select-sm bg-dark text-white border-secondary px-1 py-0" style="font-size: 0.7rem; width: auto;">
+                                <option>🇪🇸 ARS</option>
+                                <option>🇺🇸 USD</option>
+                            </select>
+                            <div class="bg-dark px-2 py-1 rounded-pill border border-secondary text-info" style="font-size: 0.8rem;"><i class="bi bi-wallet2"></i> $4.500</div>
+                        </div>
                     </div>
                 </div>
                 <div class="p-3" style="overflow-y: auto;">
@@ -116,8 +122,12 @@
             <h4 class="text-center mb-3" style="color: #d4af37;">Opción 2: Premium Casino</h4>
             <p class="text-center text-white-50 small mb-4">Elegante, dorado, muy casino físico VIP.</p>
             <div class="phone-frame theme-gold">
-                <div class="header">
+                <div class="header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0" style="color: #d4af37; font-family: serif; font-style: italic;">Infinity Casino</h5>
+                    <select class="form-select form-select-sm bg-dark text-white px-1 py-0" style="font-size: 0.7rem; width: auto; border: 1px solid #d4af37;">
+                        <option>🇪🇸 ARS</option>
+                        <option>🇺🇸 USD</option>
+                    </select>
                 </div>
                 <div class="p-3" style="overflow-y: auto;">
                     <div class="bg-dark p-3 rounded text-center mb-4 border border-secondary">
@@ -164,14 +174,18 @@
             <h4 class="text-center mb-3 text-light">Opción 3: Glassmorphism</h4>
             <p class="text-center text-white-50 small mb-4">Moderno, desenfocado, estilo app de Apple.</p>
             <div class="phone-frame theme-glass">
-                <div class="header">
+                <div class="header d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center">
-                        <img src="https://ui-avatars.com/api/?name=Jugador&background=random" class="rounded-circle me-2" width="40">
+                        <img src="https://ui-avatars.com/api/?name=Jugador&background=random" class="rounded-circle me-2" width="30">
                         <div>
-                            <h6 class="mb-0 fw-bold">Hola, Jugador</h6>
-                            <small class="text-white-50">Saldo: $4.500</small>
+                            <h6 class="mb-0 fw-bold" style="font-size: 0.8rem;">Hola, Jugador</h6>
+                            <small class="text-white-50" style="font-size: 0.7rem;">Saldo: $4.500</small>
                         </div>
                     </div>
+                    <select class="form-select form-select-sm bg-transparent text-white border-light px-1 py-0" style="font-size: 0.7rem; width: auto;">
+                        <option>🇪🇸 ARS</option>
+                        <option>🇺🇸 USD</option>
+                    </select>
                 </div>
                 <div class="p-3" style="overflow-y: auto;">
                     

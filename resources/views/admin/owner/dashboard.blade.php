@@ -12,20 +12,30 @@
         .glass-panel { background: rgba(25, 28, 36, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
     </style>
 </head>
-<body>
-<div class="container mt-4" style="color: #fff; font-family: 'Outfit', sans-serif;">
-    
-    <!-- HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
-        <h2 class="fw-bold" style="letter-spacing: -1px; text-transform: uppercase;">
-            <i class="bi bi-globe text-info me-2"></i> Infinity SaaS <span class="text-white-50 fs-5 fw-light">/ Owner Dashboard</span>
-        </h2>
-        <div>
-            <button class="btn btn-outline-info rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalEmpresa"><i class="bi bi-plus-circle me-1"></i> Nueva Empresa</button>
-            <button class="btn btn-outline-warning rounded-pill px-4 ms-2" data-bs-toggle="modal" data-bs-target="#modalTarifa"><i class="bi bi-tags me-1"></i> Gestionar Tarifas</button>
+<body class="text-white bg-dark">
+
+<nav class="navbar navbar-dark bg-black border-bottom border-secondary py-3">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <i class="bi bi-globe fs-2 me-2 text-info"></i>
+            <div>
+                <strong class="fs-4 d-block" style="letter-spacing: 1px;">INFINITY SAAS</strong>
+                <span class="text-white-50" style="font-size: 0.7rem; letter-spacing: 2px;">/ OWNER DASHBOARD</span>
+            </div>
+        </a>
+        <div class="d-flex">
+            <button class="btn btn-outline-info rounded-pill px-4 me-3" data-bs-toggle="modal" data-bs-target="#modalEmpresa">
+                <i class="bi bi-plus-circle"></i> Nueva Empresa
+            </button>
+            <button class="btn btn-outline-warning rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalTarifa">
+                <i class="bi bi-tags"></i> Gestionar Tarifas
+            </button>
         </div>
     </div>
+</nav>
 
+<div class="container-fluid px-4 mt-5">
+    
     <!-- MÉTRICAS GLOBALES -->
     <div class="row mb-5 g-4">
         <div class="col-md-3">

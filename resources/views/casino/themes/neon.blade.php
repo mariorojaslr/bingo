@@ -64,77 +64,96 @@
 
         /* Pilar 1: Diseño Adaptativo Inteligente */
         .app-container {
-            max-width: 100%;
-            margin: 0 auto;
+            width: 100%;
             min-height: 100vh;
             background-color: #07070a;
             position: relative;
         }
         @media (min-width: 768px) {
-            body { background-color: #020205; background-image: radial-gradient(circle at center, color-mix(in srgb, var(--color-primario) 15%, transparent) 0%, transparent 50%); }
-            .app-container {
-                max-width: 480px;
-                margin-top: 4vh;
-                margin-bottom: 4vh;
-                min-height: 92vh;
-                border-radius: 40px;
-                overflow: hidden;
-                box-shadow: 0 0 50px rgba(0,0,0,0.8), 0 0 0 10px #1a1a24;
-            }
+            body { background-image: radial-gradient(circle at center, color-mix(in srgb, var(--color-primario) 10%, transparent) 0%, transparent 80%); }
+            .game-card { height: 100%; }
         }
     </style>
 </head>
 <body>
 <div class="app-container">
-    <div class="header">
-        <div class="d-flex justify-content-between align-items-center">
-            <span class="fs-4 fw-bold" style="color: var(--color-primario);">{{ mb_strtoupper($empresa->nombre) }}</span>
+    <div class="header d-flex justify-content-between align-items-center px-4">
+        <span class="fs-4 fw-bold" style="color: var(--color-primario);">{{ mb_strtoupper($empresa->nombre) }}</span>
+        
+        <div class="d-flex gap-3 align-items-center">
+            <!-- Selector de Moneda y Lenguaje -->
+            <select class="form-select form-select-sm bg-dark text-white border-secondary" style="width: auto;">
+                <option value="es_ARS">🇪🇸 ARS ($)</option>
+                <option value="en_USD">🇺🇸 USD ($)</option>
+                <option value="pt_BRL">🇧🇷 BRL (R$)</option>
+            </select>
+            
             <div class="bg-dark px-3 py-1 rounded-pill border border-secondary text-info">
                 <i class="bi bi-wallet2"></i> $0.00
             </div>
         </div>
     </div>
     
-    <div class="container p-3">
+    <div class="container-fluid px-4 py-3">
         <h6 class="text-white-50 mb-3 text-uppercase" style="letter-spacing: 2px; font-size: 11px;">En Vivo Ahora</h6>
         
-        @if($sorteoActivo)
-            <a href="{{ route('tienda.show', $sorteoActivo->jugada_id) }}" class="game-card featured">
-                <span class="badge-live"><i class="bi bi-broadcast"></i> EN VIVO</span>
-                <i class="bi bi-play-circle fs-1 mb-2 d-block" style="color: var(--color-primario);"></i>
-                <h3>BINGO TOTAL</h3>
-                <p class="text-white-50 small mb-0 mt-1">Sorteo Activo en Curso</p>
-                <div class="mt-3 bg-dark rounded p-2 text-center" style="border: 1px solid var(--color-primario);">
-                    <small class="text-uppercase" style="font-size: 10px; color: var(--color-primario);">ENTRAR A JUGAR</small>
-                </div>
-            </a>
-        @else
-            <div class="game-card opacity-50">
-                <i class="bi bi-calendar-x fs-1 mb-2 d-block text-secondary"></i>
-                <h3>BINGO</h3>
-                <p class="text-white-50 small mb-0 mt-1">No hay sorteos en este momento</p>
+        <div class="row g-4 mb-5">
+            <div class="col-12 col-lg-8">
+                @if($sorteoActivo)
+                    <a href="{{ route('tienda.show', $sorteoActivo->jugada_id) }}" class="game-card featured">
+                        <span class="badge-live"><i class="bi bi-broadcast"></i> EN VIVO</span>
+                        <div class="d-flex align-items-center h-100">
+                            <i class="bi bi-play-circle d-block me-4" style="color: var(--color-primario); font-size: 4rem;"></i>
+                            <div>
+                                <h3 class="fs-1">BINGO TOTAL</h3>
+                                <p class="text-white-50 mb-0 mt-1">Sorteo Activo en Curso</p>
+                                <div class="mt-3 bg-dark rounded p-2 text-center d-inline-block px-4" style="border: 1px solid var(--color-primario);">
+                                    <small class="text-uppercase fw-bold" style="font-size: 12px; color: var(--color-primario);">ENTRAR A JUGAR</small>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                @else
+                    <div class="game-card opacity-50 d-flex align-items-center p-4">
+                        <i class="bi bi-calendar-x d-block text-secondary me-4" style="font-size: 4rem;"></i>
+                        <div>
+                            <h3 class="fs-1">BINGO</h3>
+                            <p class="text-white-50 mb-0 mt-1">No hay sorteos en este momento</p>
+                        </div>
+                    </div>
+                @endif
             </div>
-        @endif
+            
+            <div class="col-12 col-lg-4">
+                <a href="#" class="game-card">
+                    <i class="bi bi-trophy text-warning fs-1 mb-3 d-block"></i>
+                    <h3 class="text-light fs-4">Apuestas Deportivas</h3>
+                    <p class="text-white-50 small mb-0">Fútbol, NBA, F1 y más</p>
+                </a>
+            </div>
+        </div>
 
-        <h6 class="text-white-50 mt-4 mb-3 text-uppercase" style="letter-spacing: 2px; font-size: 11px;">Juegos Clásicos</h6>
+        <h6 class="text-white-50 mt-4 mb-3 text-uppercase" style="letter-spacing: 2px; font-size: 11px;">Juegos de Casino</h6>
         
-        <a href="#" class="game-card">
-            <i class="bi bi-suit-spade fs-2 mb-2 d-block" style="color: #666;"></i>
-            <h3 class="text-light fs-5">Blackjack</h3>
-            <p class="text-white-50 small mb-0">Próximamente</p>
-        </a>
+        <div class="row g-4">
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="#" class="game-card text-center p-4">
+                    <i class="bi bi-suit-spade fs-1 mb-3 d-block" style="color: #666;"></i>
+                    <h3 class="text-light fs-5">Blackjack</h3>
+                    <p class="text-white-50 small mb-0">Próximamente</p>
+                </a>
+            </div>
 
-        <a href="#" class="game-card">
-            <i class="bi bi-circle-fill fs-2 mb-2 d-block text-danger" style="border: 4px dashed #fff; border-radius: 50%; width: 40px; height: 40px; display:flex; align-items:center; justify-content:center;"></i>
-            <h3 class="text-light fs-5">Ruleta Europea</h3>
-            <p class="text-white-50 small mb-0">Mesas VIP</p>
-        </a>
-
-        <a href="#" class="game-card">
-            <i class="bi bi-trophy text-warning fs-2 mb-2 d-block"></i>
-            <h3 class="text-light fs-5">Apuestas Deportivas</h3>
-            <p class="text-white-50 small mb-0">Fútbol, NBA, F1 y más</p>
-        </a>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="#" class="game-card text-center p-4">
+                    <div class="mx-auto mb-3" style="border: 4px dashed #fff; border-radius: 50%; width: 60px; height: 60px; display:flex; align-items:center; justify-content:center;">
+                        <i class="bi bi-circle-fill fs-2 text-danger"></i>
+                    </div>
+                    <h3 class="text-light fs-5">Ruleta Europea</h3>
+                    <p class="text-white-50 small mb-0">Mesas VIP</p>
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 </body>
