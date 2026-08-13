@@ -22,11 +22,11 @@ class EmpresaDashboardController extends Controller
         // Obtener jugadas de esta empresa para las mtricas
         // Simplificado para la DEMO comercial
         
-        $ventasReales = 154000;
-        $cartonesReales = 308;
+        $ventasReales = 0; // En producción real, nadie compró nada aún
+        $cartonesReales = 0;
         
-        $ventasPiloto = 45000;
-        $cartonesPiloto = 90;
+        $ventasPiloto = 199000; // Datos de prueba para mostrar el panel funcionando
+        $cartonesPiloto = 398;
         
         if ($empresa->modo_prueba) {
             $totalVentas = $ventasReales + $ventasPiloto;

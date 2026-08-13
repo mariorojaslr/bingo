@@ -23,7 +23,7 @@
     </style>
 </head>
 <body>
-<div class="container mt-4">
+<div class="container-fluid px-4 px-md-5 mt-4 mb-5">
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-4">
         <div class="d-flex align-items-center">
