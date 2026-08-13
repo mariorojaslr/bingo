@@ -89,7 +89,13 @@ Route::post('demo/owner/empresas', [\App\Http\Controllers\Admin\OwnerDashboardCo
 Route::get('demo/owner/impersonate/{empresa}', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'impersonate'])->name('demo.owner.impersonate');
 Route::get('demo/owner/stop-impersonate', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'stopImpersonate'])->name('demo.owner.stop_impersonate');
 Route::get('demo/empresa/{id}', [\App\Http\Controllers\Admin\EmpresaDashboardController::class, 'index'])->name('demo.empresa');
-Route::get('demo/mockups', function () { return view('mockups.lobby'); });
+Route::get('/demo/mockups', function() {
+        return view('mockups.lobby');
+    });
+    
+    Route::get('/demo/mockups/blackjack', function() {
+        return view('mockups.blackjack');
+    });
 Route::get('demo/mockups/ruleta', function () { return view('mockups.ruleta'); });
 
 /*

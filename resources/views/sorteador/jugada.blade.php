@@ -230,7 +230,6 @@
     </div>
 </div>
 
-<script src="https://js.pusher.com/8.2/pusher.min.js"></script>
 <script>
     const csrf = '{{ csrf_token() }}';
     function postCall(url, dataPayload = null) {
@@ -266,7 +265,6 @@
             })
             .catch(err => {
                 console.error('Fetch error:', err);
-                // Si estamos en automático, no molestamos con alertas bloqueantes si fue un micro-corte.
                 const toast = document.createElement('div');
                 toast.style.cssText = 'position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:rgba(255,0,0,0.8); color:white; padding:10px 20px; border-radius:10px; z-index:9999; font-weight:bold; pointer-events:none;';
                 toast.innerText = 'Reconectando con el servidor...';
@@ -275,25 +273,22 @@
             });
     }
 
-    // WAKE LOCK API para evitar que el celular se apague
+    // WAKE LOCK API
     let wakeLock = null;
     const requestWakeLock = async () => {
         try {
             if ('wakeLock' in navigator) {
                 wakeLock = await navigator.wakeLock.request('screen');
-                wakeLock.addEventListener('release', () => { console.log('Wake Lock liberado'); });
-                console.log('Pantalla encendida (Wake Lock activo)');
             }
         } catch (err) { console.error(`${err.name}, ${err.message}`); }
     };
     document.addEventListener('visibilitychange', async () => {
         if (wakeLock !== null && document.visibilityState === 'visible') { requestWakeLock(); }
     });
-    // Solicitar al tocar cualquier parte de la pantalla (requerido por navegadores)
     document.body.addEventListener('click', () => {
         if(!wakeLock) requestWakeLock();
     }, { once: true });
-    requestWakeLock(); // Intento inicial
+    requestWakeLock();
 
     let autoExtraerInterval = null;
     const btnExtraerAhora = document.getElementById('btnExtraerAhora');
@@ -304,19 +299,16 @@
         if (autoExtraerInterval) {
             stopAutoExtraer();
         } else {
-            // Start automatic mode
             const ms = parseInt(selectIntervalo.value);
-            postCall('{{ route("sorteador.extraer", $jugadaId) }}'); // Extract first immediately
+            postCall('{{ route("sorteador.extraer", $jugadaId) }}');
             autoExtraerInterval = setInterval(() => {
                 postCall('{{ route("sorteador.extraer", $jugadaId) }}');
             }, ms);
             
-            // Update UI
             btnExtraerAhora.innerHTML = '<i class="bi bi-cpu-fill me-1"></i> EXTRACCIÓN AUTOMÁTICA';
             btnExtraerAhora.style.background = '#333';
             btnExtraerAhora.style.color = '#fff';
-            btnExtraerAhora.style.boxShadow = 'none';
-            btnExtraerAhora.disabled = true; // Disable manual clicking while in auto mode
+            btnExtraerAhora.disabled = true;
             
             btnTandas.innerHTML = '<i class="bi bi-stop-btn-fill"></i> DETENER TANDAS';
             btnTandas.classList.remove('btn-outline-info');
@@ -329,13 +321,10 @@
         if (autoExtraerInterval) {
             clearInterval(autoExtraerInterval);
             autoExtraerInterval = null;
-            
-            // Revert UI
             btnExtraerAhora.innerHTML = '<i class="bi bi-play-circle-fill me-1"></i> EXTRAER AHORA';
             btnExtraerAhora.style.background = 'var(--neon-green)';
             btnExtraerAhora.style.color = '#000';
             btnExtraerAhora.disabled = false;
-            
             btnTandas.innerHTML = '<i class="bi bi-play-btn-fill"></i> INICIAR TANDAS';
             btnTandas.classList.remove('btn-danger');
             btnTandas.classList.add('btn-outline-info');
@@ -344,103 +333,59 @@
     }
 
     btnTandas.onclick = toggleAutoExtraer;
-    btnExtraerAhora.onclick = () => {
-        if(!autoExtraerInterval) postCall('{{ route("sorteador.extraer", $jugadaId) }}');
-    };
-    
-    // Ingreso Manual
+    btnExtraerAhora.onclick = () => { if(!autoExtraerInterval) postCall('{{ route("sorteador.extraer", $jugadaId) }}'); };
     document.getElementById('btnManual').onclick = () => {
         let num = document.getElementById('inputManual').value;
-        if(num) {
-            stopAutoExtraer();
-            postCall('{{ route("sorteador.extraer", $jugadaId) }}', { numero: num });
-        }
+        if(num) { stopAutoExtraer(); postCall('{{ route("sorteador.extraer", $jugadaId) }}', { numero: num }); }
     };
-    document.getElementById('inputManual').addEventListener('keypress', function(e) {
-        if(e.key === 'Enter') document.getElementById('btnManual').click();
-    });
-
-    document.getElementById('btnLinea').onclick = () => {
-        stopAutoExtraer();
-        postCall('{{ route("sorteador.confirmar.linea", $jugadaId) }}');
-    };
-    document.getElementById('btnBingo').onclick = () => {
-        stopAutoExtraer();
-        postCall('{{ route("sorteador.confirmar.bingo", $jugadaId) }}');
-    };
-    document.getElementById('btnReiniciar').onclick = () => {
-        stopAutoExtraer();
-        postCall('{{ route("sorteador.reiniciar", $jugadaId) }}');
-    };
-
+    document.getElementById('btnLinea').onclick = () => { stopAutoExtraer(); postCall('{{ route("sorteador.confirmar.linea", $jugadaId) }}'); };
+    document.getElementById('btnBingo').onclick = () => { stopAutoExtraer(); postCall('{{ route("sorteador.confirmar.bingo", $jugadaId) }}'); };
+    document.getElementById('btnReiniciar').onclick = () => { stopAutoExtraer(); postCall('{{ route("sorteador.reiniciar", $jugadaId) }}'); };
     document.getElementById('btnPublicidad').onclick = () => {
         postCall('{{ route("sorteador.publicidad", $jugadaId) }}');
-        // Auto resume after 10 seconds
-        setTimeout(() => {
-            postCall('{{ route("sorteador.reanudar", $jugadaId) }}');
-        }, 10000);
+        setTimeout(() => postCall('{{ route("sorteador.reanudar", $jugadaId) }}'), 10000);
     };
 
-    const pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
-        cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
-        forceTLS: window.location.protocol === 'https:',
-        enabledTransports: ['ws', 'wss']
-    });
-
-    const channel = pusher.subscribe('jugada.{{ $jugadaId }}');
-
-    channel.bind('SorteoActualizado', data => {
-        // 1. Bolilla Maestra
+    // Sincronización (Polling)
+    const estadoUrl = '/api/monitor/jugada/{{ $jugadaId }}';
+    function actualizarPantalla(data) {
         document.getElementById('bolillaActual').innerText = data.bolilla ?? '–';
-        
-        // 2. Estado
-        let est = data.estado.toUpperCase();
+        let est = data.estado ? data.estado.toUpperCase() : 'ESPERANDO';
         let col = est === 'EXTRAYENDO' ? 'var(--neon-green)' : (est === 'LINEA' || est === 'BINGO' ? 'var(--neon-red)' : '#fff');
         document.getElementById('estadoTxt').innerHTML = `<i class="bi bi-broadcast me-1"></i> ESTADO: <span style="color:${col}; font-weight:bold;">${est}</span>`;
-
         // 3. Matriz 1-90
         document.querySelectorAll('.matrix-num').forEach(el => {
             const n = parseInt(el.innerText);
-            if (data.bolillas.includes(n)) el.classList.add('drawn');
+            if (data.bolillas && data.bolillas.includes(n)) el.classList.add('drawn');
             else el.classList.remove('drawn');
         });
-
-        // 4. Historial (Derecha a Izquierda - visualmente rtl CSS)
         const histCont = document.getElementById('ultimas');
         histCont.innerHTML = '';
-        for(let i=0; i<9; i++){
-            let val = data.ultimas[i] ?? '—';
-            histCont.innerHTML += `<div class="mini-orb ${val!=='—' ? 'active':''}">${val}</div>`;
+        if (data.ultimas) {
+            for(let i=0; i<9; i++){
+                let val = data.ultimas[i] ?? '—';
+                histCont.innerHTML += `<div class="mini-orb ${val!=='—' ? 'active':''}">${val}</div>`;
+            }
         }
-
-        // 5. Caja de Reporte del Sistema
         const wBox = document.getElementById('winnerBox');
-        if ((data.ganadores && (data.ganadores.lineas.length > 0 || data.ganadores.bingos.length > 0)) || data.estado === 'linea' || data.estado === 'bingo') {
+        if (data.ganadores && (data.ganadores.lineas.length > 0 || data.ganadores.bingos.length > 0)) {
             wBox.classList.add('show');
-            let content = `
-            <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
-                <i class="bi bi-robot fs-4" style="color: var(--neon-gold)"></i>
-                <h6 class="mb-0 fw-bold" style="color: var(--neon-gold); letter-spacing: 1px;">¡REPORTE DEL SISTEMA!</h6>
-            </div>`;
-            
+            let content = `<div class="d-flex align-items-center justify-content-center gap-2 mb-2"><i class="bi bi-robot fs-4" style="color: var(--neon-gold)"></i><h6 class="mb-0 fw-bold" style="color: var(--neon-gold); letter-spacing: 1px;">¡REPORTE DEL SISTEMA!</h6></div>`;
             if (data.ganadores.bingos.length > 0) {
-                 content += `<p class="small text-danger fw-bold mb-2">¡BINGO DETECTADO!</p>`;
-                 data.ganadores.bingos.forEach(g => {
-                     content += `<div class="p-2 rounded bg-dark border border-danger text-center font-monospace small text-white mb-2">Cartón: ${g.numero} <br> <span class="text-danger">${g.nombre}</span></div>`;
-                 });
+                content += `<p class="small text-danger fw-bold mb-2">¡BINGO DETECTADO!</p>`;
+                data.ganadores.bingos.forEach(g => content += `<div class="p-2 rounded bg-dark border border-danger text-center font-monospace small text-white mb-2">Cartón: ${g.numero} <br> <span class="text-danger">${g.nombre}</span></div>`);
             } else if (data.ganadores.lineas.length > 0) {
-                 content += `<p class="small text-info fw-bold mb-2">LÍNEA DETECTADA</p>`;
-                 data.ganadores.lineas.forEach(g => {
-                     content += `<div class="p-2 rounded bg-dark border border-info text-center font-monospace small text-white mb-2">Cartón: ${g.numero} <br> <span class="text-info">${g.nombre}</span></div>`;
-                 });
-            } else {
-                 content += `<p class="small text-white-50 mb-2">Estado pausado manualmente. Esperando resolución de sala.</p>`;
+                content += `<p class="small text-info fw-bold mb-2">LÍNEA DETECTADA</p>`;
+                data.ganadores.lineas.forEach(g => content += `<div class="p-2 rounded bg-dark border border-info text-center font-monospace small text-white mb-2">Cartón: ${g.numero} <br> <span class="text-info">${g.nombre}</span></div>`);
             }
             wBox.innerHTML = content;
-        } else {
-            wBox.classList.remove('show');
-        }
-    });
+        } else { wBox.classList.remove('show'); }
+    }
+    function syncEstado() {
+        fetch(estadoUrl).then(r => r.json()).then(data => { if (!data.error) actualizarPantalla(data); }).catch(e => console.error(e));
+    }
+    setInterval(syncEstado, 2500);
+    syncEstado();
 </script>
 
 </body>

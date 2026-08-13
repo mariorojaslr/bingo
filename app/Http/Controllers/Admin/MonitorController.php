@@ -25,19 +25,28 @@ class MonitorController extends Controller
 
     public function estado($jugadaId)
     {
-        $sorteo = Sorteo::where('jugada_id', $jugadaId)->first();
+        $sorteo = Sorteo::where('jugada_id', $jugadaId)->latest()->first();
 
-        $resultado = DetectorBingoService::detectar(
-            $jugadaId,
-            $sorteo?->bolillas_sacadas ?? []
-        );
+        if (!$sorteo) {
+            return response()->json([
+                'bolilla' => null,
+                'bolillas' => [],
+                'ultimas' => [],
+                'estado' => 'esperando',
+                'ganadores' => ['lineas' => [], 'bingos' => []]
+            ]);
+        }
+
+        $bolillas = $sorteo->getBolillas();
+        $ultimas = array_slice(array_reverse($bolillas), 0, 9);
+        $ganadores = $sorteo->evaluarGanadores();
 
         return response()->json([
-            'bolillas' => $sorteo?->bolillas_sacadas ?? [],
-            'ultima'   => $sorteo?->bolilla_actual,
-            'linea'    => $resultado['linea'],
-            'bingo'    => $resultado['bingo'],
-            'estado'   => $sorteo?->estado,
+            'bolilla'   => $sorteo->bolilla_actual,
+            'bolillas'  => $bolillas,
+            'ultimas'   => $ultimas,
+            'estado'    => $sorteo->estado,
+            'ganadores' => $ganadores,
         ]);
     }
 }

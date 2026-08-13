@@ -90,7 +90,7 @@
         
         <div class="row g-4">
             <div class="col-6 col-md-4">
-                <a href="#" class="game-card p-4 text-center">
+                <a href="/demo/mockups/blackjack" class="game-card p-4 text-center">
                     <i class="bi bi-suit-spade-fill fs-1 mb-3 d-block" style="color: var(--color-primario);"></i>
                     <h3 class="fs-5">BLACKJACK</h3>
                 </a>

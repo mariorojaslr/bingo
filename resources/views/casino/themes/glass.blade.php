@@ -102,7 +102,7 @@
 
         <div class="row g-4">
             <div class="col-6 col-md-4">
-                <a href="#" class="game-card text-center p-4">
+                <a href="/demo/mockups/blackjack" class="game-card text-center p-4">
                     <i class="bi bi-suit-spade text-white-50 mb-3 d-block" style="font-size: 3rem;"></i>
                     <h3 class="fs-4">Blackjack</h3>
                 </a>

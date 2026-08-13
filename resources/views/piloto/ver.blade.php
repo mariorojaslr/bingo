@@ -362,74 +362,94 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* =========================================================
-       CONEXIÓN PUSHER TIEMPO REAL
+       Sincronización AJAX Polling
     ========================================================= */
-    const pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
-        cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
-        forceTLS: window.location.protocol === 'https:',
-        enabledTransports: ['ws', 'wss']
-    });
+    const estadoUrl = '/api/monitor/jugada/{{ $jugada->id }}';
+    let lastBolilla = null;
+    let lastEstado = null;
 
-    const channel = pusher.subscribe('jugada.{{ $jugada->id }}');
+    function syncEstado() {
+        fetch(estadoUrl)
+            .then(r => r.json())
+            .then(data => {
+                if(data.error) return;
 
-    channel.bind('SorteoActualizado', data => {
+                // REINICIO
+                if(data.bolilla === null) {
+                    if (lastBolilla !== null) {
+                        document.getElementById('bolillaActual').innerText = '—';
+                        document.getElementById('ultimos').innerHTML = '';
+                        document.querySelectorAll('.numero').forEach(c => {
+                            c.classList.remove('bingo-hit', 'bingo-pendiente');
+                        });
+                        document.getElementById('cartelLinea').classList.remove('mostrar');
+                        document.getElementById('cartelBingo').classList.remove('mostrar');
+                        lastBolilla = null;
+                        lastEstado = data.estado;
+                    }
+                    return;
+                }
 
-        // REINICIO
-        if(data.bolilla === null) {
-            document.getElementById('bolillaActual').innerText = '—';
-            document.getElementById('ultimos').innerHTML = '';
-            document.querySelectorAll('.numero').forEach(c => {
-                c.classList.remove('bingo-hit', 'bingo-pendiente');
-            });
-            document.getElementById('cartelLinea').classList.remove('mostrar');
-            document.getElementById('cartelBingo').classList.remove('mostrar');
-            return;
-        }
+                // NUEVA BOLILLA DETECTADA
+                if (data.bolilla !== lastBolilla) {
+                    lastBolilla = data.bolilla;
 
-        // BOLILLA PRINCIPAL
-        const bActual = document.getElementById('bolillaActual');
-        bActual.innerText = data.bolilla;
-        bActual.classList.remove('pop');
-        void bActual.offsetWidth; // Force reflow
-        bActual.classList.add('pop');
+                    // BOLILLA PRINCIPAL
+                    const bActual = document.getElementById('bolillaActual');
+                    bActual.innerText = data.bolilla;
+                    bActual.classList.remove('pop');
+                    void bActual.offsetWidth; // Force reflow
+                    bActual.classList.add('pop');
 
-        // SECUENCIA HISTORIAL (CINTA)
-        const ult = document.getElementById('ultimos');
-        ult.innerHTML = '';
-        data.ultimas.slice(0, 8).forEach((n, i) => {
-            const s = document.createElement('span');
-            s.innerText = n;
-            if(i === 0) s.classList.add('hi');
-            ult.appendChild(s);
-        });
+                    // SECUENCIA HISTORIAL (CINTA)
+                    const ult = document.getElementById('ultimos');
+                    ult.innerHTML = '';
+                    if (data.ultimas) {
+                        data.ultimas.slice(0, 8).forEach((n, i) => {
+                            const s = document.createElement('span');
+                            s.innerText = n;
+                            if(i === 0) s.classList.add('hi');
+                            ult.appendChild(s);
+                        });
+                    }
 
-        // MARCADOR DE CARTONES PROPIOS (MODO AUTO VS PENDIENTE)
-        document.querySelectorAll('.numero').forEach(c => {
-            const n = parseInt(c.dataset.numero);
-            if(modoAuto && n === data.bolilla) {
-                c.classList.add('bingo-hit');
-            } else if(!modoAuto && n === data.bolilla) {
-                c.classList.add('bingo-pendiente');
-            }
-        });
+                    // MARCADOR DE CARTONES PROPIOS (MODO AUTO VS PENDIENTE)
+                    document.querySelectorAll('.numero').forEach(c => {
+                        const n = parseInt(c.dataset.numero);
+                        if(modoAuto && n === data.bolilla) {
+                            c.classList.add('bingo-hit');
+                        } else if(!modoAuto && n === data.bolilla) {
+                            c.classList.add('bingo-pendiente');
+                        }
+                    });
 
-        playAudio('audioHit');
+                    playAudio('audioHit');
+                }
 
-        // PREMIOS
-        if(data.estado === 'linea') {
-            document.getElementById('cartelLinea').classList.add('mostrar');
-            playAudio('audioLine');
-        } else {
-            document.getElementById('cartelLinea').classList.remove('mostrar');
-        }
-        
-        if(data.estado === 'bingo') {
-            document.getElementById('cartelBingo').classList.add('mostrar');
-            playAudio('audioBingo');
-        } else {
-            document.getElementById('cartelBingo').classList.remove('mostrar');
-        }
-    });
+                // CAMBIOS DE ESTADO Y PREMIOS
+                if (data.estado !== lastEstado) {
+                    lastEstado = data.estado;
+
+                    if(data.estado === 'linea') {
+                        document.getElementById('cartelLinea').classList.add('mostrar');
+                        playAudio('audioLine');
+                    } else {
+                        document.getElementById('cartelLinea').classList.remove('mostrar');
+                    }
+                    
+                    if(data.estado === 'bingo') {
+                        document.getElementById('cartelBingo').classList.add('mostrar');
+                        playAudio('audioBingo');
+                    } else {
+                        document.getElementById('cartelBingo').classList.remove('mostrar');
+                    }
+                }
+            })
+            .catch(e => console.error(e));
+    }
+
+    setInterval(syncEstado, 2500);
+    syncEstado();
 });
 </script>
 

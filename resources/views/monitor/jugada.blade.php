@@ -211,55 +211,52 @@
 
 </div>
 
-<script src="https://js.pusher.com/8.2/pusher.min.js"></script>
 <script>
-    const pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
-        cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
-        forceTLS: window.location.protocol === 'https:',
-        enabledTransports: ['ws', 'wss']
-    });
-
-    const channel = pusher.subscribe('jugada.{{ $jugada->id }}');
-
-    channel.bind('SorteoActualizado', data => {
+    // Sincronización en Tiempo Real (AJAX Polling)
+    const estadoUrl = '/api/monitor/jugada/{{ $jugada->id }}';
+    
+    function actualizarPantalla(data) {
         // 1. Bolilla Maestra
-        document.getElementById('numero-actual').innerText = data.bolilla ?? '–';
+        document.getElementById('numero-actual').innerText = data.bolilla ?? '-';
         
         // 2. Estado Overlays
         let est = data.estado;
-        document.getElementById('estadoTxt').innerText = est.toUpperCase();
-        
-        document.getElementById('overlay-linea').classList.toggle('activo', est === 'linea');
-        document.getElementById('overlay-bingo').classList.toggle('activo', est === 'bingo');
+        if (est) {
+            document.getElementById('estadoTxt').innerText = est.toUpperCase();
+            document.getElementById('overlay-linea').classList.toggle('activo', est === 'linea');
+            document.getElementById('overlay-bingo').classList.toggle('activo', est === 'bingo');
+        }
 
         // 3. Matriz 1-90
         document.querySelectorAll('.matrix-num').forEach(el => {
             const n = parseInt(el.innerText);
-            if (data.bolillas.includes(n)) el.classList.add('drawn');
+            if (data.bolillas && data.bolillas.includes(n)) el.classList.add('drawn');
             else el.classList.remove('drawn');
         });
 
         // 4. Historial (Derecha a Izquierda RTL)
         const histCont = document.getElementById('historial');
         histCont.innerHTML = '';
-        for(let i=0; i<9; i++){
-            let val = data.ultimas[i] ?? '—';
-            histCont.innerHTML += `<div class="mini-orb ${val!=='—' ? 'active':''}">${val}</div>`;
+        if (data.ultimas) {
+            for(let i=0; i<9; i++){
+                let val = data.ultimas[i] ?? '-';
+                histCont.innerHTML += `<div class="mini-orb ${val!=='-' ? 'active':''}">${val}</div>`;
+            }
         }
-    });
+    }
 
-    // Retro-compatibilidad de eventos sueltos si el controlador original los dispara
-    channel.bind('BolillaSorteada', data => {
-        document.getElementById('numero-actual').innerText = data.bolilla;
-        const hist = document.getElementById('historial');
-        hist.innerHTML = '';
-        data.ultimas.forEach(val => { hist.innerHTML += `<div class="mini-orb active">${val}</div>`; });
-        document.getElementById('num-' + data.bolilla).classList.add('drawn');
-    });
+    function syncEstado() {
+        fetch(estadoUrl)
+            .then(r => r.json())
+            .then(data => {
+                if (!data.error) actualizarPantalla(data);
+            })
+            .catch(e => console.error("Error sincronizando estado:", e));
+    }
 
-    channel.bind('LineaConfirmada', () => { document.getElementById('overlay-linea').classList.add('activo'); });
-    channel.bind('BingoConfirmado', () => { document.getElementById('overlay-bingo').classList.add('activo'); });
-    channel.bind('JuegoReanudado', () => { document.getElementById('overlay-linea').classList.remove('activo'); document.getElementById('overlay-bingo').classList.remove('activo'); });
+    // Iniciar el polling
+    setInterval(syncEstado, 2500);
+    syncEstado(); // Llamada inicial
 </script>
 
 </body>
