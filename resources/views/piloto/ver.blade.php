@@ -131,7 +131,7 @@ body {
 /* ===== 3. ZONA DE CARTONES (MÁXIMO 4) ===== */
 .zona-cartones-title {
     font-family: 'Outfit'; font-weight: 800; font-size: 1.2rem;
-    color: #fff; letter-spacing: 1px; margin-bottom: 15px;
+    color: #333; letter-spacing: 1px; margin-bottom: 15px;
     display: flex; align-items: center; gap: 10px;
 }
 
@@ -206,6 +206,11 @@ body {
     
     // En modo prueba o si no hay URL, usamos la imagen estática de IA
     $streamUrl = $jugada->streaming_url ?? null; 
+    
+    // Si quedó el enlace viejo de youtube por defecto, lo forzamos a null para que muestre la imagen IA
+    if ($streamUrl && str_contains($streamUrl, 'youtube.com')) {
+        $streamUrl = null;
+    }
     
     // Formato Bunny Stream (si solo es el ID)
     if (is_numeric($streamUrl)) {
