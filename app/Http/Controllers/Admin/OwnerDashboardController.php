@@ -58,11 +58,26 @@ class OwnerDashboardController extends Controller
             'subdominio' => $subdominio,
             'tarifa_id' => $request->input('tarifa_id') ?: null,
             'color_primario' => $request->input('color_primario', '#00ff88'),
+            'tema_visual' => 'neon',
+            'idioma_defecto' => 'es',
+            'moneda_defecto' => 'ARS',
             'activo' => 1,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
         return redirect()->back();
+    }
+
+    public function impersonate($empresa_id)
+    {
+        session(['impersonating_empresa_id' => $empresa_id]);
+        return redirect()->route('demo.empresa', ['id' => $empresa_id, 'pwd' => 'infinity2026']);
+    }
+
+    public function stopImpersonate()
+    {
+        session()->forget('impersonating_empresa_id');
+        return redirect()->route('demo.owner', ['pwd' => 'infinity2026']);
     }
 }

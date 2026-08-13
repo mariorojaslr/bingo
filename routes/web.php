@@ -72,6 +72,7 @@ Route::get('/salas', [\App\Http\Controllers\LobbyController::class, 'index'])->n
 
 // El HUB de Casino Marca Blanca para el jugador final
 Route::get('/c/{subdominio}', [\App\Http\Controllers\CasinoLobbyController::class, 'index'])->name('casino.lobby');
+Route::get('/c/{subdominio}/manifest.json', [\App\Http\Controllers\CasinoLobbyController::class, 'manifest'])->name('casino.manifest');
 
 Route::get('/tienda/{jugada}', [\App\Http\Controllers\UserStoreController::class, 'showTienda'])->name('tienda.show');
 Route::post('/tienda/{jugada}', [\App\Http\Controllers\UserStoreController::class, 'procesarCompra'])->name('tienda.procesar');
@@ -85,6 +86,8 @@ Route::get('demo/sorteador', [App\Http\Controllers\CartonController::class, 'dem
 Route::get('demo/owner', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'index'])->name('demo.owner');
 Route::post('demo/owner/tarifas', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'storeTarifa']);
 Route::post('demo/owner/empresas', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'storeEmpresa']);
+Route::get('demo/owner/impersonate/{empresa}', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'impersonate'])->name('demo.owner.impersonate');
+Route::get('demo/owner/stop-impersonate', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'stopImpersonate'])->name('demo.owner.stop_impersonate');
 Route::get('demo/empresa/{id}', [\App\Http\Controllers\Admin\EmpresaDashboardController::class, 'index'])->name('demo.empresa');
 Route::get('demo/mockups', function () { return view('mockups.lobby'); });
 Route::get('demo/mockups/ruleta', function () { return view('mockups.ruleta'); });

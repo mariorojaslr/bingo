@@ -106,7 +106,8 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="/demo/empresa/{{ $emp->id }}?pwd=infinity2026" class="btn btn-sm btn-outline-light" target="_blank"><i class="bi bi-eye"></i> Entrar como Admin</a>
+                                    <a href="{{ route('demo.owner.impersonate', $emp->id) }}" class="btn btn-sm btn-outline-light"><i class="bi bi-eye"></i> Entrar como Admin</a>
+                                    <a href="{{ route('casino.lobby', $emp->subdominio) }}" target="_blank" class="btn btn-sm btn-outline-info ms-2"><i class="bi bi-phone"></i> Ver Casino App</a>
                                 </td>
                             </tr>
                             @endforeach

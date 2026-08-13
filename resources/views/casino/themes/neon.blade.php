@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{ $empresa->nombre }} | Casino</title>
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="{{ route('casino.manifest', $empresa->subdominio) }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
@@ -59,9 +61,31 @@
             50% { transform: scale(1.05); box-shadow: 0 0 15px #ff0055; }
             100% { transform: scale(1); }
         }
+
+        /* Pilar 1: Diseño Adaptativo Inteligente */
+        .app-container {
+            max-width: 100%;
+            margin: 0 auto;
+            min-height: 100vh;
+            background-color: #07070a;
+            position: relative;
+        }
+        @media (min-width: 768px) {
+            body { background-color: #020205; background-image: radial-gradient(circle at center, color-mix(in srgb, var(--color-primario) 15%, transparent) 0%, transparent 50%); }
+            .app-container {
+                max-width: 480px;
+                margin-top: 4vh;
+                margin-bottom: 4vh;
+                min-height: 92vh;
+                border-radius: 40px;
+                overflow: hidden;
+                box-shadow: 0 0 50px rgba(0,0,0,0.8), 0 0 0 10px #1a1a24;
+            }
+        }
     </style>
 </head>
 <body>
+<div class="app-container">
     <div class="header">
         <div class="d-flex justify-content-between align-items-center">
             <span class="fs-4 fw-bold" style="color: var(--color-primario);">{{ mb_strtoupper($empresa->nombre) }}</span>
@@ -112,5 +136,6 @@
             <p class="text-white-50 small mb-0">Fútbol, NBA, F1 y más</p>
         </a>
     </div>
+</div>
 </body>
 </html>

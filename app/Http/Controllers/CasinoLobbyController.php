@@ -39,4 +39,37 @@ class CasinoLobbyController extends Controller
 
         return view("casino.themes.{$tema}", compact('empresa', 'sorteoActivo'));
     }
+
+    /**
+     * Genera dinámicamente el manifest.json (PWA) con el nombre y colores del cliente
+     */
+    public function manifest($subdominio)
+    {
+        $empresa = Empresa::where('subdominio', $subdominio)->where('activo', true)->firstOrFail();
+
+        $manifest = [
+            'name' => $empresa->nombre,
+            'short_name' => mb_substr($empresa->nombre, 0, 12),
+            'start_url' => "/c/{$subdominio}",
+            'display' => 'standalone',
+            'background_color' => '#07070a', // Ajustable por tema luego
+            'theme_color' => $empresa->color_primario,
+            'icons' => [
+                [
+                    'src' => $empresa->logo_url ? asset('storage/' . $empresa->logo_url) : 'https://ui-avatars.com/api/?name=' . urlencode($empresa->nombre) . '&background=random&size=192',
+                    'sizes' => '192x192',
+                    'type' => 'image/png',
+                    'purpose' => 'any'
+                ],
+                [
+                    'src' => $empresa->logo_url ? asset('storage/' . $empresa->logo_url) : 'https://ui-avatars.com/api/?name=' . urlencode($empresa->nombre) . '&background=random&size=512',
+                    'sizes' => '512x512',
+                    'type' => 'image/png',
+                    'purpose' => 'any'
+                ]
+            ]
+        ];
+
+        return response()->json($manifest);
+    }
 }
