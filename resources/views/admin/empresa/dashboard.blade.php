@@ -74,6 +74,15 @@
             </a>
         </div>
 
+        <!-- Tienda Virtual -->
+        <div class="col-md-4">
+            <a href="/tienda/1" target="_blank" class="glass-panel p-4 rounded-4 module-card h-100 text-white" style="border-color: rgba(255,100,0,0.3);">
+                <i class="bi bi-shop text-warning fs-1 mb-3" style="color: #ff6400 !important;"></i>
+                <h4 class="fw-bold">Tienda Virtual B2C</h4>
+                <p class="text-white-50 mb-0">La plataforma online donde tus jugadores compran y reciben sus cartones digitales.</p>
+            </a>
+        </div>
+
         <!-- Consola del Locutor (Sorteador) -->
         <div class="col-md-4">
             <a href="/demo/sorteador?pwd=infinity2026" target="_blank" class="glass-panel p-4 rounded-4 module-card h-100 text-white" style="border-color: rgba(0,255,136,0.3);">
@@ -87,26 +96,26 @@
         <div class="col-md-4">
             <a href="/demo/visor?pwd=infinity2026" target="_blank" class="glass-panel p-4 rounded-4 module-card h-100 text-white" style="border-color: rgba(0,168,255,0.3);">
                 <i class="bi bi-phone text-info fs-1 mb-3"></i>
-                <h4 class="fw-bold">Visor Jugadores (App)</h4>
-                <p class="text-white-50 mb-0">La interfaz web para que los jugadores sigan sus cartones desde casa.</p>
+                <h4 class="fw-bold">Visor Legacy (App)</h4>
+                <p class="text-white-50 mb-0">Visor clásico offline para jugadores.</p>
             </a>
         </div>
 
         <!-- Monitor TV -->
-        <div class="col-md-6">
+        <div class="col-md-4">
             <a href="/demo/monitor-tv?pwd=infinity2026" target="_blank" class="glass-panel p-4 rounded-4 module-card h-100 text-white" style="background: rgba(255,0,85,0.05); border-color: rgba(255,0,85,0.3);">
                 <i class="bi bi-tv text-danger fs-1 mb-3"></i>
                 <h4 class="fw-bold">Monitor TV (Transmisión)</h4>
-                <p class="text-white-50 mb-0">Gráfica transparente lista para OBS o vMix en transmisiones de streaming satelital o Facebook Live.</p>
+                <p class="text-white-50 mb-0">Gráfica lista para OBS o vMix en transmisiones de streaming satelital.</p>
             </a>
         </div>
 
         <!-- Monitor Común -->
-        <div class="col-md-6">
+        <div class="col-md-4">
             <a href="/demo/monitor-comun?pwd=infinity2026" target="_blank" class="glass-panel p-4 rounded-4 module-card h-100 text-white" style="background: rgba(255,215,0,0.05); border-color: rgba(255,215,0,0.3);">
                 <i class="bi bi-projector text-warning fs-1 mb-3"></i>
                 <h4 class="fw-bold">Monitor de Salón (Físico)</h4>
-                <p class="text-white-50 mb-0">La clásica grilla gigante de 90 números pensada para ser proyectada con un cañón en clubes y estadios.</p>
+                <p class="text-white-50 mb-0">La grilla gigante de 90 números para proyectar en clubes y estadios.</p>
             </a>
         </div>
     </div>
