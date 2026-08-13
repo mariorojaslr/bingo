@@ -42,7 +42,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
+            width: 100%;
             height: 100vh;
             z-index: -1;
             background: radial-gradient(circle at 50% 10%, rgba(0, 255, 136, 0.08) 0%, transparent 40%),
