@@ -84,6 +84,7 @@ Route::post('demo/owner/tarifas', [\App\Http\Controllers\Admin\OwnerDashboardCon
 Route::post('demo/owner/empresas', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'storeEmpresa']);
 Route::get('demo/empresa/{id}', [\App\Http\Controllers\Admin\EmpresaDashboardController::class, 'index'])->name('demo.empresa');
 Route::get('demo/mockups', function () { return view('mockups.lobby'); });
+Route::get('demo/mockups/ruleta', function () { return view('mockups.ruleta'); });
 
 /*
 |--------------------------------------------------------------------------
