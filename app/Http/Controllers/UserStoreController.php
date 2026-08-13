@@ -71,7 +71,7 @@ class UserStoreController extends Controller
 
             // Asignarlo al jugador vinculado a esta jugada
             ParticipanteCartonPrueba::create([
-                'participante_id' => $participante->id,
+                'participante_prueba_id' => $participante->id,
                 'jugada_id' => $jugada->id,
                 'carton_id' => $carton->id
             ]);
@@ -91,7 +91,7 @@ class UserStoreController extends Controller
         $jugada = Jugada::find($jugadaId);
 
         // Cartones adquiridos hoy
-        $comprados = ParticipanteCartonPrueba::where('participante_id', $participante->id)
+        $comprados = ParticipanteCartonPrueba::where('participante_prueba_id', $participante->id)
             ->where('jugada_id', $jugadaId)
             ->count();
 
