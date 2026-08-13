@@ -86,5 +86,4 @@ class UserStoreController extends Controller
         return view('tienda.gracias', compact('participante', 'jugada', 'comprados'));
     }
 
-    }
 }
