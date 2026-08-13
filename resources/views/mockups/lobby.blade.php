@@ -101,6 +101,12 @@
                         <h3 class="text-light fs-5">Póker Texas</h3>
                         <p class="text-white-50 small mb-0">Mesas Cash</p>
                     </a>
+
+                    <a href="#" class="game-card">
+                        <i class="bi bi-trophy text-warning fs-2 mb-2 d-block"></i>
+                        <h3 class="text-light fs-5">Apuestas Deportivas</h3>
+                        <p class="text-white-50 small mb-0">Fútbol, NBA, F1 y más</p>
+                    </a>
                 </div>
             </div>
         </div>
@@ -139,6 +145,14 @@
                         <div>
                             <h3 class="fs-6">Póker</h3>
                             <small class="text-white-50">Texas Hold'em</small>
+                        </div>
+                    </a>
+
+                    <a href="#" class="game-card">
+                        <i class="bi bi-trophy fs-3 me-3 text-white-50"></i>
+                        <div>
+                            <h3 class="fs-6">Sportsbook</h3>
+                            <small class="text-white-50">Apuestas Deportivas</small>
                         </div>
                     </a>
                 </div>
@@ -181,6 +195,12 @@
                             <a href="#" class="game-card h-100 text-center">
                                 <i class="bi bi-dice-5 fs-2 mb-2 d-block"></i>
                                 <h6>Dados</h6>
+                            </a>
+                        </div>
+                        <div class="col-12">
+                            <a href="#" class="game-card text-center">
+                                <i class="bi bi-trophy fs-2 mb-2 d-block"></i>
+                                <h6>Apuestas Deportivas</h6>
                             </a>
                         </div>
                     </div>
