@@ -16,6 +16,13 @@ use MercadoPago\Exceptions\MPApiException;
 
 class UserStoreController extends Controller
 {
+    private function limpiarTelefono($telefono)
+    {
+        // Remueve espacios, guiones, paréntesis y el signo más.
+        // Ej: "+54 9 3804 250-007" -> "5493804250007"
+        return preg_replace('/[^0-9]/', '', $telefono);
+    }
+
     public function showTienda(Request $request, $jugadaId)
     {
         $jugada = Jugada::with('institucion', 'organizador')->findOrFail($jugadaId);
@@ -43,9 +50,10 @@ class UserStoreController extends Controller
         ]);
 
         $jugada = Jugada::findOrFail($jugadaId);
+        $telefonoLimpio = $this->limpiarTelefono($request->telefono);
 
         $participante = PruebaParticipante::firstOrCreate(
-            ['telefono' => $request->telefono],
+            ['telefono' => $telefonoLimpio],
             [
                 'nombre' => mb_strtoupper($request->nombre),
                 'token' => (string) Str::uuid(),
@@ -111,10 +119,12 @@ class UserStoreController extends Controller
     */
     public function cajeroShow(Request $request)
     {
-        $telefono = $request->query('t');
-        if(!$telefono) {
+        $telefonoRaw = $request->query('t');
+        if(!$telefonoRaw) {
             return redirect()->route('tienda.show', 1)->with('error', 'Debes ingresar tu teléfono para acceder al cajero.');
         }
+
+        $telefono = $this->limpiarTelefono($telefonoRaw);
 
         // Si el usuario ingresa un teléfono pero es su primera vez en la vida (no existe en DB),
         // lo creamos automáticamente para que pueda fondear su cuenta antes de comprar cartones.
@@ -141,7 +151,8 @@ class UserStoreController extends Controller
             'paquete_fichas' => 'required|integer|in:500,1000,5000'
         ]);
 
-        $participante = PruebaParticipante::where('telefono', $request->telefono)->firstOrFail();
+        $telefono = $this->limpiarTelefono($request->telefono);
+        $participante = PruebaParticipante::where('telefono', $telefono)->firstOrFail();
         
         $montoFiat = $request->paquete_fichas; // 1 Ficha = 1 ARS Base
 
