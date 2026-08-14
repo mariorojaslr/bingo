@@ -71,24 +71,39 @@
             </div>
         @endif
 
+        @if($participanteLogueado)
+            <div class="alert alert-info border-0 rounded-4 mb-4 text-start shadow-sm" style="background-color: rgba(13, 202, 240, 0.1);">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="mb-1 text-info fw-bold"><i class="bi bi-person-circle"></i> ¡Hola de nuevo, {{ $participanteLogueado->nombre }}!</p>
+                        <small class="text-white-50">Tu saldo actual: <strong class="text-warning">{{ number_format($participanteLogueado->saldo_fichas, 0) }} Fichas</strong></small>
+                    </div>
+                    <form action="{{ route('tienda.cerrar_sesion') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-secondary btn-sm" title="Cambiar usuario"><i class="bi bi-box-arrow-right"></i></button>
+                    </form>
+                </div>
+            </div>
+        @endif
+
         <form action="{{ route('tienda.procesar', $jugada->id) }}" method="POST">
             @csrf
             
-            <div class="mb-3">
-                <label class="form-label text-white-50 small text-uppercase fw-bold">Nombre del Jugador</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-person"></i></span>
-                    <input type="text" name="nombre" class="form-control" placeholder="Ej: Juan Pérez" required>
+            @if($participanteLogueado)
+                <input type="hidden" name="nombre" value="{{ $participanteLogueado->nombre }}">
+                <input type="hidden" name="telefono" value="{{ $participanteLogueado->telefono }}">
+            @else
+                <div class="mb-3">
+                    <label class="form-label text-white-50 small text-uppercase fw-bold">Nombre del Jugador</label>
+                    <input type="text" name="nombre" class="form-control form-control-lg bg-dark text-white border-secondary" placeholder="Ej: Juan Pérez" required>
                 </div>
-            </div>
 
-            <div class="mb-4">
-                <label class="form-label text-white-50 small text-uppercase fw-bold">Teléfono Celular (Para identificar tus compras)</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-whatsapp"></i></span>
-                    <input type="tel" name="telefono" class="form-control" placeholder="Ej: 5491123456789" required>
+                <div class="mb-4">
+                    <label class="form-label text-white-50 small text-uppercase fw-bold">Tu Teléfono (Billetera)</label>
+                    <input type="tel" name="telefono" class="form-control form-control-lg bg-dark text-warning border-secondary fw-bold" placeholder="Tu número" required>
+                    <div class="form-text text-white-50 small">Este número será tu acceso a tu billetera y cartones.</div>
                 </div>
-            </div>
+            @endif
 
             <div class="mb-5 bg-dark p-3 rounded" style="border: 1px solid rgba(255,255,255,0.05);">
                 <label class="form-label text-white-50 small text-uppercase fw-bold">Cantidad de Cartones</label>
@@ -115,10 +130,15 @@
         <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
             <h6 class="text-white-50 text-uppercase fw-bold mb-3"><i class="bi bi-wallet2"></i> Cajero de Fichas Infinity</h6>
             <form action="{{ route('cajero.show') }}" method="GET" class="d-flex gap-2">
-                <input type="tel" name="t" class="form-control form-control-sm" placeholder="Tu Teléfono (para identificarte)" required>
-                <button type="submit" class="btn btn-warning btn-sm text-nowrap fw-bold"><i class="bi bi-cart"></i> Comprar Fichas</button>
+                @if($participanteLogueado)
+                    <input type="hidden" name="t" value="{{ $participanteLogueado->telefono }}">
+                    <button type="submit" class="btn btn-warning btn-sm text-nowrap fw-bold"><i class="bi bi-cart"></i> Comprar Fichas para {{ $participanteLogueado->nombre }}</button>
+                @else
+                    <input type="tel" name="t" class="form-control form-control-sm" placeholder="Tu Teléfono (para identificarte)" required>
+                    <button type="submit" class="btn btn-warning btn-sm text-nowrap fw-bold"><i class="bi bi-cart"></i> Comprar Fichas</button>
+                @endif
             </form>
-            <div class="small text-muted mt-2">Ingresa tu teléfono y accede al cajero para comprar fichas con MercadoPago, Prex o Airtm.</div>
+            <div class="small text-muted mt-2">Accede al cajero para comprar fichas con MercadoPago, Prex, ARQ o Airtm.</div>
         </div>
     </div>
 </div>

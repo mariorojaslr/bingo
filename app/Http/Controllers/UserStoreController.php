@@ -16,10 +16,22 @@ use MercadoPago\Exceptions\MPApiException;
 
 class UserStoreController extends Controller
 {
-    public function showTienda($jugadaId)
+    public function showTienda(Request $request, $jugadaId)
     {
         $jugada = Jugada::with('institucion', 'organizador')->findOrFail($jugadaId);
-        return view('tienda.compra', compact('jugada'));
+        
+        $participanteLogueado = null;
+        $token = $request->cookie('participante_token');
+        if ($token) {
+            $participanteLogueado = PruebaParticipante::where('token', $token)->first();
+        }
+
+        return view('tienda.compra', compact('jugada', 'participanteLogueado'));
+    }
+
+    public function cerrarSesion()
+    {
+        return back()->withCookie(\Cookie::forget('participante_token'));
     }
 
     public function procesarCompra(Request $request, $jugadaId)
@@ -47,7 +59,9 @@ class UserStoreController extends Controller
         $costoTotal = $request->cantidad * $precioPorCarton; 
         
         if ($participante->saldo_fichas < $costoTotal) {
-            return back()->with('error', "No tienes suficientes Fichas Infinity. Necesitas $costoTotal pero tienes {$participante->saldo_fichas}.");
+            return back()
+                ->withCookie(cookie('participante_token', $participante->token, 525600)) // Guardar cookie igual
+                ->with('error', "No tienes suficientes Fichas Infinity. Necesitas $costoTotal pero tienes {$participante->saldo_fichas}.");
         }
 
         $participante->saldo_fichas -= $costoTotal;
@@ -73,7 +87,8 @@ class UserStoreController extends Controller
             ]);
         }
 
-        return redirect()->route('tienda.gracias', ['token' => $participante->token, 'j' => $jugada->id]);
+        return redirect()->route('tienda.gracias', ['token' => $participante->token, 'j' => $jugada->id])
+                         ->withCookie(cookie('participante_token', $participante->token, 525600)); // Cookie dura 1 año
     }
 
     public function gracias(Request $request, $token)

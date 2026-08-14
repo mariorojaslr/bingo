@@ -76,6 +76,7 @@ Route::get('/c/{subdominio}/manifest.json', [\App\Http\Controllers\CasinoLobbyCo
 
 Route::get('/tienda/{jugada}', [\App\Http\Controllers\UserStoreController::class, 'showTienda'])->name('tienda.show');
 Route::post('/tienda/{jugada}', [\App\Http\Controllers\UserStoreController::class, 'procesarCompra'])->name('tienda.procesar');
+Route::post('/tienda/cerrar-sesion', [\App\Http\Controllers\UserStoreController::class, 'cerrarSesion'])->name('tienda.cerrar_sesion');
 
 // Cajero Multipasarela
 Route::get('/cajero', [\App\Http\Controllers\UserStoreController::class, 'cajeroShow'])->name('cajero.show');
