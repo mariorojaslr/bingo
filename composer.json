@@ -11,6 +11,7 @@
         "laragear/webauthn": "^4.1",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
+        "mercadopago/dx-php": "^3.14",
         "mpdf/mpdf": "^8.2",
         "pusher/pusher-php-server": "^7.3",
         "simplesoftwareio/simple-qrcode": "^4.2"

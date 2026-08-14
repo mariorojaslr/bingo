@@ -114,13 +114,11 @@
 
         <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
             <h6 class="text-white-50 text-uppercase fw-bold mb-3"><i class="bi bi-wallet2"></i> Cajero de Fichas Infinity</h6>
-            <form action="{{ route('tienda.fichas') }}" method="POST" class="d-flex gap-2">
-                @csrf
-                <input type="tel" name="telefono" class="form-control form-control-sm" placeholder="Tu Teléfono" required>
-                <input type="number" name="monto" class="form-control form-control-sm" value="5000" required>
-                <button type="submit" class="btn btn-outline-success btn-sm text-nowrap">Comprar Fichas</button>
+            <form action="{{ route('cajero.show') }}" method="GET" class="d-flex gap-2">
+                <input type="tel" name="t" class="form-control form-control-sm" placeholder="Tu Teléfono (para identificarte)" required>
+                <button type="submit" class="btn btn-warning btn-sm text-nowrap fw-bold"><i class="bi bi-cart"></i> Comprar Fichas</button>
             </form>
-            <div class="small text-muted mt-2">Usa el mismo teléfono de arriba. Si no te has registrado antes, primero dale a Comprar Cartones para que el sistema cree tu billetera.</div>
+            <div class="small text-muted mt-2">Ingresa tu teléfono y accede al cajero para comprar fichas con MercadoPago, Prex o Airtm.</div>
         </div>
     </div>
 </div>

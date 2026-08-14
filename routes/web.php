@@ -76,7 +76,14 @@ Route::get('/c/{subdominio}/manifest.json', [\App\Http\Controllers\CasinoLobbyCo
 
 Route::get('/tienda/{jugada}', [\App\Http\Controllers\UserStoreController::class, 'showTienda'])->name('tienda.show');
 Route::post('/tienda/{jugada}', [\App\Http\Controllers\UserStoreController::class, 'procesarCompra'])->name('tienda.procesar');
-Route::post('/tienda/comprar-fichas', [\App\Http\Controllers\UserStoreController::class, 'comprarFichas'])->name('tienda.fichas');
+
+// Cajero Multipasarela
+Route::get('/cajero', [\App\Http\Controllers\UserStoreController::class, 'cajeroShow'])->name('cajero.show');
+Route::post('/cajero/procesar', [\App\Http\Controllers\UserStoreController::class, 'cajeroProcesar'])->name('cajero.procesar');
+Route::get('/cajero/mp/success', [\App\Http\Controllers\UserStoreController::class, 'mpSuccess'])->name('cajero.mp_success');
+Route::get('/cajero/mp/failure', [\App\Http\Controllers\UserStoreController::class, 'mpFailure'])->name('cajero.mp_failure');
+Route::post('/api/webhooks/mercadopago', [\App\Http\Controllers\UserStoreController::class, 'mpWebhook'])->name('cajero.mp_webhook');
+
 Route::get('/tienda/gracias/{token}', [\App\Http\Controllers\UserStoreController::class, 'gracias'])->name('tienda.gracias');
 
 // Public Marketing / Demo Routes
