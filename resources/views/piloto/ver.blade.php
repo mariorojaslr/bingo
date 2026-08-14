@@ -330,7 +330,7 @@ body {
         @foreach($cartonesVisibles as $pcp)
             <div class="carton-wrapper">
                 <div class="carton-header">
-                    CARTÓN Nº {{ str_pad($pcp->carton->numero, 6, '0', STR_PAD_LEFT) }} | S.C: {{ 1000 + $pcp->carton->numero }}
+                    CARTÓN Nº {{ str_pad($pcp->carton->numero_carton, 6, '0', STR_PAD_LEFT) }} | S.C: {{ 1000 + $pcp->carton->numero_carton }}
                 </div>
                 
                 <div class="bingo-grid">
