@@ -195,6 +195,7 @@
 
         <div class="d-flex gap-2 mb-3">
             <button id="btnLinea" class="btn-action linea"><i class="bi bi-pause"></i> PAUSA LÍNEA</button>
+            <button id="btnReanudar" class="btn-action" style="background: #00A8FF; color: white;"><i class="bi bi-play-circle"></i> REANUDAR</button>
             <button id="btnBingo" class="btn-action bingo"><i class="bi bi-stop"></i> BINGO FINAL</button>
         </div>
         
@@ -204,8 +205,8 @@
         <div class="d-flex gap-2 mb-3">
             <select id="selectIntervalo" class="form-select bg-dark text-white border-secondary" style="width: 120px; font-weight: bold; font-family: 'Outfit';">
                 <option value="3000">Cada 3s</option>
-                <option value="5000">Cada 5s</option>
-                <option value="10000" selected>Cada 10s</option>
+                <option value="5000" selected>Cada 5s</option>
+                <option value="10000">Cada 10s</option>
                 <option value="15000">Cada 15s</option>
             </select>
             <button id="btnTandas" class="btn btn-outline-info w-100 fw-bold" style="font-family: 'Outfit'; letter-spacing: 1px;"><i class="bi bi-play-btn-fill"></i> INICIAR TANDAS</button>
@@ -339,6 +340,7 @@
         if(num) { stopAutoExtraer(); postCall('{{ route("sorteador.extraer", $jugadaId) }}', { numero: num }); }
     };
     document.getElementById('btnLinea').onclick = () => { stopAutoExtraer(); postCall('{{ route("sorteador.confirmar.linea", $jugadaId) }}'); };
+    document.getElementById('btnReanudar').onclick = () => { postCall('{{ route("sorteador.reanudar", $jugadaId) }}'); };
     document.getElementById('btnBingo').onclick = () => { stopAutoExtraer(); postCall('{{ route("sorteador.confirmar.bingo", $jugadaId) }}'); };
     document.getElementById('btnReiniciar').onclick = () => { stopAutoExtraer(); postCall('{{ route("sorteador.reiniciar", $jugadaId) }}'); };
     document.getElementById('btnPublicidad').onclick = () => {

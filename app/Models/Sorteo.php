@@ -93,16 +93,21 @@ class Sorteo extends Model
             $c = $rel->carton;
             if (!$c) continue;
             
+            $nombreJugador = 'Cartón de Sala';
+            if (method_exists($rel, 'participante') && $rel->participante) {
+                $nombreJugador = mb_strtoupper($rel->participante->nombre);
+            }
+            
             // Verificar bingo primero
             if ($c->esBingo($bolillas)) {
                 $bingos[] = [
                     'numero' => $c->numero_carton,
-                    'nombre' => 'Jugador #' . $c->numero_carton // En el futuro se puede mapear al nombre del participante si existe
+                    'nombre' => $nombreJugador
                 ];
             } elseif ($c->tieneLinea($bolillas)) {
                 $lineas[] = [
                     'numero' => $c->numero_carton,
-                    'nombre' => 'Jugador #' . $c->numero_carton
+                    'nombre' => $nombreJugador
                 ];
             }
         }

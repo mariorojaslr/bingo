@@ -35,7 +35,11 @@ class SorteoController extends Controller
         $sorteo = Sorteo::where('jugada_id', $jugadaId)
             ->where('estado', 'en_curso')
             ->latest()
-            ->firstOrFail();
+            ->first();
+
+        if (!$sorteo) {
+            return response()->json(['success' => false, 'error' => 'La partida no está en curso o ya ha finalizado.'], 400);
+        }
 
         try {
             // 🛑 Corte si ya salieron 90 bolillas
