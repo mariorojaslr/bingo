@@ -306,7 +306,7 @@ body {
                 @if($streamUrl)
                     <iframe src="{{ $streamUrl }}?autoplay=1&mute=0&controls=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 @else
-                    <img src="{{ asset('images/live_placeholder.jpg') }}" alt="Sorteo en vivo" id="liveImage" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" />
+                    <img src="https://gentepiola.b-cdn.net/standby.jpg" alt="Sorteo en vivo" id="liveImage" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" />
                 @endif
             </div>
         </div>
