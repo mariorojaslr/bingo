@@ -131,7 +131,7 @@ body {
 /* OVERLAY ESPERANDO INICIO */
 .tv-waiting-overlay {
     position: absolute; inset: 0;
-    background: rgba(0,0,0,0.85);
+    background: rgba(0,0,0,0.5);
     z-index: 5;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     transition: opacity 0.5s;
@@ -303,7 +303,6 @@ body {
         <div class="glass-panel p-1">
             <div class="tv-container" id="tvContainer">
                 <div class="tv-waiting-overlay" id="tvWaiting" style="{{ count($bolillasIniciales) > 0 ? 'display: none;' : '' }}">
-                    <i class="bi bi-hourglass-split text-white-50" style="font-size: 3rem; margin-bottom: 10px;"></i>
                     <h3>INICIAMOS PRÓXIMAMENTE</h3>
                     <div class="text-white-50">Esperando al locutor...</div>
                 </div>

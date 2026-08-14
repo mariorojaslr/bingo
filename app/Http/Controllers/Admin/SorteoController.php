@@ -129,6 +129,7 @@ class SorteoController extends Controller
             ->firstOrFail();
 
         $sorteo->estado = 'en_curso';
+        $sorteo->linea_cantada = true; // Ya no buscará más líneas
         $sorteo->save();
 
         event(new SorteoActualizado($sorteo));

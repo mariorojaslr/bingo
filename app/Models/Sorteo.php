@@ -104,7 +104,7 @@ class Sorteo extends Model
                     'numero' => $c->numero_carton,
                     'nombre' => $nombreJugador
                 ];
-            } elseif ($c->tieneLinea($bolillas)) {
+            } elseif (!$this->linea_cantada && $c->tieneLinea($bolillas)) {
                 $lineas[] = [
                     'numero' => $c->numero_carton,
                     'nombre' => $nombreJugador
