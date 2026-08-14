@@ -272,6 +272,9 @@ body {
     <header class="piloto-header">
         <div class="player-info">
             <i class="bi bi-person-fill text-white-50 me-2"></i>{{ mb_strtoupper($participante->nombre) }}
+            <span class="ms-3 badge" style="background: rgba(0,255,136,0.2); color: #00FF88; font-family: 'Outfit'; letter-spacing: 1px;">
+                <i class="bi bi-gem me-1"></i> <span id="piloto-saldo">{{ number_format($participante->saldo_fichas, 0) }}</span> INFINITY
+            </span>
         </div>
         
         <div class="d-flex gap-3 align-items-center">

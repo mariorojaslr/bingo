@@ -53,11 +53,14 @@
     <div class="glass-card">
         <h5 class="fw-bold mb-4 text-center pb-3" style="border-bottom: 1px dashed rgba(255,255,255,0.1); font-family: 'Outfit';"><i class="bi bi-ticket-perforated me-2"></i> BOLETERÍA DIGITAL</h5>
 
-        @if($errors->any())
+        @if(session('error'))
             <div class="alert alert-danger border-0" style="background: rgba(255,0,85,0.1); color: #FF0055;">
-                <ul class="mb-0">
-                    @foreach($errors->all() as $error) <li>{{ $error }}</li> @endforeach
-                </ul>
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+            </div>
+        @endif
+        @if(session('success'))
+            <div class="alert alert-success border-0" style="background: rgba(0,255,136,0.1); color: #00FF88;">
+                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
             </div>
         @endif
 
@@ -93,18 +96,25 @@
                     </div>
                     <div class="text-end">
                         <span class="text-muted small">Costo por cartón:</span><br>
-                        <span class="fw-bold fs-5 text-success">$5.000 (Ejemplo)</span>
+                        <span class="fw-bold fs-5" style="color: #00FF88;"><i class="bi bi-gem"></i> 50 Infinity</span>
                     </div>
                 </div>
-                <div class="text-warning small mt-2"><i class="bi bi-info-circle me-1"></i> Puedes comprar un máximo de 4 por partida en modalidad digital para cuidar tu bolsillo y pantalla.</div>
+                <div class="text-warning small mt-2"><i class="bi bi-info-circle me-1"></i> Puedes comprar un máximo de 4 por partida.</div>
             </div>
 
-            <button type="submit" class="btn btn-neon w-100">CONFIRMAR COMPRA <i class="bi bi-arrow-right-circle ms-2"></i></button>
-
-            <div class="text-center text-muted small mt-4">
-                <i class="bi bi-shield-check me-1 text-success"></i> Pago Seguro Simulado y Certificado por el Sistema.
-            </div>
+            <button type="submit" class="btn btn-neon w-100 mb-4">COMPRAR CARTONES <i class="bi bi-arrow-right-circle ms-2"></i></button>
         </form>
+
+        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+            <h6 class="text-white-50 text-uppercase fw-bold mb-3"><i class="bi bi-wallet2"></i> Cajero de Fichas Infinity</h6>
+            <form action="{{ route('tienda.fichas') }}" method="POST" class="d-flex gap-2">
+                @csrf
+                <input type="tel" name="telefono" class="form-control form-control-sm" placeholder="Tu Teléfono" required>
+                <input type="number" name="monto" class="form-control form-control-sm" value="5000" required>
+                <button type="submit" class="btn btn-outline-success btn-sm text-nowrap">Comprar Fichas</button>
+            </form>
+            <div class="small text-muted mt-2">Usa el mismo teléfono de arriba. Si no te has registrado antes, primero dale a Comprar Cartones para que el sistema cree tu billetera.</div>
+        </div>
     </div>
 </div>
 

@@ -41,19 +41,22 @@ class UserStoreController extends Controller
                 'nombre' => mb_strtoupper($request->nombre),
                 'token' => (string) Str::uuid(),
                 'codigo_acceso' => strtoupper(Str::random(6)),
-                'saldo' => 0,
-                'es_prueba' => false
+                'saldo_fichas' => 0, // Inicia sin fichas Infinity
+                'es_prueba' => false // Por defecto, es jugador real de B2C
             ]
         );
 
-        // Si es el piloto de prueba, descontamos el saldo ficticio
-        if ($participante->es_prueba) {
-            $costoTotal = $request->cantidad * 5000; // Asumimos 5000 por cartón por ahora
-            if ($participante->saldo >= $costoTotal) {
-                $participante->saldo -= $costoTotal;
-                $participante->save();
-            }
+        // Validar y descontar Fichas Infinity
+        $precioPorCarton = 50; // Asumimos 50 Infinity por cartón
+        $costoTotal = $request->cantidad * $precioPorCarton; 
+        
+        if ($participante->saldo_fichas < $costoTotal) {
+            return back()->with('error', "No tienes suficientes Fichas Infinity. Necesitas $costoTotal pero tienes {$participante->saldo_fichas}.");
         }
+
+        // Descontar saldo
+        $participante->saldo_fichas -= $costoTotal;
+        $participante->save();
 
         // Generar la cantidad de cartones 100% digitales On-The-Fly para esta jugada
         for($i = 0; $i < $request->cantidad; $i++) {
@@ -96,6 +99,26 @@ class UserStoreController extends Controller
             ->count();
 
         return view('tienda.gracias', compact('participante', 'jugada', 'comprados'));
+    }
+
+    /**
+     * Comprar Fichas Infinity (Demo: inyectar fichas gratis)
+     */
+    public function comprarFichas(Request $request)
+    {
+        $request->validate([
+            'telefono' => 'required|string|max:50',
+            'monto' => 'required|numeric|min:1'
+        ]);
+
+        $participante = PruebaParticipante::where('telefono', $request->telefono)->first();
+        if ($participante) {
+            $participante->saldo_fichas += $request->monto;
+            $participante->save();
+            return back()->with('success', "¡Has adquirido {$request->monto} Fichas Infinity con éxito!");
+        }
+
+        return back()->with('error', "Debes ingresar tu nombre y teléfono abajo primero antes de comprar fichas.");
     }
 
 }

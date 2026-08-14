@@ -86,6 +86,10 @@ class SorteoController extends Controller
                 $sorteo->estado = 'bingo';
                 $sorteo->save();
                 
+                // Calcular premio y dividir si hay múltiples ganadores
+                $premioPozoBingo = 10000; // TODO: Calcular % de recaudación real
+                $premioPorGanador = count($ganadores['bingos']) > 0 ? $premioPozoBingo / count($ganadores['bingos']) : 0;
+
                 // Registrar ganadores de BINGO
                 foreach ($ganadores['bingos'] as $ganador) {
                     SorteoGanador::create([
@@ -98,12 +102,26 @@ class SorteoController extends Controller
                         'tiempo_segundos' => $tiempoSegundos,
                         'tiempo_texto' => $tiempoTexto
                     ]);
+
+                    // Pagar Premio
+                    $carton = \App\Models\Carton::where('numero_carton', $ganador['numero'])->first();
+                    if ($carton) {
+                        $pCarton = \App\Models\ParticipanteCartonPrueba::where('carton_id', $carton->id)->first();
+                        if ($pCarton && $pCarton->participante) {
+                            $pCarton->participante->saldo_fichas += $premioPorGanador;
+                            $pCarton->participante->save();
+                        }
+                    }
                 }
             } elseif (count($ganadores['lineas']) > 0 && $estadoPrevio === 'en_curso') {
                 // Asumimos que si el estado es 'linea', ya fue cantada, no volvemos a pausar por línea
                 $sorteo->estado = 'linea';
                 $sorteo->save();
                 
+                // Calcular premio y dividir si hay múltiples ganadores
+                $premioPozoLinea = 5000; // TODO: Calcular % de recaudación real
+                $premioPorGanador = count($ganadores['lineas']) > 0 ? $premioPozoLinea / count($ganadores['lineas']) : 0;
+
                 // Registrar ganadores de LÍNEA
                 foreach ($ganadores['lineas'] as $ganador) {
                     SorteoGanador::create([
@@ -116,6 +134,16 @@ class SorteoController extends Controller
                         'tiempo_segundos' => $tiempoSegundos,
                         'tiempo_texto' => $tiempoTexto
                     ]);
+
+                    // Pagar Premio
+                    $carton = \App\Models\Carton::where('numero_carton', $ganador['numero'])->first();
+                    if ($carton) {
+                        $pCarton = \App\Models\ParticipanteCartonPrueba::where('carton_id', $carton->id)->first();
+                        if ($pCarton && $pCarton->participante) {
+                            $pCarton->participante->saldo_fichas += $premioPorGanador;
+                            $pCarton->participante->save();
+                        }
+                    }
                 }
             }
 

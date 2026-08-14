@@ -76,6 +76,7 @@ Route::get('/c/{subdominio}/manifest.json', [\App\Http\Controllers\CasinoLobbyCo
 
 Route::get('/tienda/{jugada}', [\App\Http\Controllers\UserStoreController::class, 'showTienda'])->name('tienda.show');
 Route::post('/tienda/{jugada}', [\App\Http\Controllers\UserStoreController::class, 'procesarCompra'])->name('tienda.procesar');
+Route::post('/tienda/comprar-fichas', [\App\Http\Controllers\UserStoreController::class, 'comprarFichas'])->name('tienda.fichas');
 Route::get('/tienda/gracias/{token}', [\App\Http\Controllers\UserStoreController::class, 'gracias'])->name('tienda.gracias');
 
 // Public Marketing / Demo Routes
