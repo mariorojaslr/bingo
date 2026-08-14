@@ -157,7 +157,7 @@ body {
 /* ===== 3. ZONA DE CARTONES (MÁXIMO 4) ===== */
 .zona-cartones-title {
     font-family: 'Outfit'; font-weight: 800; font-size: 1.2rem;
-    color: #333; letter-spacing: 1px; margin-bottom: 15px;
+    color: #fff; letter-spacing: 1px; margin-bottom: 15px;
     display: flex; align-items: center; gap: 10px;
 }
 
