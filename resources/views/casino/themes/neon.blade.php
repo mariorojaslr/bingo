@@ -114,18 +114,18 @@
                         </div>
                     </a>
                 @else
-                    <div class="game-card opacity-50 d-flex align-items-center p-4">
+                    <div class="game-card opacity-50 d-flex align-items-center p-4" onclick="window.location.href='{{ url('/tienda/1') }}'" style="cursor: pointer;">
                         <i class="bi bi-calendar-x d-block text-secondary me-4" style="font-size: 4rem;"></i>
                         <div>
                             <h3 class="fs-1">BINGO</h3>
-                            <p class="text-white-50 mb-0 mt-1">No hay sorteos en este momento</p>
+                            <p class="text-white-50 mb-0 mt-1">No hay sorteos en curso (Click para demo)</p>
                         </div>
                     </div>
                 @endif
             </div>
             
             <div class="col-12 col-lg-4">
-                <a href="#" class="game-card">
+                <a href="#" class="game-card" onclick="alert('Módulo de Apuestas Deportivas en desarrollo...'); return false;">
                     <i class="bi bi-trophy text-warning fs-1 mb-3 d-block"></i>
                     <h3 class="text-light fs-4">Apuestas Deportivas</h3>
                     <p class="text-white-50 small mb-0">Fútbol, NBA, F1 y más</p>
