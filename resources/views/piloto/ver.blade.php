@@ -244,6 +244,13 @@ body {
 
     // REGLA DE JUEGO: Limitamos visualmente a un máximo de 4 cartones simultáneos en pantalla.
     $cartonesVisibles = $cartones->take(4);
+
+    // Evitar problemas de rutas HTTP/HTTPS o 403 codificando la imagen en base64
+    $placeholderPath = public_path('images/live_placeholder.jpg');
+    $placeholderBase64 = '';
+    if (file_exists($placeholderPath)) {
+        $placeholderBase64 = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($placeholderPath));
+    }
 @endphp
 
 <div class="piloto-wrapper">
@@ -255,7 +262,7 @@ body {
         </div>
         
         <div class="d-flex gap-3 align-items-center">
-            <span class="badge bg-warning text-dark me-2" style="font-size: 0.7rem; padding: 5px 8px;">VER 2</span>
+            <span class="badge bg-warning text-dark me-2" style="font-size: 0.7rem; padding: 5px 8px;">VER 3</span>
             
             <div class="switch-control">
                 <label for="modoAuto" class="text-white fw-bold" style="font-family: 'Outfit'; font-size: 0.8rem; letter-spacing: 1px;">MODO AUTO</label>
@@ -305,8 +312,10 @@ body {
                 <div class="live-tag">🔴 EN DIRECTO</div>
                 @if($streamUrl)
                     <iframe src="{{ $streamUrl }}?autoplay=1&mute=0&controls=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                @elseif($placeholderBase64)
+                    <img src="{{ $placeholderBase64 }}" alt="Sorteo en vivo" id="liveImage" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" />
                 @else
-                    <img src="https://gentepiola.b-cdn.net/standby.jpg" alt="Sorteo en vivo" id="liveImage" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" />
+                    <div style="width:100%; height:100%; background:#111; border-radius:12px;"></div>
                 @endif
             </div>
         </div>
