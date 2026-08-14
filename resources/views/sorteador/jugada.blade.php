@@ -246,8 +246,18 @@
             .then(async res => {
                 if (!res.ok) {
                     let msg = res.status;
-                    try { const data = await res.json(); msg += ' - ' + (data.error || JSON.stringify(data)); } catch(e){}
-                    alert('Error: ' + msg);
+                    let isGameOverError = false;
+                    try { 
+                        const data = await res.json(); 
+                        msg += ' - ' + (data.error || JSON.stringify(data)); 
+                        if (data.error && (data.error.includes('no está en curso') || data.error.includes('finalizado'))) {
+                            isGameOverError = true;
+                        }
+                    } catch(e){}
+                    
+                    if (!isGameOverError) {
+                        alert('Error: ' + msg);
+                    }
                     if (typeof stopAutoExtraer === 'function') stopAutoExtraer();
                 } else {
                     const data = await res.json().catch(() => ({}));

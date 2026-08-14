@@ -245,11 +245,12 @@ body {
     // REGLA DE JUEGO: Limitamos visualmente a un máximo de 4 cartones simultáneos en pantalla.
     $cartonesVisibles = $cartones->take(4);
 
-    // Evitar problemas de rutas HTTP/HTTPS o 403 codificando la imagen en base64
-    $placeholderPath = public_path('images/live_placeholder.jpg');
-    $placeholderBase64 = '';
-    if (file_exists($placeholderPath)) {
-        $placeholderBase64 = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($placeholderPath));
+    // Como PHP file_get_contents falla en Hostinger por permisos, usamos la URL absoluta que sabemos que funciona por CDN
+    $placeholderUrl = 'https://fullbin.gentepiola.net/images/live_placeholder.jpg';
+    
+    // Si no hay video cargado en la base de datos, ponemos un video de prueba (Vimeo) para que el cliente pueda comprobar que el reproductor funciona
+    if(empty($streamUrl)) {
+        $streamUrl = 'https://player.vimeo.com/video/76979871?autoplay=1&loop=1&muted=1&background=1';
     }
 @endphp
 
@@ -262,7 +263,7 @@ body {
         </div>
         
         <div class="d-flex gap-3 align-items-center">
-            <span class="badge bg-warning text-dark me-2" style="font-size: 0.7rem; padding: 5px 8px;">VER 3</span>
+            <span class="badge bg-warning text-dark me-2" style="font-size: 0.7rem; padding: 5px 8px;">VER 4</span>
             
             <div class="switch-control">
                 <label for="modoAuto" class="text-white fw-bold" style="font-family: 'Outfit'; font-size: 0.8rem; letter-spacing: 1px;">MODO AUTO</label>
@@ -311,11 +312,9 @@ body {
                 </div>
                 <div class="live-tag">🔴 EN DIRECTO</div>
                 @if($streamUrl)
-                    <iframe src="{{ $streamUrl }}?autoplay=1&mute=0&controls=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                @elseif($placeholderBase64)
-                    <img src="{{ $placeholderBase64 }}" alt="Sorteo en vivo" id="liveImage" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" />
+                    <iframe src="{{ $streamUrl }}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 @else
-                    <div style="width:100%; height:100%; background:#111; border-radius:12px;"></div>
+                    <img src="{{ $placeholderUrl }}" alt="Sorteo en vivo" id="liveImage" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" />
                 @endif
             </div>
         </div>
