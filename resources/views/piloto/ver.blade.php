@@ -328,13 +328,15 @@ body {
                 </div>
 
                 <!-- OVERLAY ESPERA (Encima de la amenización) -->
-                <div class="tv-waiting-overlay" id="tvWaiting" style="position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 12px; {{ count($bolillasIniciales) > 0 ? 'display: none;' : '' }}">
+                <div class="tv-waiting-overlay" id="tvWaiting" style="position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 12px; transition: opacity 0.5s;">
                     <h3 style="font-family: 'Outfit'; font-weight: 900; color: #D4AF37; letter-spacing: 3px; font-size: 2.5rem; text-shadow: 0 0 20px rgba(212,175,55,0.5);">EN BREVE EMPEZAMOS</h3>
                     <div class="text-white-50" style="font-size: 1.2rem;">Preparando sorteo...</div>
                 </div>
 
-                <!-- BOLILLERO BLUFF (Oculto al inicio) -->
-                <video id="bluff-video" src="/videos/bolillero.mp4" loop muted playsinline style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 12px;"></video>
+                <!-- BOLILLERO BLUFF YOUTUBE (Oculto al inicio con opacity para que cargue) -->
+                <div id="bluff-video-container" style="position: absolute; inset: 0; z-index: 2; opacity: 0; pointer-events: none; transition: opacity 0.5s; overflow: hidden; border-radius: 12px;">
+                    <iframe id="bluff-video" src="https://www.youtube.com/embed/hfKS3486dPI?autoplay=1&mute=1&controls=0&loop=1&playlist=hfKS3486dPI&modestbranding=1&showinfo=0" allow="autoplay; encrypted-media" allowfullscreen style="width: 100%; height: 100%; border: none; transform: scale(1.1);"></iframe>
+                </div>
                 
                 <div class="live-tag">🔴 EN DIRECTO</div>
             </div>
@@ -429,21 +431,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function actualizarVideo(enJuego) {
         const amenizacion = document.getElementById('amenizacion-container');
         const overlayEspera = document.getElementById('tvWaiting');
-        const bluffVideo = document.getElementById('bluff-video');
+        const bluffVideoContainer = document.getElementById('bluff-video-container');
         
         if (enJuego) {
-            if (amenizacion) amenizacion.style.display = 'none';
-            if (overlayEspera) overlayEspera.style.display = 'none';
-            if (bluffVideo) {
-                bluffVideo.style.display = 'block';
-                bluffVideo.play().catch(e => console.log("Autoplay blocked"));
+            if (amenizacion) amenizacion.style.opacity = '0';
+            if (overlayEspera) overlayEspera.style.opacity = '0';
+            if (bluffVideoContainer) {
+                bluffVideoContainer.style.opacity = '1';
             }
         } else {
-            if (amenizacion) amenizacion.style.display = 'block';
-            if (overlayEspera) overlayEspera.style.display = 'flex';
-            if (bluffVideo) {
-                bluffVideo.style.display = 'none';
-                bluffVideo.pause();
+            if (amenizacion) amenizacion.style.opacity = '1';
+            if (overlayEspera) overlayEspera.style.opacity = '1';
+            if (bluffVideoContainer) {
+                bluffVideoContainer.style.opacity = '0';
             }
         }
     }
