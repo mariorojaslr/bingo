@@ -503,15 +503,38 @@ document.addEventListener('DOMContentLoaded', () => {
         playAudio('audioHit');
 
         // PREMIOS
+        // PREMIOS
         if(data.estado === 'linea') {
-            document.getElementById('cartelLinea').classList.add('mostrar');
+            const cartelLinea = document.getElementById('cartelLinea');
+            const textoLinea = cartelLinea.querySelector('.text-white-50');
+            if (data.ganadores && data.ganadores.lineas && data.ganadores.lineas.length > 0) {
+                let html = '';
+                data.ganadores.lineas.forEach(g => {
+                    html += `CARTÓN GANADOR Nº ${g.numero} - ${g.nombre}<br>`;
+                });
+                textoLinea.innerHTML = html;
+            } else {
+                textoLinea.innerHTML = "Verificando ganadores en sala...";
+            }
+            cartelLinea.classList.add('mostrar');
             playAudio('audioLine');
         } else {
             document.getElementById('cartelLinea').classList.remove('mostrar');
         }
         
         if(data.estado === 'bingo') {
-            document.getElementById('cartelBingo').classList.add('mostrar');
+            const cartelBingo = document.getElementById('cartelBingo');
+            const textoBingo = cartelBingo.querySelector('.text-white-50');
+            if (data.ganadores && data.ganadores.bingos && data.ganadores.bingos.length > 0) {
+                let html = '';
+                data.ganadores.bingos.forEach(g => {
+                    html += `CARTÓN GANADOR Nº ${g.numero} - ${g.nombre}<br>`;
+                });
+                textoBingo.innerHTML = html;
+            } else {
+                textoBingo.innerHTML = "Juego finalizado.";
+            }
+            cartelBingo.classList.add('mostrar');
             playAudio('audioBingo');
         } else {
             document.getElementById('cartelBingo').classList.remove('mostrar');

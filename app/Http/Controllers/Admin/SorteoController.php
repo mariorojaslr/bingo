@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Sorteo;
 use App\Models\Jugada;
+use App\Models\SorteoGanador;
 use App\Events\SorteoActualizado;
 
 class SorteoController extends Controller
@@ -72,13 +73,40 @@ class SorteoController extends Controller
             // Lógica de transición de estado basada en los ganadores
             // Solo pausamos automáticamente si acabamos de descubrir la línea/bingo en ESTA bolilla.
             $estadoPrevio = $sorteo->estado;
+            $bolillasExtraidas = $sorteo->getMemoryBolillas();
+            $ultimaBolilla = end($bolillasExtraidas) ?: 0;
+
             if (count($ganadores['bingos']) > 0 && $estadoPrevio !== 'bingo') {
                 $sorteo->estado = 'bingo';
                 $sorteo->save();
+                
+                // Registrar ganadores de BINGO
+                foreach ($ganadores['bingos'] as $ganador) {
+                    SorteoGanador::create([
+                        'sorteo_id' => $sorteo->id,
+                        'jugada_id' => $sorteo->jugada_id,
+                        'tipo_premio' => 'bingo',
+                        'carton_numero' => $ganador['numero'],
+                        'nombre_jugador' => $ganador['nombre'],
+                        'bolilla_ganadora' => $ultimaBolilla
+                    ]);
+                }
             } elseif (count($ganadores['lineas']) > 0 && $estadoPrevio === 'en_curso') {
                 // Asumimos que si el estado es 'linea', ya fue cantada, no volvemos a pausar por línea
                 $sorteo->estado = 'linea';
                 $sorteo->save();
+                
+                // Registrar ganadores de LÍNEA
+                foreach ($ganadores['lineas'] as $ganador) {
+                    SorteoGanador::create([
+                        'sorteo_id' => $sorteo->id,
+                        'jugada_id' => $sorteo->jugada_id,
+                        'tipo_premio' => 'linea',
+                        'carton_numero' => $ganador['numero'],
+                        'nombre_jugador' => $ganador['nombre'],
+                        'bolilla_ganadora' => $ultimaBolilla
+                    ]);
+                }
             }
 
             // 📡 Evento ÚNICO (todas las pantallas escuchan)

@@ -337,8 +337,9 @@
     </div>
 
     <!-- Overlay Ganador -->
-    <div id="winner-overlay">
+    <div id="winner-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; flex-direction: column; align-items: center; justify-content: center;">
         <div class="winner-text" id="winner-type">¡GANADOR!</div>
+        <div class="text-white-50 mt-4 fs-3 text-center" id="winner-details" style="font-family: 'Outfit';"></div>
     </div>
 
     <!-- Overlay Publicidad -->
@@ -410,11 +411,30 @@
                             renderizar(e.bolillas, e.estado);
 
                             const winnerOverlay = document.getElementById('winner-overlay');
+                            const winnerDetails = document.getElementById('winner-details');
                             if(e.estado === 'linea') {
                                 document.getElementById('winner-type').innerText = '¡HAY LÍNEA!';
+                                if (e.ganadores && e.ganadores.lineas && e.ganadores.lineas.length > 0) {
+                                    let html = '';
+                                    e.ganadores.lineas.forEach(g => {
+                                        html += `CARTÓN GANADOR Nº ${g.numero} - ${g.nombre}<br>`;
+                                    });
+                                    winnerDetails.innerHTML = html;
+                                } else {
+                                    winnerDetails.innerHTML = 'Verificando ganadores en sala...';
+                                }
                                 winnerOverlay.style.display = 'flex';
                             } else if(e.estado === 'bingo') {
                                 document.getElementById('winner-type').innerText = '¡BINGO!';
+                                if (e.ganadores && e.ganadores.bingos && e.ganadores.bingos.length > 0) {
+                                    let html = '';
+                                    e.ganadores.bingos.forEach(g => {
+                                        html += `CARTÓN GANADOR Nº ${g.numero} - ${g.nombre}<br>`;
+                                    });
+                                    winnerDetails.innerHTML = html;
+                                } else {
+                                    winnerDetails.innerHTML = 'Verificando ganadores en sala...';
+                                }
                                 winnerOverlay.style.display = 'flex';
                             } else if(e.estado === 'publicidad') {
                                 document.getElementById('takeover-ad').style.display = 'flex';
