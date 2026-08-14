@@ -251,6 +251,18 @@ body {
     // Si no hay video cargado en la base de datos, ponemos un video de prueba directo (MP4) para evitar bloqueos de iframes
     if(empty($streamUrl)) {
         $streamUrl = 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4';
+    } else {
+        // Convertir links regulares de YouTube a formato embed
+        if (str_contains($streamUrl, 'youtube.com/watch?v=')) {
+            $streamUrl = str_replace('watch?v=', 'embed/', $streamUrl);
+            if (str_contains($streamUrl, '&')) {
+                $streamUrl = explode('&', $streamUrl)[0];
+            }
+            $streamUrl .= '?autoplay=1&mute=1';
+        } elseif (str_contains($streamUrl, 'youtu.be/')) {
+            $streamUrl = str_replace('youtu.be/', 'youtube.com/embed/', $streamUrl);
+            $streamUrl .= '?autoplay=1&mute=1';
+        }
     }
 @endphp
 
