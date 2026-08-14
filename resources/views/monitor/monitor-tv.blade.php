@@ -230,12 +230,51 @@
             from { transform: scale(1); }
             to { transform: scale(1.05); }
         }
+
+        /* --- VIDEO BACKGROUND (Right side) --- */
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 40vh;
+            width: calc(100% - 40vh);
+            height: calc(100vh - 7vh); /* Above bottom bar */
+            z-index: 1;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
+    @php
+        $streamUrl = $jugada->streaming_url ?? null;
+        if(empty($streamUrl)) {
+            $streamUrl = 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4';
+        }
+        $placeholderUrl = 'https://fullbin.gentepiola.net/images/live_placeholder.jpg';
+    @endphp
+
+    <!-- Video Background -->
+    <div class="video-container">
+        @if($streamUrl)
+            @if(str_ends_with(strtolower($streamUrl), '.mp4'))
+                <video src="{{ $streamUrl }}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+            @else
+                <iframe src="{{ $streamUrl }}" allow="autoplay; encrypted-media" allowfullscreen style="width: 100%; height: 100%; border: none;"></iframe>
+            @endif
+        @else
+            <img src="{{ $placeholderUrl }}" alt="Sorteo en vivo" style="width: 100%; height: 100%; object-fit: cover;" />
+        @endif
+    </div>
 
     <!-- Botón En Vivo (Esquina Superior Derecha) -->
     <div class="live-btn">EN VIVO</div>
+    
+    <!-- Badge VER 4 -->
+    <div style="position: absolute; top: 20px; right: 140px; z-index: 10;">
+        <span class="badge bg-warning text-dark" style="font-size: 0.8rem; padding: 5px 10px;">VER 4</span>
+    </div>
 
     <!-- BARRA LATERAL -->
     <div class="sidebar">

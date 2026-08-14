@@ -27,6 +27,7 @@ class Sorteo extends Model
         $this->bolillas = [];
         $this->bolilla_actual = null;
         $this->estado = 'en_curso';
+        $this->linea_cantada = false;
         $this->inicio = Carbon::now();
         $this->fin = null;
         $this->save();

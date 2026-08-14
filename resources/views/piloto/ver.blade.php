@@ -248,9 +248,9 @@ body {
     // Como PHP file_get_contents falla en Hostinger por permisos, usamos la URL absoluta que sabemos que funciona por CDN
     $placeholderUrl = 'https://fullbin.gentepiola.net/images/live_placeholder.jpg';
     
-    // Si no hay video cargado en la base de datos, ponemos un video de prueba (Vimeo) para que el cliente pueda comprobar que el reproductor funciona
+    // Si no hay video cargado en la base de datos, ponemos un video de prueba directo (MP4) para evitar bloqueos de iframes
     if(empty($streamUrl)) {
-        $streamUrl = 'https://player.vimeo.com/video/76979871?autoplay=1&loop=1&muted=1&background=1';
+        $streamUrl = 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4';
     }
 @endphp
 
@@ -312,7 +312,11 @@ body {
                 </div>
                 <div class="live-tag">🔴 EN DIRECTO</div>
                 @if($streamUrl)
-                    <iframe src="{{ $streamUrl }}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    @if(str_ends_with(strtolower($streamUrl), '.mp4'))
+                        <video src="{{ $streamUrl }}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;"></video>
+                    @else
+                        <iframe src="{{ $streamUrl }}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    @endif
                 @else
                     <img src="{{ $placeholderUrl }}" alt="Sorteo en vivo" id="liveImage" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" />
                 @endif
