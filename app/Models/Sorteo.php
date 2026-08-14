@@ -76,23 +76,18 @@ class Sorteo extends Model
         $lineas = [];
         $bingos = [];
 
-        // 1. Obtener cartones fsicos
+        // 1. Obtener cartones fisicos
         $relacionesFisicas = \App\Models\JugadaCarton::where('jugada_id', $this->jugada_id)
                         ->with(['carton'])
                         ->get();
-                            
-        // 2. Obtener cartones digitales de jugadores reales
-        $relacionesDigitales = \App\Models\ParticipanteCarton::where('jugada_id', $this->jugada_id)
-                        ->with(['carton'])
-                        ->get();
                         
-        // 3. Obtener cartones digitales del piloto de prueba
+        // 2. Obtener cartones digitales del piloto de prueba
         $relacionesPrueba = \App\Models\ParticipanteCartonPrueba::where('jugada_id', $this->jugada_id)
                         ->with(['carton'])
                         ->get();
                         
         // Juntar todos los cartones vendidos en esta jugada
-        $todasLasRelaciones = $relacionesFisicas->concat($relacionesDigitales)->concat($relacionesPrueba);
+        $todasLasRelaciones = $relacionesFisicas->concat($relacionesPrueba);
         
         foreach ($todasLasRelaciones as $rel) {
             $c = $rel->carton;
