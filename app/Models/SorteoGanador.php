@@ -15,6 +15,8 @@ class SorteoGanador extends Model
         'tipo_premio',
         'carton_numero',
         'nombre_jugador',
-        'bolilla_ganadora'
+        'bolilla_ganadora',
+        'tiempo_segundos',
+        'tiempo_texto'
     ];
 }

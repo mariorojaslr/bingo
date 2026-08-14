@@ -75,6 +75,12 @@ class SorteoController extends Controller
             $estadoPrevio = $sorteo->estado;
             $bolillasExtraidas = $sorteo->getMemoryBolillas();
             $ultimaBolilla = end($bolillasExtraidas) ?: 0;
+            
+            // Calcular tiempo transcurrido
+            $tiempoSegundos = $sorteo->created_at ? now()->diffInSeconds($sorteo->created_at) : 0;
+            $minutos = floor($tiempoSegundos / 60);
+            $segundos = $tiempoSegundos % 60;
+            $tiempoTexto = $minutos > 0 ? "{$minutos}m {$segundos}s" : "{$segundos}s";
 
             if (count($ganadores['bingos']) > 0 && $estadoPrevio !== 'bingo') {
                 $sorteo->estado = 'bingo';
@@ -88,7 +94,9 @@ class SorteoController extends Controller
                         'tipo_premio' => 'bingo',
                         'carton_numero' => $ganador['numero'],
                         'nombre_jugador' => $ganador['nombre'],
-                        'bolilla_ganadora' => $ultimaBolilla
+                        'bolilla_ganadora' => $ultimaBolilla,
+                        'tiempo_segundos' => $tiempoSegundos,
+                        'tiempo_texto' => $tiempoTexto
                     ]);
                 }
             } elseif (count($ganadores['lineas']) > 0 && $estadoPrevio === 'en_curso') {
@@ -104,7 +112,9 @@ class SorteoController extends Controller
                         'tipo_premio' => 'linea',
                         'carton_numero' => $ganador['numero'],
                         'nombre_jugador' => $ganador['nombre'],
-                        'bolilla_ganadora' => $ultimaBolilla
+                        'bolilla_ganadora' => $ultimaBolilla,
+                        'tiempo_segundos' => $tiempoSegundos,
+                        'tiempo_texto' => $tiempoTexto
                     ]);
                 }
             }
