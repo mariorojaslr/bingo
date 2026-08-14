@@ -116,12 +116,21 @@ class UserStoreController extends Controller
             return redirect()->route('tienda.show', 1)->with('error', 'Debes ingresar tu teléfono para acceder al cajero.');
         }
 
-        $participante = PruebaParticipante::where('telefono', $telefono)->first();
-        if(!$participante) {
-            return redirect()->route('tienda.show', 1)->with('error', 'Usuario no encontrado. Inicia tu compra primero.');
-        }
+        // Si el usuario ingresa un teléfono pero es su primera vez en la vida (no existe en DB),
+        // lo creamos automáticamente para que pueda fondear su cuenta antes de comprar cartones.
+        $participante = PruebaParticipante::firstOrCreate(
+            ['telefono' => $telefono],
+            [
+                'nombre' => 'Jugador ' . rand(1000, 9999), // Nombre genérico que puede cambiar después
+                'token' => (string) Str::uuid(),
+                'codigo_acceso' => strtoupper(Str::random(6)),
+                'saldo_fichas' => 0,
+                'es_prueba' => false
+            ]
+        );
 
-        return view('tienda.cajero', compact('participante'));
+        return response(view('tienda.cajero', compact('participante')))
+               ->withCookie(cookie('participante_token', $participante->token, 525600));
     }
 
     public function cajeroProcesar(Request $request)
@@ -156,7 +165,9 @@ class UserStoreController extends Controller
         }
 
         // Para métodos manuales (Prex, Airtm, ARQ)
-        return back()->with('success', 'Transacción creada. Por favor, realiza la transferencia con tu método elegido y guarda tu comprobante. Nuestro equipo lo verificará en breve.');
+        return redirect()->route('tienda.show', 1)
+               ->withCookie(cookie('participante_token', $participante->token, 525600))
+               ->with('success', 'Transacción creada. Por favor, realiza la transferencia con tu método elegido y guarda tu comprobante. Nuestro equipo lo verificará en breve.');
     }
 
     private function procesarMercadoPago($transaccion, $participante)
@@ -194,6 +205,7 @@ class UserStoreController extends Controller
                 $participante->save();
 
                 return redirect()->route('tienda.show', 1)
+                    ->withCookie(cookie('participante_token', $participante->token, 525600))
                     ->with('success', "¡Pago Aprobado! Se acreditaron {$transaccion->fichas} Fichas Infinity a tu cuenta.");
             }
         }
