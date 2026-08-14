@@ -249,10 +249,13 @@ body {
 
 <div class="piloto-wrapper">
     
-    <!-- 1. ENCABEZADO -->
-    <header class="piloto-header">
-        <div class="player-info">
-            <i class="bi bi-person-fill text-white-50 me-2"></i>{{ mb_strtoupper($participante->nombre) }}
+    <!-- 1. HEADER: INFO JUGADOR -->
+    <div class="glass-panel p-3 mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2 position-relative">
+        <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2">VERSIÓN 2</span>
+        <div>
+            <h5 class="mb-0 fw-bold" style="color: var(--neon-gold); font-family: 'Outfit'; letter-spacing: 2px; text-transform: uppercase;">
+                {{ mb_strtoupper($participante->nombre) }}
+            </h5>
         </div>
         
         <div class="d-flex gap-3">
