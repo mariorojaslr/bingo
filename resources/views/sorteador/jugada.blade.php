@@ -261,7 +261,9 @@
                     }
                     if (document.getElementById('inputManual')) {
                         document.getElementById('inputManual').value = '';
-                        document.getElementById('inputManual').focus();
+                        if (!autoExtraerInterval) {
+                            document.getElementById('inputManual').focus();
+                        }
                     }
                 }
             })
@@ -312,6 +314,9 @@
             btnExtraerAhora.style.color = '#fff';
             btnExtraerAhora.disabled = true;
             
+            if (document.getElementById('inputManual')) document.getElementById('inputManual').disabled = true;
+            if (document.getElementById('btnManual')) document.getElementById('btnManual').disabled = true;
+            
             btnTandas.innerHTML = '<i class="bi bi-stop-btn-fill"></i> DETENER TANDAS';
             btnTandas.classList.remove('btn-outline-info');
             btnTandas.classList.add('btn-danger');
@@ -327,6 +332,10 @@
             btnExtraerAhora.style.background = 'var(--neon-green)';
             btnExtraerAhora.style.color = '#000';
             btnExtraerAhora.disabled = false;
+            
+            if (document.getElementById('inputManual')) document.getElementById('inputManual').disabled = false;
+            if (document.getElementById('btnManual')) document.getElementById('btnManual').disabled = false;
+            
             btnTandas.innerHTML = '<i class="bi bi-play-btn-fill"></i> INICIAR TANDAS';
             btnTandas.classList.remove('btn-danger');
             btnTandas.classList.add('btn-outline-info');

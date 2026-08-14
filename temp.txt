@@ -1,25 +1,16 @@
-<!DOCTYPE html>
-<html lang="es" data-bs-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <title>Infinity Bingo - Piloto de Prueba</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
-    <style>
+@extends('dashboard')
+
+@section('content')
+
+<style>
 /* =========================================================
-   ESTÉTICA ROLLS-ROYCE OLED | VISTA DEL JUGADOR (PILOTO)
+   ESTÉTICA ROLLS-ROYCE OLED | VISTA DEL TUGADOR (PILOTO)
 ========================================================= */
 body { 
     background: #020202; 
-    background-image: radial-gradient(circle at 50% 10%, rgba(212, 175, 55, 0.15) 0%, transparent 60%);
     margin: 0; 
     font-family: 'Inter', sans-serif;
     color: #fff;
-    min-height: 100vh;
 }
 
 .piloto-wrapper {
@@ -137,19 +128,6 @@ body {
 }
 @keyframes blinkLive { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-/* OVERLAY ESPERANDO INICIO */
-.tv-waiting-overlay {
-    position: absolute; inset: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 5;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    transition: opacity 0.5s;
-}
-.tv-waiting-overlay h3 {
-    font-family: 'Outfit'; font-weight: 900; color: #D4AF37; letter-spacing: 3px;
-    animation: blinkLive 2s infinite;
-}
-
 /* ===== 3. ZONA DE CARTONES (MÁXIMO 4) ===== */
 .zona-cartones-title {
     font-family: 'Outfit'; font-weight: 800; font-size: 1.2rem;
@@ -193,7 +171,7 @@ body {
     transition: all 0.2s;
 }
 
-.bingo-empty { background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.1); box-shadow: none; border-radius: 6px; aspect-ratio: 1; }
+.bingo-empty { background: transparent; box-shadow: none; }
 
 .bingo-hit { 
     background: #00FF88 !important; color: #000 !important; 
@@ -223,25 +201,10 @@ body {
 @keyframes blink { from { transform: scale(0.9); } to { transform: scale(1.1); } }
 </style>
 
-</head>
-<body>
-
 @php
     $bolillasIniciales = $bolillasMarcadas ?? [];
+    $streamUrl = $jugada->streaming_url ?? 'https://www.youtube.com/embed/live_stream?channel=UC4R8DWoMoI7CAwX8_LjQHig';
     
-    // En modo prueba o si no hay URL, usamos la imagen estática de IA
-    $streamUrl = trim($jugada->streaming_url ?? '') ?: null; 
-    
-    // Si quedó el enlace viejo de youtube por defecto, lo forzamos a null para que muestre la imagen IA
-    if ($streamUrl && str_contains($streamUrl, 'youtube.com')) {
-        $streamUrl = null;
-    }
-    
-    // Formato Bunny Stream (si solo es el ID)
-    if (is_numeric($streamUrl)) {
-        $streamUrl = "https://iframe.mediadelivery.net/embed/" . ($jugada->bunny_library_id ?? 'default') . "/" . $streamUrl;
-    }
-
     // REGLA DE JUEGO: Limitamos visualmente a un máximo de 4 cartones simultáneos en pantalla.
     $cartonesVisibles = $cartones->take(4);
 @endphp
@@ -254,9 +217,7 @@ body {
             <i class="bi bi-person-fill text-white-50 me-2"></i>{{ mb_strtoupper($participante->nombre) }}
         </div>
         
-        <div class="d-flex gap-3 align-items-center">
-            <span class="badge bg-warning text-dark me-2" style="font-size: 0.7rem; padding: 5px 8px;">VER 2</span>
-            
+        <div class="d-flex gap-3">
             <div class="switch-control">
                 <label for="modoAuto" class="text-white fw-bold" style="font-family: 'Outfit'; font-size: 0.8rem; letter-spacing: 1px;">MODO AUTO</label>
                 <div class="form-check form-switch m-0 pt-1">
@@ -269,6 +230,7 @@ body {
                     <input class="form-check-input" type="checkbox" id="sonidoOn" checked>
                 </div>
             </div>
+            <a href="/salas" class="btn btn-sm btn-outline-secondary d-flex align-items-center"><i class="bi bi-door-closed me-1"></i> Salir</a>
         </div>
     </header>
 
@@ -298,16 +260,8 @@ body {
         <!-- Derecha: TV Transmisión -->
         <div class="glass-panel p-1">
             <div class="tv-container">
-                <div class="tv-waiting-overlay" id="tvWaiting" style="{{ count($bolillasIniciales) > 0 ? 'display: none;' : '' }}">
-                    <h3>INICIAMOS PRÓXIMAMENTE</h3>
-                    <div class="text-white-50">Esperando al locutor...</div>
-                </div>
                 <div class="live-tag">🔴 EN DIRECTO</div>
-                @if($streamUrl)
-                    <iframe src="{{ $streamUrl }}?autoplay=1&mute=0&controls=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                @else
-                    <img src="{{ asset('images/live_placeholder.jpg') }}" alt="Sorteo en vivo" id="liveImage" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" />
-                @endif
+                <iframe src="{{ $streamUrl }}?autoplay=1&mute=0&controls=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             </div>
         </div>
     </div>
@@ -430,9 +384,6 @@ document.addEventListener('DOMContentLoaded', () => {
         bActual.classList.remove('pop');
         void bActual.offsetWidth; // Force reflow
         bActual.classList.add('pop');
-        
-        const overlay = document.getElementById('tvWaiting');
-        if(overlay) overlay.style.display = 'none';
 
         // SECUENCIA HISTORIAL (CINTA)
         const ult = document.getElementById('ultimos');
@@ -474,5 +425,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-</body>
-</html>
+@endsection
