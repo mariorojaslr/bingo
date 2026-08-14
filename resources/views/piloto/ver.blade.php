@@ -248,9 +248,9 @@ body {
     // Como PHP file_get_contents falla en Hostinger por permisos, usamos la URL absoluta que sabemos que funciona por CDN
     $placeholderUrl = 'https://fullbin.gentepiola.net/images/live_placeholder.jpg';
     
-    // Si no hay video cargado en la base de datos, ponemos un video de prueba directo (MP4) para evitar bloqueos de iframes
+    // Si no hay video cargado en la base de datos, ponemos nulo
     if(empty($streamUrl)) {
-        $streamUrl = 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4';
+        $streamUrl = null;
     } else {
         // Convertir links regulares de YouTube a formato embed
         if (str_contains($streamUrl, 'youtube.com/watch?v=')) {
@@ -275,7 +275,7 @@ body {
         </div>
         
         <div class="d-flex gap-3 align-items-center">
-            <span class="badge bg-warning text-dark me-2" style="font-size: 0.7rem; padding: 5px 8px;">VER 4</span>
+            <span class="badge bg-warning text-dark me-2" style="font-size: 0.7rem; padding: 5px 8px;">VER 5</span>
             
             <div class="switch-control">
                 <label for="modoAuto" class="text-white fw-bold" style="font-family: 'Outfit'; font-size: 0.8rem; letter-spacing: 1px;">MODO AUTO</label>
@@ -317,21 +317,26 @@ body {
 
         <!-- Derecha: TV Transmisión -->
         <div class="glass-panel p-1">
-            <div class="tv-container">
-                <div class="tv-waiting-overlay" id="tvWaiting" style="{{ count($bolillasIniciales) > 0 ? 'display: none;' : '' }}">
-                    <h3>INICIAMOS PRÓXIMAMENTE</h3>
-                    <div class="text-white-50">Esperando al locutor...</div>
-                </div>
-                <div class="live-tag">🔴 EN DIRECTO</div>
-                @if($streamUrl)
-                    @if(str_ends_with(strtolower($streamUrl), '.mp4'))
-                        <video src="{{ $streamUrl }}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;"></video>
+            <div class="tv-container" id="video-container">
+                <!-- AMENIZACIÓN PREVIA -->
+                <div id="amenizacion-container" style="width: 100%; height: 100%;">
+                    @if($streamUrl)
+                        <iframe src="{{ $streamUrl }}" allow="autoplay; encrypted-media" allowfullscreen style="width: 100%; height: 100%; border: none; pointer-events: none; border-radius: 12px;"></iframe>
                     @else
-                        <iframe src="{{ $streamUrl }}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        <img src="{{ $placeholderUrl }}" alt="Sorteo en vivo" id="liveImage" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" />
                     @endif
-                @else
-                    <img src="{{ $placeholderUrl }}" alt="Sorteo en vivo" id="liveImage" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" />
-                @endif
+                </div>
+
+                <!-- OVERLAY ESPERA (Encima de la amenización) -->
+                <div class="tv-waiting-overlay" id="tvWaiting" style="position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 12px; {{ count($bolillasIniciales) > 0 ? 'display: none;' : '' }}">
+                    <h3 style="font-family: 'Outfit'; font-weight: 900; color: #D4AF37; letter-spacing: 3px; font-size: 2.5rem; text-shadow: 0 0 20px rgba(212,175,55,0.5);">EN BREVE EMPEZAMOS</h3>
+                    <div class="text-white-50" style="font-size: 1.2rem;">Preparando sorteo...</div>
+                </div>
+
+                <!-- BOLILLERO BLUFF (Oculto al inicio) -->
+                <video id="bluff-video" src="/videos/bolillero.mp4" loop muted playsinline style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 12px;"></video>
+                
+                <div class="live-tag">🔴 EN DIRECTO</div>
             </div>
         </div>
     </div>
@@ -396,7 +401,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('modoAuto').addEventListener('change', e => {
         modoAuto = e.target.checked;
         if(modoAuto) {
-            // Convierte todos los pendientes olvidados a aciertos automáticos
             document.querySelectorAll('.bingo-pendiente').forEach(c => {
                 c.classList.remove('bingo-pendiente');
                 c.classList.add('bingo-hit');
@@ -406,7 +410,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.getElementById('sonidoOn').addEventListener('change', e => sonido = e.target.checked);
     
-    // Toque manual del cartón
     document.querySelectorAll('.numero').forEach(c => {
         c.addEventListener('click', function() {
             if(!modoAuto && this.classList.contains('bingo-pendiente')) {
@@ -423,6 +426,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function actualizarVideo(enJuego) {
+        const amenizacion = document.getElementById('amenizacion-container');
+        const overlayEspera = document.getElementById('tvWaiting');
+        const bluffVideo = document.getElementById('bluff-video');
+        
+        if (enJuego) {
+            if (amenizacion) amenizacion.style.display = 'none';
+            if (overlayEspera) overlayEspera.style.display = 'none';
+            if (bluffVideo) {
+                bluffVideo.style.display = 'block';
+                bluffVideo.play().catch(e => console.log("Autoplay blocked"));
+            }
+        } else {
+            if (amenizacion) amenizacion.style.display = 'block';
+            if (overlayEspera) overlayEspera.style.display = 'flex';
+            if (bluffVideo) {
+                bluffVideo.style.display = 'none';
+                bluffVideo.pause();
+            }
+        }
+    }
+
     /* =========================================================
        CONEXIÓN PUSHER TIEMPO REAL
     ========================================================= */
@@ -436,7 +461,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     channel.bind('SorteoActualizado', data => {
 
-        // REINICIO
         if(data.bolilla === null) {
             document.getElementById('bolillaActual').innerText = '—';
             document.getElementById('ultimos').innerHTML = '';
@@ -445,20 +469,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             document.getElementById('cartelLinea').classList.remove('mostrar');
             document.getElementById('cartelBingo').classList.remove('mostrar');
+            actualizarVideo(false);
             return;
         }
 
-        // BOLILLA PRINCIPAL
         const bActual = document.getElementById('bolillaActual');
         bActual.innerText = data.bolilla;
         bActual.classList.remove('pop');
-        void bActual.offsetWidth; // Force reflow
+        void bActual.offsetWidth;
         bActual.classList.add('pop');
         
-        const overlay = document.getElementById('tvWaiting');
-        if(overlay) overlay.style.display = 'none';
+        actualizarVideo(true);
 
-        // SECUENCIA HISTORIAL (CINTA)
         const ult = document.getElementById('ultimos');
         ult.innerHTML = '';
         data.ultimas.slice(0, 8).forEach((n, i) => {

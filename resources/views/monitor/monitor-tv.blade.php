@@ -250,12 +250,11 @@
     @php
         $streamUrl = $jugada->streaming_url ?? null;
         if(empty($streamUrl)) {
-            $streamUrl = 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4';
+            $streamUrl = null; // Sin amenización de YouTube por defecto
         } else {
             // Convertir links regulares de YouTube a formato embed
             if (str_contains($streamUrl, 'youtube.com/watch?v=')) {
                 $streamUrl = str_replace('watch?v=', 'embed/', $streamUrl);
-                // Remover parámetros extra
                 if (str_contains($streamUrl, '&')) {
                     $streamUrl = explode('&', $streamUrl)[0];
                 }
@@ -269,24 +268,32 @@
     @endphp
 
     <!-- Video Background -->
-    <div class="video-container">
-        @if($streamUrl)
-            @if(str_ends_with(strtolower($streamUrl), '.mp4'))
-                <video src="{{ $streamUrl }}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+    <div class="video-container" id="video-container">
+        <!-- AMENIZACIÓN PREVIA -->
+        <div id="amenizacion-container" style="width: 100%; height: 100%;">
+            @if($streamUrl)
+                <iframe src="{{ $streamUrl }}" allow="autoplay; encrypted-media" allowfullscreen style="width: 100%; height: 100%; border: none; pointer-events: none;"></iframe>
             @else
-                <iframe src="{{ $streamUrl }}" allow="autoplay; encrypted-media" allowfullscreen style="width: 100%; height: 100%; border: none;"></iframe>
+                <img src="{{ $placeholderUrl }}" alt="Sorteo en vivo" style="width: 100%; height: 100%; object-fit: cover;" />
             @endif
-        @else
-            <img src="{{ $placeholderUrl }}" alt="Sorteo en vivo" style="width: 100%; height: 100%; object-fit: cover;" />
-        @endif
+        </div>
+
+        <!-- OVERLAY ESPERA (Encima de la amenización) -->
+        <div class="tv-waiting-overlay" id="tvWaiting" style="position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <h3 style="font-family: 'Outfit'; font-weight: 900; color: #D4AF37; letter-spacing: 3px; font-size: 2.5rem; text-shadow: 0 0 20px rgba(212,175,55,0.5);">EN BREVE EMPEZAMOS</h3>
+            <div class="text-white-50" style="font-size: 1.2rem;">Preparando sorteo...</div>
+        </div>
+
+        <!-- BOLILLERO BLUFF (Oculto al inicio) -->
+        <video id="bluff-video" src="/videos/bolillero.mp4" loop muted playsinline style="display: none; width: 100%; height: 100%; object-fit: cover;"></video>
     </div>
 
     <!-- Botón En Vivo (Esquina Superior Derecha) -->
     <div class="live-btn">EN VIVO</div>
     
-    <!-- Badge VER 4 -->
+    <!-- Badge VER 5 -->
     <div style="position: absolute; top: 20px; right: 140px; z-index: 10;">
-        <span class="badge bg-warning text-dark" style="font-size: 0.8rem; padding: 5px 10px;">VER 4</span>
+        <span class="badge bg-warning text-dark" style="font-size: 0.8rem; padding: 5px 10px;">VER 5</span>
     </div>
 
     <!-- BARRA LATERAL -->
@@ -367,9 +374,32 @@
                         historyBox.innerHTML += `<div class="history-ball">${num}</div>`;
                     });
                 }
+                
+                // --- LÓGICA DE VIDEO (BLUFF BOLILLERO) ---
+                const amenizacion = document.getElementById('amenizacion-container');
+                const overlayEspera = document.getElementById('tvWaiting');
+                const bluffVideo = document.getElementById('bluff-video');
+                
+                // Si ya hay bolillas extraídas y estamos en juego, mostramos el bolillero
+                if (bolillas.length > 0 && estado !== 'esperando') {
+                    if (amenizacion) amenizacion.style.display = 'none';
+                    if (overlayEspera) overlayEspera.style.display = 'none';
+                    if (bluffVideo) {
+                        bluffVideo.style.display = 'block';
+                        bluffVideo.play().catch(e => console.log("Autoplay bloqued"));
+                    }
+                } else {
+                    // Volver a estado de espera
+                    if (amenizacion) amenizacion.style.display = 'block';
+                    if (overlayEspera) overlayEspera.style.display = 'flex';
+                    if (bluffVideo) {
+                        bluffVideo.style.display = 'none';
+                        bluffVideo.pause();
+                    }
+                }
             }
 
-            renderizar(bolillas);
+            renderizar(bolillas, estado);
 
             // WebSockets
             setTimeout(() => {
@@ -377,7 +407,7 @@
                     window.Echo.channel('jugada.{{ $jugada->id ?? ($jugadaId ?? 1) }}')
                         .listen('.SorteoActualizado', (e) => {
                             console.log("Evento recibido:", e);
-                            renderizar(e.bolillas);
+                            renderizar(e.bolillas, e.estado);
 
                             const winnerOverlay = document.getElementById('winner-overlay');
                             if(e.estado === 'linea') {

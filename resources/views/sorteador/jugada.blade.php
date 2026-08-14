@@ -152,7 +152,7 @@
 <body>
 
 <header class="top-navbar">
-    <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2">VERSIÓN 4</span>
+    <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2">VERSIÓN 5</span>
     <div class="d-flex align-items-center gap-2">
         <i class="bi bi-controller fs-3 text-white"></i>
         <div>
