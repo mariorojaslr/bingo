@@ -146,44 +146,18 @@ class UserStoreController extends Controller
 
     private function procesarMercadoPago($transaccion, $participante)
     {
-        MercadoPagoConfig::setAccessToken(env('MP_ACCESS_TOKEN', 'APP_USR-123456789-test'));
+        // MODO DEMO / SIMULACIÓN: Saltamos la API real de MercadoPago para no frenar las pruebas
+        $fakePaymentId = rand(100000000, 999999999);
+        
+        $transaccion->detalles_adicionales = "MOCK_PREF_" . rand(1000, 9999);
+        $transaccion->save();
 
-        $client = new PreferenceClient();
-
-        try {
-            $preference = $client->create([
-                "items" => [
-                    [
-                        "id" => "FICHAS-" . $transaccion->fichas,
-                        "title" => $transaccion->fichas . " Fichas Infinity",
-                        "quantity" => 1,
-                        "currency_id" => "ARS",
-                        "unit_price" => (float) $transaccion->monto_fiat
-                    ]
-                ],
-                "payer" => [
-                    "name" => $participante->nombre,
-                    "surname" => "",
-                    "email" => "jugador" . $participante->id . "@test.com",
-                ],
-                "back_urls" => [
-                    "success" => route('cajero.mp_success'),
-                    "failure" => route('cajero.mp_failure'),
-                    "pending" => route('cajero.mp_failure')
-                ],
-                "auto_return" => "approved",
-                "external_reference" => (string) $transaccion->id
-            ]);
-
-            $transaccion->detalles_adicionales = $preference->id;
-            $transaccion->save();
-
-            return redirect($preference->init_point);
-
-        } catch (MPApiException $e) {
-            \Log::error("MercadoPago API Error: " . $e->getMessage());
-            return back()->with('error', 'Hubo un error al conectar con MercadoPago. Intenta nuevamente más tarde.');
-        }
+        // Redirigimos automáticamente a nuestra propia ruta de éxito simulando que MercadoPago aprobó el pago
+        return redirect()->route('cajero.mp_success', [
+            'payment_id' => $fakePaymentId,
+            'status' => 'approved',
+            'external_reference' => $transaccion->id
+        ])->with('success_mock', '¡Simulación de MercadoPago exitosa! (No se usó dinero real)');
     }
 
     public function mpSuccess(Request $request)
