@@ -44,6 +44,13 @@
 
 <div class="container container-box">
     
+    <!-- AVISO DE MODO DEMO -->
+    <div class="alert alert-warning text-center border-warning fw-bold mb-4 shadow-sm" style="background: rgba(255, 193, 7, 0.1); color: #ffc107;">
+        <i class="bi bi-exclamation-triangle-fill fs-4 d-block mb-2"></i>
+        ATENCIÓN: MODO DE PRUEBA Y DEMOSTRACIÓN<br>
+        <span class="small fw-normal">Todos los movimientos, saldos y compras en este sector operan en el plano de lo ficticio. Es solo una simulación. No tendrás que pagar nada real, ni podrás cobrar premios reales. Disfruta la experiencia.</span>
+    </div>
+
     <div class="text-center mb-4">
         <h6 class="badge badge-premium px-3 py-2 mb-3">SORTEO EN VIVO (PLATAFORMA B2C)</h6>
         <h2 class="fw-bold" style="font-family: 'Outfit';">{{ mb_strtoupper($jugada->nombre_jugada) }}</h2>
