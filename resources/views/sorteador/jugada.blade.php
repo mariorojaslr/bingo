@@ -340,7 +340,11 @@
         if(num) { stopAutoExtraer(); postCall('{{ route("sorteador.extraer", $jugadaId) }}', { numero: num }); }
     };
     document.getElementById('btnLinea').onclick = () => { stopAutoExtraer(); postCall('{{ route("sorteador.confirmar.linea", $jugadaId) }}'); };
-    document.getElementById('btnReanudar').onclick = () => { postCall('{{ route("sorteador.reanudar", $jugadaId) }}'); };
+    document.getElementById('btnReanudar').onclick = () => { 
+        postCall('{{ route("sorteador.reanudar", $jugadaId) }}'); 
+        document.getElementById('winnerBox').classList.remove('show');
+        if (!autoExtraerInterval) toggleAutoExtraer();
+    };
     document.getElementById('btnBingo').onclick = () => { stopAutoExtraer(); postCall('{{ route("sorteador.confirmar.bingo", $jugadaId) }}'); };
     document.getElementById('btnReiniciar').onclick = () => { stopAutoExtraer(); postCall('{{ route("sorteador.reiniciar", $jugadaId) }}'); };
     document.getElementById('btnPublicidad').onclick = () => {
