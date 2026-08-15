@@ -124,7 +124,7 @@
         .betting-board {
             display: grid;
             grid-template-columns: 60px repeat(12, 1fr) 60px;
-            grid-template-rows: repeat(3, 1fr) 40px 40px;
+            grid-template-rows: repeat(3, 80px) 50px 50px;
             gap: 2px;
             background: rgba(255,255,255,0.2);
             padding: 5px;
@@ -291,6 +291,7 @@
             }
             .betting-board {
                 max-width: 1100px;
+                grid-template-rows: repeat(3, 90px) 60px 60px;
             }
         }
 
