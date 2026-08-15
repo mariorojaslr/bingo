@@ -88,39 +88,23 @@
         }
 
         .wheel {
-            width: 250px;
-            height: 250px;
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
-            background: repeating-conic-gradient(
-                var(--red-num) 0 9.7deg, 
-                var(--black-num) 9.7deg 19.4deg
-            );
-            border: 15px solid #3e1b04; /* Madera */
+            border: 20px solid #3e1b04; /* Madera */
             box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 15px rgba(0,0,0,0.9);
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: #222; /* Fondo debajo del SVG */
+            overflow: hidden;
         }
 
-        .wheel::before {
-            content: '';
-            position: absolute;
-            width: 90%;
-            height: 90%;
-            border-radius: 50%;
-            border: 2px solid #888;
-            pointer-events: none;
-        }
-
-        .wheel::after {
-            content: '';
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle, #eaddc0 0%, #bca56a 50%, #856a29 100%);
-            border-radius: 50%;
-            border: 2px solid #5a4b27;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+        .wheel svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-4.86deg); /* Ajuste fino inicial si es necesario */
         }
 
         /* --- Tablero de Apuestas (Grid) --- */
@@ -306,35 +290,38 @@
         @media (min-width: 901px) {
             .roulette-container {
                 flex-direction: row;
-                align-items: center;
-                justify-content: space-around;
-                padding: 40px 20px;
+                align-items: stretch;
+                justify-content: center;
+                gap: 50px;
+                padding: 40px;
             }
             .wheel-wrapper {
-                flex: 1;
-                margin-bottom: 0;
+                flex: 0 0 450px;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
             }
             .wheel {
                 width: 450px;
                 height: 450px;
                 border-width: 25px;
             }
-            .wheel::after {
-                width: 160px;
-                height: 160px;
-            }
             .board-wrapper {
-                flex: 1.5;
-                margin-top: 0;
-                justify-content: flex-end;
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                max-width: 1100px;
             }
             .betting-board {
-                max-width: 100%;
-                grid-template-rows: repeat(3, 110px) 60px 60px;
+                width: 100%;
+                height: 100%;
+                max-height: 600px;
+                grid-template-rows: repeat(3, 1fr) 70px 70px;
                 border-radius: 10px;
             }
             .board-cell {
-                font-size: 1.8rem;
+                font-size: 2.5rem;
                 border: 1px solid #fff;
             }
             .dozen-cell, .outside-cell {
@@ -391,7 +378,9 @@
         <div class="table-logo">INFINITY RULETA</div>
         
         <div class="wheel-wrapper">
-            <div class="wheel"></div>
+            <div class="wheel">
+                @include('mockups.partials.wheel_svg')
+            </div>
         </div>
 
         <div class="board-wrapper">
