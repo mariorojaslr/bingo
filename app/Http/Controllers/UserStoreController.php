@@ -38,7 +38,7 @@ class UserStoreController extends Controller
 
     public function cerrarSesion()
     {
-        return back()->withCookie(\Cookie::forget('participante_token'));
+        return redirect()->route('tienda.show', 1)->withCookie(cookie('participante_token', '', -1));
     }
 
     public function procesarCompra(Request $request, $jugadaId)
