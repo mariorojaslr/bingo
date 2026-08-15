@@ -28,6 +28,9 @@
             flex-direction: column;
             height: 100vh;
             user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: manipulation;
         }
 
         /* --- Header --- */
@@ -354,11 +357,12 @@
 
             .board-wrapper { 
                 width: 100%; 
-                height: 100%;
+                height: 75vh; /* Matches the rotated width of betting-board to prevent overlap */
                 display: flex; 
                 justify-content: center; 
                 align-items: center;
                 position: relative;
+                margin: 20px 0;
             }
 
             /* Truco matemático: Intercambiamos viewport width (vw) y height (vh) 
@@ -366,11 +370,8 @@
             .betting-board {
                 width: 75vh;
                 height: 85vw;
-                max-width: 800px;
-                max-height: 300px;
-                grid-template-rows: repeat(3, 1fr) 40px 40px;
+                grid-template-rows: repeat(3, 1fr) 45px 45px;
                 transform: rotate(-90deg);
-                /* Forzamos el origen de transformación al centro absoluto del viewport si es necesario */
             }
             
             .board-cell { 
