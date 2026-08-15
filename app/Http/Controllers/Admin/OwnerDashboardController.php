@@ -73,16 +73,25 @@ class OwnerDashboardController extends Controller
     public function storeTarifa(Request $request)
     {
         DB::table('tarifas')->insert([
-            'nombre' => $request->input('nombre'),
-            'canon_mensual' => $request->input('canon_mensual', 0),
-            'comision_por_carton' => $request->input('comision_por_carton', 0),
-            'max_cartones' => $request->input('max_cartones') ?: null,
-            'streaming_incluido' => $request->has('streaming_incluido') ? 1 : 0,
-            'created_at' => now(),
-            'updated_at' => now(),
+            'nombre' => $request->nombre,
+            'canon_mensual' => $request->canon_mensual ?? 0,
+            'comision_por_carton' => $request->comision_por_carton ?? 0,
+            'max_cartones' => $request->max_cartones ?: null,
+            'streaming_incluido' => $request->has('streaming_incluido')
         ]);
-        
-        return redirect()->back();
+        return back()->with('success', 'Plan comercial creado exitosamente.');
+    }
+
+    public function updateTarifa($id, Request $request)
+    {
+        DB::table('tarifas')->where('id', $id)->update([
+            'nombre' => $request->nombre,
+            'canon_mensual' => $request->canon_mensual ?? 0,
+            'comision_por_carton' => $request->comision_por_carton ?? 0,
+            'max_cartones' => $request->max_cartones ?: null,
+            'streaming_incluido' => $request->has('streaming_incluido')
+        ]);
+        return back()->with('success', 'Plan comercial actualizado exitosamente.');
     }
 
     public function storeEmpresa(Request $request)

@@ -83,14 +83,23 @@
         <div class="d-flex gap-3 align-items-center">
             <!-- Selector de Moneda y Lenguaje -->
             <select class="form-select form-select-sm bg-dark text-white border-secondary" style="width: auto;">
-                <option value="es_ARS">🇪🇸 ARS ($)</option>
+                <option value="es_ARS">🇦🇷 ARS ($)</option>
                 <option value="en_USD">🇺🇸 USD ($)</option>
-                <option value="pt_BRL">🇧🇷 BRL (R$)</option>
+                <option value="es_EUR">🇪🇸 EUR (€)</option>
             </select>
             
-            <div class="bg-dark px-3 py-1 rounded-pill border border-secondary text-info">
-                <i class="bi bi-wallet2"></i> $0.00
+            @if($participanteLogueado)
+            <div class="d-flex flex-column text-end">
+                <span class="text-white-50" style="font-size: 0.7rem; margin-bottom: -5px;">{{ $participanteLogueado->nombre }}</span>
+                <div class="bg-dark px-3 py-1 rounded-pill border border-secondary text-warning fw-bold mt-1">
+                    <i class="bi bi-gem"></i> {{ number_format($participanteLogueado->saldo_fichas, 0) }}
+                </div>
             </div>
+            @else
+            <div class="bg-dark px-3 py-1 rounded-pill border border-secondary text-info">
+                <i class="bi bi-wallet2"></i> Invitado
+            </div>
+            @endif
         </div>
     </div>
     
@@ -137,7 +146,7 @@
         
         <div class="row g-4">
             <div class="col-6 col-md-4 col-lg-3">
-                <a href="{{ url('/demo/mockups/blackjack') }}" class="game-card text-center p-4">
+                <a href="{{ route('casino.blackjack') }}" class="game-card text-center p-4">
                     <i class="bi bi-suit-spade fs-1 mb-3 d-block" style="color: #666;"></i>
                     <h3 class="text-light fs-5">Blackjack</h3>
                     <p class="text-white-50 small mb-0">Multijugador</p>
@@ -145,12 +154,12 @@
             </div>
 
             <div class="col-6 col-md-4 col-lg-3">
-                <a href="{{ url('/demo/mockups/ruleta') }}" class="game-card text-center p-4">
+                <a href="#" class="game-card text-center p-4" onclick="alert('Ruleta en mantenimiento. ¡Próximamente versión final!'); return false;">
                     <div class="mx-auto mb-3" style="border: 4px dashed #fff; border-radius: 50%; width: 60px; height: 60px; display:flex; align-items:center; justify-content:center;">
                         <i class="bi bi-circle-fill fs-2 text-danger"></i>
                     </div>
                     <h3 class="text-light fs-5">Ruleta Europea</h3>
-                    <p class="text-white-50 small mb-0">Mesas VIP</p>
+                    <p class="text-white-50 small mb-0">Próximamente</p>
                 </a>
             </div>
         </div>

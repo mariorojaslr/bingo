@@ -140,7 +140,12 @@
                             <li class="list-group-item bg-transparent text-white border-secondary px-0 py-3">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <strong class="fs-5 text-info">{{ $tarifa->nombre }}</strong>
-                                    <span class="fs-5 fw-bold">${{ number_format($tarifa->canon_mensual, 0) }}</span>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <span class="fs-5 fw-bold">${{ number_format($tarifa->canon_mensual, 0) }}</span>
+                                        <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#modalEditarTarifa{{ $tarifa->id }}">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="text-white-50 mt-1" style="font-size: 0.85rem;">
                                     <i class="bi bi-check2 text-success"></i> Máx Cartones: {{ $tarifa->max_cartones ? number_format($tarifa->max_cartones, 0, ',', '.') : 'Ilimitado' }}<br>
@@ -148,6 +153,50 @@
                                     <i class="bi bi-check2 text-success"></i> Streaming: {{ $tarifa->streaming_incluido ? 'Incluido' : 'No incluido' }}
                                 </div>
                             </li>
+
+                            <!-- MODAL EDITAR TARIFA -->
+                            <div class="modal fade" id="modalEditarTarifa{{ $tarifa->id }}" tabindex="-1" data-bs-theme="dark">
+                              <div class="modal-dialog">
+                                <div class="modal-content glass-panel text-white border-secondary">
+                                  <div class="modal-header border-secondary">
+                                    <h5 class="modal-title"><i class="bi bi-pencil-square"></i> Editar Plan Comercial</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <form action="{{ route('demo.owner.tarifas.update', $tarifa->id) }}" method="POST">
+                                  @csrf
+                                  @method('PUT')
+                                  <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nombre del Plan</label>
+                                        <input type="text" name="nombre" class="form-control bg-dark text-white border-secondary" value="{{ $tarifa->nombre }}" required>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label">Canon Mensual ($)</label>
+                                            <input type="number" step="0.01" name="canon_mensual" class="form-control bg-dark text-white border-secondary" value="{{ $tarifa->canon_mensual }}">
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label">Comisión x Cartón ($)</label>
+                                            <input type="number" step="0.01" name="comision_por_carton" class="form-control bg-dark text-white border-secondary" value="{{ $tarifa->comision_por_carton }}">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Límite de Cartones (Vacío para ilimitado)</label>
+                                        <input type="number" name="max_cartones" class="form-control bg-dark text-white border-secondary" value="{{ $tarifa->max_cartones }}">
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" name="streaming_incluido" id="streamCheck{{ $tarifa->id }}" value="1" {{ $tarifa->streaming_incluido ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="streamCheck{{ $tarifa->id }}">Incluir Streaming Video (Bunny.net)</label>
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer border-secondary">
+                                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-info fw-bold text-dark">Guardar Cambios</button>
+                                  </div>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
                         @endforeach
                     </ul>
                 @endif

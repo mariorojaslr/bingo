@@ -28,12 +28,19 @@ class UserStoreController extends Controller
         $jugada = Jugada::with('institucion', 'organizador')->findOrFail($jugadaId);
         
         $participanteLogueado = null;
+        $cartonesComprados = 0;
+        
         $token = $request->cookie('participante_token');
         if ($token) {
             $participanteLogueado = PruebaParticipante::where('token', $token)->first();
+            if ($participanteLogueado) {
+                $cartonesComprados = \App\Models\ParticipanteCartonPrueba::where('participante_prueba_id', $participanteLogueado->id)
+                                        ->where('jugada_id', $jugadaId)
+                                        ->count();
+            }
         }
 
-        return view('tienda.compra', compact('jugada', 'participanteLogueado'));
+        return view('tienda.compra', compact('jugada', 'participanteLogueado', 'cartonesComprados'));
     }
 
     public function cerrarSesion()

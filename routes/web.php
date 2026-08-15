@@ -98,6 +98,7 @@ Route::get('demo/sorteador', [App\Http\Controllers\CartonController::class, 'dem
 // Owner Global Dashboard
 Route::get('/demo/owner', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'index'])->name('demo.owner');
 Route::post('/demo/owner/tarifas', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'storeTarifa']);
+Route::put('/demo/owner/tarifas/{id}', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'updateTarifa'])->name('demo.owner.tarifas.update');
 Route::post('/demo/owner/empresas', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'storeEmpresa']);
 Route::get('/demo/owner/impersonate/{empresa}', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'impersonate'])->name('demo.owner.impersonate');
 Route::get('/demo/owner/stop-impersonate', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'stopImpersonate'])->name('demo.owner.stop_impersonate');

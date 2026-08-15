@@ -119,6 +119,17 @@
                 </div>
             @endif
 
+            @if($cartonesComprados > 0)
+                <div class="alert alert-success bg-dark border-success text-center mb-4">
+                    <i class="bi bi-ticket-perforated fs-1 text-success mb-2 d-block"></i>
+                    <h5 class="text-white">¡Ya tienes {{ $cartonesComprados }} cartones para esta jugada!</h5>
+                    <p class="text-white-50 small mb-3">Puedes entrar a la sala ahora mismo y esperar el sorteo.</p>
+                    <a href="{{ route('piloto.ver', $participanteLogueado->token) }}" class="btn btn-success btn-lg fw-bold w-100 rounded-pill shadow">
+                        <i class="bi bi-play-circle me-2"></i> Entrar a la Sala
+                    </a>
+                </div>
+            @endif
+
             <div class="mb-5 bg-dark p-3 rounded" style="border: 1px solid rgba(255,255,255,0.05);">
                 <label class="form-label text-white-50 small text-uppercase fw-bold">Cantidad de Cartones</label>
                 <div class="d-flex justify-content-between align-items-center">

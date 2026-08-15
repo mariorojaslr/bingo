@@ -6,13 +6,22 @@ use Illuminate\Http\Request;
 use App\Models\Empresa;
 use App\Models\Sorteo;
 
+use App\Models\PruebaParticipante;
+
 class CasinoLobbyController extends Controller
 {
     /**
      * Muestra el Lobby de Casino para una Marca Blanca específica usando su subdominio.
      */
-    public function index($subdominio)
+    public function index($subdominio, Request $request)
     {
+        // Buscar al participante logueado
+        $participanteLogueado = null;
+        $token = $request->cookie('participante_token');
+        if ($token) {
+            $participanteLogueado = PruebaParticipante::where('token', $token)->first();
+        }
+
         // Buscar la empresa por su subdominio
         $empresa = Empresa::where('subdominio', $subdominio)
                     ->where('activo', true)
@@ -37,7 +46,7 @@ class CasinoLobbyController extends Controller
             $tema = 'neon';
         }
 
-        return view("casino.themes.{$tema}", compact('empresa', 'sorteoActivo'));
+        return view("casino.themes.{$tema}", compact('empresa', 'sorteoActivo', 'participanteLogueado'));
     }
 
     /**
