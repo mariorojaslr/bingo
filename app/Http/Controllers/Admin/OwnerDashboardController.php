@@ -113,7 +113,22 @@ class OwnerDashboardController extends Controller
             'updated_at' => now(),
         ]);
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Empresa creada exitosamente.');
+    }
+
+    public function updateEmpresa($id, Request $request)
+    {
+        DB::table('empresas')->where('id', $id)->update([
+            'nombre' => $request->input('nombre'),
+            'tarifa_id' => $request->input('tarifa_id') ?: null,
+            'activo' => $request->has('activo') ? 1 : 0,
+            'canon_personalizado' => $request->input('canon_personalizado') !== null ? floatval($request->input('canon_personalizado')) : null,
+            'comision_personalizada' => $request->input('comision_personalizada') !== null ? floatval($request->input('comision_personalizada')) : null,
+            'notas_owner' => $request->input('notas_owner'),
+            'updated_at' => now()
+        ]);
+
+        return back()->with('success', 'Empresa actualizada correctamente con tus condiciones particulares.');
     }
 
     public function impersonate($empresa_id)

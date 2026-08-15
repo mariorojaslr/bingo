@@ -87,7 +87,7 @@
                             <tr class="text-white-50">
                                 <th>CLIENTE</th>
                                 <th>PLAN</th>
-                                <th>CANON</th>
+                                <th>MÉTRICAS (Ref)</th>
                                 <th>ESTADO</th>
                                 <th>ACCIONES</th>
                             </tr>
@@ -106,8 +106,18 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td><span class="badge bg-secondary">{{ $emp->tarifa_nombre ?? 'Sin plan' }}</span></td>
-                                <td>${{ number_format($emp->canon_mensual ?? 0, 2) }}</td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ $emp->tarifa_nombre ?? 'Sin plan' }}</span>
+                                    @if($emp->canon_personalizado || $emp->comision_personalizada)
+                                        <br><span class="badge bg-warning text-dark mt-1" style="font-size:0.65rem;">Trato Especial</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <div class="small">
+                                        <div class="text-white-50">Usuarios: <span class="text-white fw-bold">{{ rand(50, 400) }}</span></div>
+                                        <div class="text-white-50">Ingresos: <span class="text-success fw-bold">${{ number_format(rand(100000, 900000), 2) }}</span></div>
+                                    </div>
+                                </td>
                                 <td>
                                     @if($emp->activo)
                                         <span class="badge bg-success rounded-pill px-3">ACTIVO</span>
@@ -116,8 +126,9 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('demo.owner.impersonate', $emp->id) }}" class="btn btn-sm btn-outline-light"><i class="bi bi-eye"></i> Entrar como Admin</a>
-                                    <a href="{{ route('casino.lobby', $emp->subdominio) }}" target="_blank" class="btn btn-sm btn-outline-info ms-2"><i class="bi bi-phone"></i> Ver Casino App</a>
+                                    <button class="btn btn-sm btn-outline-warning mb-1" data-bs-toggle="modal" data-bs-target="#modalEditarEmpresa{{ $emp->id }}" title="Editar Empresa"><i class="bi bi-pencil"></i></button>
+                                    <a href="{{ route('demo.owner.impersonate', $emp->id) }}" class="btn btn-sm btn-outline-light mb-1" title="Entrar como Admin"><i class="bi bi-eye"></i></a>
+                                    <a href="{{ route('casino.lobby', $emp->subdominio) }}" target="_blank" class="btn btn-sm btn-outline-info mb-1" title="Ver App"><i class="bi bi-phone"></i></a>
                                 </td>
                             </tr>
                             @endforeach
@@ -275,6 +286,74 @@
       <div class="modal-footer border-secondary p-3">
         <button type="button" class="btn btn-outline-light px-4" data-bs-dismiss="modal">Cancelar</button>
         <button type="submit" class="btn btn-info px-5 fw-bold text-dark">Guardar Cambios</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+@endforeach
+
+<!-- MODALES DE EDICIÓN DE EMPRESAS (Fuera del stacking context) -->
+@foreach($empresas as $emp)
+<div class="modal fade" id="modalEditarEmpresa{{ $emp->id }}" tabindex="-1" data-bs-theme="dark">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content glass-panel text-white border-secondary">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title"><i class="bi bi-building-gear"></i> Acuerdos Particulares: {{ $emp->nombre }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{{ route('demo.owner.empresas.update', $emp->id) }}" method="POST">
+      @csrf
+      @method('PUT')
+      <div class="modal-body p-4">
+        
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <label class="form-label text-white-50">Nombre de la Empresa</label>
+                <input type="text" name="nombre" class="form-control bg-dark text-white border-secondary" value="{{ $emp->nombre }}" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label text-white-50">Estado Operativo</label>
+                <div class="form-check form-switch mt-2">
+                    <input class="form-check-input" type="checkbox" name="activo" id="activoCheck{{ $emp->id }}" value="1" style="transform: scale(1.3);" {{ $emp->activo ? 'checked' : '' }}>
+                    <label class="form-check-label ms-2" for="activoCheck{{ $emp->id }}">{{ $emp->activo ? 'Activa' : 'Suspendida' }}</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-4 p-3 rounded" style="background: rgba(0,255,136,0.05); border: 1px solid rgba(0,255,136,0.2);">
+            <label class="form-label text-success fw-bold"><i class="bi bi-tag-fill me-2"></i>Plan Base Asignado</label>
+            <select name="tarifa_id" class="form-select bg-dark text-white border-success">
+                <option value="">-- Sin Plan (Modo Prueba) --</option>
+                @foreach($tarifas as $tarifa)
+                    <option value="{{ $tarifa->id }}" {{ $emp->tarifa_id == $tarifa->id ? 'selected' : '' }}>{{ $tarifa->nombre }} - ${{ number_format($tarifa->canon_mensual, 0) }}</option>
+                @endforeach
+            </select>
+            <small class="text-white-50 mt-2 d-block">El sistema facturará este plan por defecto, a menos que definas condiciones especiales abajo.</small>
+        </div>
+
+        <h6 class="text-warning mt-4 mb-3 border-bottom border-secondary pb-2"><i class="bi bi-star-fill me-2"></i>Condiciones Especiales (Overrides)</h6>
+        
+        <div class="row g-4 mb-3">
+            <div class="col-md-6">
+                <label class="form-label text-white-50">Canon Mensual Personalizado ($)</label>
+                <input type="number" step="any" name="canon_personalizado" class="form-control bg-dark text-white border-secondary" value="{{ $emp->canon_personalizado }}" placeholder="Dejar vacío para usar el del Plan">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-white-50">Comisión x Cartón Personalizada ($)</label>
+                <input type="number" step="any" name="comision_personalizada" class="form-control bg-dark text-white border-secondary" value="{{ $emp->comision_personalizada }}" placeholder="Dejar vacío para usar el del Plan">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label text-white-50">Notas Privadas (Acuerdos, 3 meses gratis, etc.)</label>
+            <textarea name="notas_owner" class="form-control bg-dark text-white border-secondary" rows="3" placeholder="Ej: 3 meses gratis hasta diciembre...">{{ $emp->notas_owner }}</textarea>
+        </div>
+
+      </div>
+      <div class="modal-footer border-secondary p-3">
+        <button type="button" class="btn btn-outline-light px-4" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-warning px-4 fw-bold text-dark">Guardar Acuerdos</button>
       </div>
       </form>
     </div>

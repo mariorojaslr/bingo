@@ -100,6 +100,7 @@ Route::get('/demo/owner', [\App\Http\Controllers\Admin\OwnerDashboardController:
 Route::post('/demo/owner/tarifas', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'storeTarifa']);
 Route::put('/demo/owner/tarifas/{id}', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'updateTarifa'])->name('demo.owner.tarifas.update');
 Route::post('/demo/owner/empresas', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'storeEmpresa']);
+Route::put('/demo/owner/empresas/{id}', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'updateEmpresa'])->name('demo.owner.empresas.update');
 Route::get('/demo/owner/impersonate/{empresa}', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'impersonate'])->name('demo.owner.impersonate');
 Route::get('/demo/owner/stop-impersonate', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'stopImpersonate'])->name('demo.owner.stop_impersonate');
 Route::post('/demo/owner/transacciones/{id}/aprobar', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'aprobarTransaccion'])->name('demo.owner.transacciones.aprobar');
