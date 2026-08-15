@@ -46,11 +46,14 @@ class UserStoreController extends Controller
         $request->validate([
             'nombre' => 'required|string|max:255',
             'telefono' => 'required|string|max:50',
+            'prefijo' => 'nullable|string|max:10',
             'cantidad' => 'required|integer|min:1|max:4',
         ]);
 
         $jugada = Jugada::findOrFail($jugadaId);
-        $telefonoLimpio = $this->limpiarTelefono($request->telefono);
+        
+        $telefonoCompleto = $request->prefijo . $request->telefono;
+        $telefonoLimpio = $this->limpiarTelefono($telefonoCompleto);
 
         $participante = PruebaParticipante::firstOrCreate(
             ['telefono' => $telefonoLimpio],
@@ -120,11 +123,14 @@ class UserStoreController extends Controller
     public function cajeroShow(Request $request)
     {
         $telefonoRaw = $request->query('t');
+        $prefijo = $request->query('prefijo', '');
+        
         if(!$telefonoRaw) {
             return redirect()->route('tienda.show', 1)->with('error', 'Debes ingresar tu teléfono para acceder al cajero.');
         }
 
-        $telefono = $this->limpiarTelefono($telefonoRaw);
+        $telefonoCompleto = $prefijo . $telefonoRaw;
+        $telefono = $this->limpiarTelefono($telefonoCompleto);
 
         // Si el usuario ingresa un teléfono pero es su primera vez en la vida (no existe en DB),
         // lo creamos automáticamente para que pueda fondear su cuenta antes de comprar cartones.

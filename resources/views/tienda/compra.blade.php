@@ -91,6 +91,7 @@
             
             @if($participanteLogueado)
                 <input type="hidden" name="nombre" value="{{ $participanteLogueado->nombre }}">
+                <input type="hidden" name="prefijo" value="">
                 <input type="hidden" name="telefono" value="{{ $participanteLogueado->telefono }}">
             @else
                 <div class="mb-3">
@@ -100,8 +101,22 @@
 
                 <div class="mb-4">
                     <label class="form-label text-white-50 small text-uppercase fw-bold">Tu Teléfono (Billetera)</label>
-                    <input type="tel" name="telefono" class="form-control form-control-lg bg-dark text-warning border-secondary fw-bold" placeholder="Tu número" required>
-                    <div class="form-text text-white-50 small">Este número será tu acceso a tu billetera y cartones.</div>
+                    <div class="input-group input-group-lg">
+                        <select name="prefijo" class="form-select bg-dark text-white border-secondary text-center" style="max-width: 120px;" required>
+                            <option value="54" selected>🇦🇷 +54</option>
+                            <option value="56">🇨🇱 +56</option>
+                            <option value="598">🇺🇾 +598</option>
+                            <option value="51">🇵🇪 +51</option>
+                            <option value="52">🇲🇽 +52</option>
+                            <option value="57">🇨🇴 +57</option>
+                            <option value="55">🇧🇷 +55</option>
+                            <option value="1">🇺🇸 +1</option>
+                            <option value="34">🇪🇸 +34</option>
+                            <option value="">Otro</option>
+                        </select>
+                        <input type="tel" name="telefono" class="form-control bg-dark text-warning border-secondary fw-bold" placeholder="Número sin el prefijo (Ej: 3804123456)" required>
+                    </div>
+                    <div class="form-text text-white-50 small mt-2">Selecciona tu país e ingresa tu número. Esto garantizará que tu billetera sea única en el mundo.</div>
                 </div>
             @endif
 
@@ -129,13 +144,26 @@
 
         <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
             <h6 class="text-white-50 text-uppercase fw-bold mb-3"><i class="bi bi-wallet2"></i> Cajero de Fichas Infinity</h6>
-            <form action="{{ route('cajero.show') }}" method="GET" class="d-flex gap-2">
+            <form action="{{ route('cajero.show') }}" method="GET" class="d-flex flex-column gap-2">
                 @if($participanteLogueado)
                     <input type="hidden" name="t" value="{{ $participanteLogueado->telefono }}">
                     <button type="submit" class="btn btn-warning btn-sm text-nowrap fw-bold"><i class="bi bi-cart"></i> Comprar Fichas para {{ $participanteLogueado->nombre }}</button>
                 @else
-                    <input type="tel" name="t" class="form-control form-control-sm" placeholder="Tu Teléfono (para identificarte)" required>
-                    <button type="submit" class="btn btn-warning btn-sm text-nowrap fw-bold"><i class="bi bi-cart"></i> Comprar Fichas</button>
+                    <div class="input-group input-group-sm">
+                        <select name="prefijo" class="form-select bg-dark text-white border-secondary text-center" style="max-width: 90px;" required>
+                            <option value="54" selected>🇦🇷 +54</option>
+                            <option value="56">🇨🇱 +56</option>
+                            <option value="598">🇺🇾 +598</option>
+                            <option value="51">🇵🇪 +51</option>
+                            <option value="52">🇲🇽 +52</option>
+                            <option value="57">🇨🇴 +57</option>
+                            <option value="55">🇧🇷 +55</option>
+                            <option value="1">🇺🇸 +1</option>
+                            <option value="34">🇪🇸 +34</option>
+                        </select>
+                        <input type="tel" name="t" class="form-control bg-dark text-white border-secondary" placeholder="Tu Teléfono (para identificarte)" required>
+                        <button type="submit" class="btn btn-warning fw-bold"><i class="bi bi-cart"></i> Comprar Fichas</button>
+                    </div>
                 @endif
             </form>
             <div class="small text-muted mt-2">Accede al cajero para comprar fichas con MercadoPago, Prex, ARQ o Airtm.</div>
