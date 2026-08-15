@@ -83,12 +83,19 @@ Route::get('/cajero', [\App\Http\Controllers\UserStoreController::class, 'cajero
 Route::post('/cajero/procesar', [\App\Http\Controllers\UserStoreController::class, 'cajeroProcesar'])->name('cajero.procesar');
 Route::get('/cajero/mp/success', [\App\Http\Controllers\UserStoreController::class, 'mpSuccess'])->name('cajero.mp_success');
 
-// Casino Games
-Route::get('/casino/blackjack', [\App\Http\Controllers\BlackjackController::class, 'index'])->name('casino.blackjack');
+// Blackjack Rutas
+Route::get('/blackjack', [\App\Http\Controllers\BlackjackController::class, 'index'])->name('blackjack.index');
+Route::post('/blackjack/bet', [\App\Http\Controllers\BlackjackController::class, 'bet'])->name('blackjack.bet');
+Route::post('/blackjack/hit', [\App\Http\Controllers\BlackjackController::class, 'hit'])->name('blackjack.hit');
+Route::post('/blackjack/stand', [\App\Http\Controllers\BlackjackController::class, 'stand'])->name('blackjack.stand');
+Route::post('/blackjack/double', [\App\Http\Controllers\BlackjackController::class, 'doubleDown'])->name('blackjack.double');
 Route::get('/cajero/mp/failure', [\App\Http\Controllers\UserStoreController::class, 'mpFailure'])->name('cajero.mp_failure');
 Route::post('/api/webhooks/mercadopago', [\App\Http\Controllers\UserStoreController::class, 'mpWebhook'])->name('cajero.mp_webhook');
 
 Route::get('/tienda/gracias/{token}', [\App\Http\Controllers\UserStoreController::class, 'gracias'])->name('tienda.gracias');
+
+// Casino Games
+Route::get('/casino/blackjack', [\App\Http\Controllers\BlackjackController::class, 'index'])->name('casino.blackjack');
 
 // Public Marketing / Demo Routes
 Route::get('demo/visor', [App\Http\Controllers\CartonController::class, 'demoVisor'])->name('demo.visor');

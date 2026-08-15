@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Blackjack | Infinity Casino</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -275,104 +276,209 @@
         
         <!-- Banca (Dealer) -->
         <div class="dealer-area">
-            <div class="score-badge">BANCA: 10</div>
-            <div class="cards-container">
-                <!-- Carta 1 (Boca Arriba) -->
-                <div class="playing-card card-black">
-                    <div class="d-flex justify-content-between">
-                        <div class="card-value">10</div>
-                        <div class="card-suit">♠</div>
-                    </div>
-                    <div class="card-center">♠</div>
-                    <div class="card-bottom d-flex justify-content-between">
-                        <div class="card-value">10</div>
-                        <div class="card-suit">♠</div>
-                    </div>
-                </div>
-                <!-- Carta 2 (Boca Abajo) -->
-                <div class="playing-card card-back"></div>
+            <div class="score-badge" id="dealer-score">BANCA: ?</div>
+            <div class="cards-container" id="dealer-cards">
+                <!-- Se llenará con JS -->
             </div>
+        </div>
+
+        <!-- Mensajes del Sistema -->
+        <div class="text-center mt-3" style="min-height: 40px;">
+            <h3 id="game-message" class="text-warning fw-bold" style="font-family: 'Outfit'; text-shadow: 0 2px 10px rgba(0,0,0,0.8); display: none;"></h3>
         </div>
 
         <!-- Apuesta en la mesa -->
         <div class="betting-area">
-            <div class="current-bet">
-                500
+            <div class="current-bet" id="current-bet" style="display: none;">
+                0
             </div>
         </div>
 
         <!-- Jugador (Player) -->
         <div class="player-area">
-            <div class="score-badge">TU MANO: 19</div>
-            <div class="cards-container">
-                <!-- Carta 1 -->
-                <div class="playing-card card-red">
-                    <div class="d-flex justify-content-between">
-                        <div class="card-value">9</div>
-                        <div class="card-suit">♥</div>
-                    </div>
-                    <div class="card-center">♥</div>
-                    <div class="card-bottom d-flex justify-content-between">
-                        <div class="card-value">9</div>
-                        <div class="card-suit">♥</div>
-                    </div>
-                </div>
-                <!-- Carta 2 -->
-                <div class="playing-card card-black">
-                    <div class="d-flex justify-content-between">
-                        <div class="card-value">J</div>
-                        <div class="card-suit">♣</div>
-                    </div>
-                    <div class="card-center text-center" style="font-size: 2rem;">🂫</div>
-                    <div class="card-bottom d-flex justify-content-between">
-                        <div class="card-value">J</div>
-                        <div class="card-suit">♣</div>
-                    </div>
-                </div>
+            <div class="score-badge" id="player-score">TU MANO: 0</div>
+            <div class="cards-container" id="player-cards">
+                <!-- Se llenará con JS -->
             </div>
         </div>
 
     </div>
 
-    <!-- Controles -->
-    <div class="controls-area">
-        <button class="btn btn-casino btn-action-hit"><i class="bi bi-plus-circle me-1"></i> Pedir</button>
-        <button class="btn btn-casino btn-action-stand"><i class="bi bi-hand-index-thumb me-1"></i> Plantarse</button>
-        <button class="btn btn-casino"><i class="bi bi-layers me-1"></i> Doblar</button>
+    <!-- Controles Activos -->
+    <div class="controls-area" id="controls-playing" style="display: none;">
+        <button class="btn btn-casino btn-action-hit" onclick="hit()"><i class="bi bi-plus-circle me-1"></i> Pedir</button>
+        <button class="btn btn-casino btn-action-stand" onclick="stand()"><i class="bi bi-hand-index-thumb me-1"></i> Plantarse</button>
+        <button class="btn btn-casino" onclick="doubleDown()"><i class="bi bi-layers me-1"></i> Doblar</button>
     </div>
     
     <!-- Selección de Apuesta (Fichas) -->
-    <div class="bg-dark text-center py-3" style="border-top: 1px solid #222;">
+    <div class="bg-dark text-center py-3" id="controls-betting" style="border-top: 1px solid #222;">
         <div class="text-white-50 small mb-2 text-uppercase fw-bold">Colocar Apuesta</div>
         <div class="d-flex justify-content-center">
-            <div class="chip chip-100">100</div>
-            <div class="chip chip-500">500</div>
-            <div class="chip chip-1k">1K</div>
-            <div class="chip chip-5k">5K</div>
+            <div class="chip chip-100" onclick="placeBet(100)">100</div>
+            <div class="chip chip-500" onclick="placeBet(500)">500</div>
+            <div class="chip chip-1k" onclick="placeBet(1000)">1K</div>
+            <div class="chip chip-5k" onclick="placeBet(5000)">5K</div>
         </div>
     </div>
 
 </div>
 
-<!-- Scripts Simbólicos para la Maqueta -->
 <script>
-    // Por ahora esto es solo un prototipo visual interactivo básico
-    document.querySelectorAll('.btn-casino').forEach(btn => {
-        btn.addEventListener('click', function() {
-            if(this.innerText.includes('Pedir')) {
-                alert('¡Animación de pedir carta en desarrollo!');
-            } else if(this.innerText.includes('Plantarse')) {
-                document.querySelector('.card-back').classList.remove('card-back');
-                document.querySelector('.cards-container').lastElementChild.innerHTML = `
-                    <div class="d-flex justify-content-between"><div class="card-value">8</div><div class="card-suit card-red">♦</div></div>
-                    <div class="card-center card-red">♦</div>
-                    <div class="card-bottom d-flex justify-content-between"><div class="card-value">8</div><div class="card-suit card-red">♦</div></div>
-                `;
-                document.querySelectorAll('.score-badge')[0].innerText = 'BANCA: 18';
-                setTimeout(() => alert('¡GANASTE! 19 le gana a 18.'), 500);
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+    const suitSymbols = { 'H': '♥', 'D': '♦', 'C': '♣', 'S': '♠' };
+    const suitColors = { 'H': 'card-red', 'D': 'card-red', 'C': 'card-black', 'S': 'card-black' };
+
+    function renderCard(cardData) {
+        if (cardData.suit === 'hidden') {
+            return `<div class="playing-card card-back"></div>`;
+        }
+
+        const symbol = suitSymbols[cardData.suit];
+        const colorClass = suitColors[cardData.suit];
+        const val = cardData.value;
+
+        return `
+            <div class="playing-card ${colorClass}">
+                <div class="d-flex justify-content-between">
+                    <div class="card-value">${val}</div>
+                    <div class="card-suit">${symbol}</div>
+                </div>
+                <div class="card-center">${symbol}</div>
+                <div class="card-bottom d-flex justify-content-between">
+                    <div class="card-value">${val}</div>
+                    <div class="card-suit">${symbol}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    function updateUI(data) {
+        // Actualizar saldo visualmente
+        if (data.saldo !== undefined) {
+            document.querySelector('.text-warning').innerHTML = `<i class="bi bi-gem"></i> ${new Intl.NumberFormat().format(data.saldo)}`;
+        }
+
+        // Render Dealer Cards
+        if (data.dealer_hand) {
+            document.getElementById('dealer-cards').innerHTML = data.dealer_hand.map(renderCard).join('');
+        }
+        
+        // Render Player Cards
+        if (data.player_hand) {
+            document.getElementById('player-cards').innerHTML = data.player_hand.map(renderCard).join('');
+        }
+
+        // Update Scores
+        if (data.player_value !== undefined) {
+            document.getElementById('player-score').innerText = `TU MANO: ${data.player_value}`;
+        }
+        if (data.dealer_value !== undefined) {
+            document.getElementById('dealer-score').innerText = `BANCA: ${data.dealer_value}`;
+        } else {
+            document.getElementById('dealer-score').innerText = `BANCA: ?`;
+        }
+
+        // Mostrar Apuesta Actual
+        if (data.bet_amount || document.getElementById('current-bet').innerText != "0") {
+            const betElem = document.getElementById('current-bet');
+            betElem.style.display = 'flex';
+            if (data.bet_amount) betElem.innerText = data.bet_amount;
+        }
+
+        // Manejar estado de botones
+        const msgElem = document.getElementById('game-message');
+        if (data.estado === 'playing') {
+            document.getElementById('controls-betting').style.display = 'none';
+            document.getElementById('controls-playing').style.display = 'flex';
+            msgElem.style.display = 'none';
+        } else if (data.estado === 'finished') {
+            document.getElementById('controls-playing').style.display = 'none';
+            setTimeout(() => {
+                document.getElementById('controls-betting').style.display = 'block';
+                document.getElementById('current-bet').style.display = 'none';
+                document.getElementById('dealer-cards').innerHTML = '';
+                document.getElementById('player-cards').innerHTML = '';
+                document.getElementById('player-score').innerText = 'TU MANO: 0';
+                document.getElementById('dealer-score').innerText = 'BANCA: ?';
+            }, 4000); // Dar 4 segundos para ver el resultado
+
+            // Mostrar Mensaje de Resultado
+            msgElem.style.display = 'block';
+            if (data.result === 'win') msgElem.innerHTML = '¡GANASTE! 🎉';
+            else if (data.result === 'loss') msgElem.innerHTML = 'LA CASA GANA 💸';
+            else if (data.result === 'push') msgElem.innerHTML = 'EMPATE (PUSH) 🤝';
+            else if (data.result === 'blackjack') msgElem.innerHTML = '¡BLACKJACK! 💎';
+        }
+    }
+
+    async function placeBet(amount) {
+        try {
+            const res = await fetch('/blackjack/bet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                body: JSON.stringify({ amount })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                data.bet_amount = amount;
+                updateUI(data);
+            } else {
+                alert(data.error || 'Error al apostar');
             }
-        });
-    });
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async function hit() {
+        try {
+            const res = await fetch('/blackjack/hit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken }
+            });
+            const data = await res.json();
+            if (res.ok) updateUI(data);
+            else alert(data.error);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async function stand() {
+        try {
+            const res = await fetch('/blackjack/stand', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken }
+            });
+            const data = await res.json();
+            if (res.ok) updateUI(data);
+            else alert(data.error);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async function doubleDown() {
+        try {
+            const res = await fetch('/blackjack/double', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken }
+            });
+            const data = await res.json();
+            if (res.ok) updateUI(data);
+            else alert(data.error);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    // Si ya existe un juego activo (pasado por el controlador), inicializarlo
+    @if($activeGame)
+        // Por ahora lo simplificamos: si hay un juego colgado, el frontend lo reinicia visualmente.
+        // En una versio multijugador, aqui cargariamos el estado completo.
+    @endif
 </script>
 
 </body>
