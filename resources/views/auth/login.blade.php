@@ -137,6 +137,13 @@
             <button type="submit" class="btn-neon mt-3">Iniciar Protocolo</button>
         </form>
         
+        <div class="mt-4 pt-4 border-top border-secondary text-center">
+            <p class="text-white-50 small mb-2">¿Quieres ver cómo funciona la plataforma?</p>
+            <a href="/c/agencia-prueba" class="btn btn-sm btn-outline-info rounded-pill px-4" style="letter-spacing: 1px;">
+                <i class="bi bi-play-circle me-1"></i> Entrar a Empresa de Demostración
+            </a>
+        </div>
+        
         <div class="text-center mt-4">
             <p class="text-muted small mb-0"><i class="bi bi-lock me-1"></i> Plataforma encriptada End-to-End</p>
         </div>

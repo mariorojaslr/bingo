@@ -111,25 +111,22 @@ Route::get('demo/monitor-tv', [App\Http\Controllers\CartonController::class, 'de
 Route::get('demo/monitor-comun', [App\Http\Controllers\CartonController::class, 'demoMonitorComun'])->name('demo.monitor_comun');
 Route::get('demo/sorteador', [App\Http\Controllers\CartonController::class, 'demoSorteador'])->name('demo.sorteador');
 // Owner Global Dashboard
-Route::get('/demo/owner', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'index'])->name('demo.owner');
-Route::post('/demo/owner/tarifas', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'storeTarifa']);
-Route::put('/demo/owner/tarifas/{id}', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'updateTarifa'])->name('demo.owner.tarifas.update');
-Route::post('/demo/owner/empresas', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'storeEmpresa']);
-Route::put('/demo/owner/empresas/{id}', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'updateEmpresa'])->name('demo.owner.empresas.update');
-Route::get('/demo/owner/impersonate/{empresa}', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'impersonate'])->name('demo.owner.impersonate');
-Route::get('/demo/owner/stop-impersonate', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'stopImpersonate'])->name('demo.owner.stop_impersonate');
-Route::post('/demo/owner/transacciones/{id}/aprobar', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'aprobarTransaccion'])->name('demo.owner.transacciones.aprobar');
-Route::post('/demo/owner/transacciones/{id}/rechazar', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'rechazarTransaccion'])->name('demo.owner.transacciones.rechazar');
-Route::get('demo/empresa/{id}', [\App\Http\Controllers\Admin\EmpresaDashboardController::class, 'index'])->name('demo.empresa');
-Route::post('demo/empresa/{id}/toggle-prueba', [\App\Http\Controllers\Admin\EmpresaDashboardController::class, 'togglePrueba'])->name('demo.empresa.toggle');
-Route::get('/demo/mockups', function() {
-        return view('mockups.lobby');
-    });
-    
-    Route::get('/demo/mockups/blackjack', function() {
-        return view('mockups.blackjack');
-    });
-Route::get('demo/mockups/ruleta', function () { return view('mockups.ruleta'); });
+Route::prefix('admin/owner')->middleware('auth')->name('admin.owner.')->group(function() {
+    Route::post('/tarifas', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'storeTarifa'])->name('tarifas.store');
+    Route::put('/tarifas/{id}', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'updateTarifa'])->name('tarifas.update');
+    Route::post('/empresas', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'storeEmpresa'])->name('empresas.store');
+    Route::put('/empresas/{id}', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'updateEmpresa'])->name('empresas.update');
+    Route::get('/impersonate/{empresa}', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'impersonate'])->name('impersonate');
+    Route::get('/stop-impersonate', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'stopImpersonate'])->name('stop_impersonate');
+    Route::post('/transacciones/{id}/aprobar', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'aprobarTransaccion'])->name('transacciones.aprobar');
+    Route::post('/transacciones/{id}/rechazar', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'rechazarTransaccion'])->name('transacciones.rechazar');
+});
+
+// Franchise Dashboard (Empresa)
+Route::middleware('auth')->group(function() {
+    Route::get('admin/empresa/{id}', [\App\Http\Controllers\Admin\EmpresaDashboardController::class, 'index'])->name('admin.empresa');
+    Route::post('admin/empresa/{id}/toggle-prueba', [\App\Http\Controllers\Admin\EmpresaDashboardController::class, 'togglePrueba'])->name('admin.empresa.toggle');
+});
 
 /*
 |--------------------------------------------------------------------------

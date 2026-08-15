@@ -23,8 +23,19 @@
                 <span class="text-white-50" style="font-size: 0.7rem; letter-spacing: 2px;">/ OWNER DASHBOARD</span>
             </div>
         </a>
-        <div class="d-flex">
-            <button class="btn btn-outline-info rounded-pill px-4 me-3" data-bs-toggle="modal" data-bs-target="#modalEmpresa">
+        <div class="d-flex gap-2">
+            <!-- Menú de Herramientas de Bingo (Sorteador, Cartones, etc) -->
+            <div class="dropdown">
+                <button class="btn btn-outline-light rounded-pill px-3 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-grid-3x3-gap"></i> Herramientas Bingo
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark">
+                    <li><a class="dropdown-item" href="{{ route('admin.cartones.generar') }}"><i class="bi bi-printer"></i> Generador PDF</a></li>
+                    <li><a class="dropdown-item" href="{{ route('admin.jugadas.index') }}"><i class="bi bi-play-circle"></i> Sorteador & Salas</a></li>
+                </ul>
+            </div>
+            
+            <button class="btn btn-outline-info rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalEmpresa">
                 <i class="bi bi-plus-circle"></i> Nueva Empresa
             </button>
             <button class="btn btn-outline-warning rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalTarifa">
@@ -127,7 +138,7 @@
                                 </td>
                                 <td>
                                     <button class="btn btn-sm btn-outline-warning mb-1" data-bs-toggle="modal" data-bs-target="#modalEditarEmpresa{{ $emp->id }}" title="Editar Empresa"><i class="bi bi-pencil"></i></button>
-                                    <a href="{{ route('demo.owner.impersonate', $emp->id) }}" class="btn btn-sm btn-outline-light mb-1" title="Entrar como Admin"><i class="bi bi-eye"></i></a>
+                                    <a href="{{ route('admin.owner.impersonate', $emp->id) }}" class="btn btn-sm btn-outline-light mb-1" title="Entrar como Admin"><i class="bi bi-eye"></i></a>
                                     <a href="{{ route('casino.lobby', $emp->subdominio) }}" target="_blank" class="btn btn-sm btn-outline-info mb-1" title="Ver App"><i class="bi bi-phone"></i></a>
                                 </td>
                             </tr>
@@ -221,11 +232,11 @@
                                     <td class="fw-bold text-warning"><i class="bi bi-gem"></i> {{ number_format($tx->fichas, 0) }}</td>
                                     <td><span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split"></i> Pendiente</span></td>
                                     <td class="text-end">
-                                        <form action="{{ route('demo.owner.transacciones.aprobar', $tx->id) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('admin.owner.transacciones.aprobar', $tx->id) }}" method="POST" class="d-inline">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-success fw-bold px-3"><i class="bi bi-check-lg"></i> Aprobar</button>
                                         </form>
-                                        <form action="{{ route('demo.owner.transacciones.rechazar', $tx->id) }}" method="POST" class="d-inline ms-1">
+                                        <form action="{{ route('admin.owner.transacciones.rechazar', $tx->id) }}" method="POST" class="d-inline ms-1">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-outline-danger px-3"><i class="bi bi-x-lg"></i> Rechazar</button>
                                         </form>
@@ -250,7 +261,7 @@
         <h5 class="modal-title"><i class="bi bi-pencil-square"></i> Editar Plan Comercial</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="{{ route('demo.owner.tarifas.update', $tarifa->id) }}" method="POST">
+      <form action="{{ route('admin.owner.tarifas.update', $tarifa->id) }}" method="POST">
       @csrf
       @method('PUT')
       <div class="modal-body p-4">
@@ -302,7 +313,7 @@
         <h5 class="modal-title"><i class="bi bi-building-gear"></i> Acuerdos Particulares: {{ $emp->nombre }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="{{ route('demo.owner.empresas.update', $emp->id) }}" method="POST">
+      <form action="{{ route('admin.owner.empresas.update', $emp->id) }}" method="POST">
       @csrf
       @method('PUT')
       <div class="modal-body p-4">

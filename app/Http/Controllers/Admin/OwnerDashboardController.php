@@ -12,9 +12,7 @@ class OwnerDashboardController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->query('pwd') !== 'infinity2026') {
-            return response('Acceso Denegado. Se requiere contraseña de seguridad.', 403);
-        }
+        // La seguridad ahora está dada por el middleware auth y los controles de rol en las rutas/controlador.
 
         // Métricas simuladas para el dashboard inicial (luego se conectarán a modelos reales)
         $metricas = [
@@ -134,12 +132,12 @@ class OwnerDashboardController extends Controller
     public function impersonate($empresa_id)
     {
         session(['impersonating_empresa_id' => $empresa_id]);
-        return redirect()->route('demo.empresa', ['id' => $empresa_id, 'pwd' => 'infinity2026']);
+        return redirect()->route('admin.dashboard');
     }
 
     public function stopImpersonate()
     {
         session()->forget('impersonating_empresa_id');
-        return redirect()->route('demo.owner', ['pwd' => 'infinity2026']);
+        return redirect()->route('admin.dashboard');
     }
 }
