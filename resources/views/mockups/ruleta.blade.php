@@ -53,15 +53,17 @@
             font-size: 1.1rem;
         }
 
+        /* --- Mesa de Juego --- */
         .roulette-container {
             flex-grow: 1;
-            background: radial-gradient(ellipse at center, #11572c 0%, var(--felt-color) 100%);
+            background: #0d4a25; /* Fondo solido de paño de casino verde */
             display: flex;
             flex-direction: column;
             padding: 20px;
             position: relative;
             overflow-y: auto;
             overflow-x: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="%230d4a25"/><circle cx="50" cy="50" r="2" fill="%23ffffff" fill-opacity="0.05"/></svg>'); /* Textura de paño leve */
         }
 
         .table-logo {
@@ -93,23 +95,32 @@
                 var(--red-num) 0 9.7deg, 
                 var(--black-num) 9.7deg 19.4deg
             );
-            border: 15px solid #222;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 0 30px rgba(0,0,0,0.8);
+            border: 15px solid #3e1b04; /* Madera */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 15px rgba(0,0,0,0.9);
             position: relative;
-            transform: rotateX(45deg);
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
+        .wheel::before {
+            content: '';
+            position: absolute;
+            width: 90%;
+            height: 90%;
+            border-radius: 50%;
+            border: 2px solid #888;
+            pointer-events: none;
+        }
+
         .wheel::after {
             content: '';
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle, #555, #222);
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, #eaddc0 0%, #bca56a 50%, #856a29 100%);
             border-radius: 50%;
-            border: 5px solid var(--gold-accent);
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            border: 2px solid #5a4b27;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
         }
 
         /* --- Tablero de Apuestas (Grid) --- */
@@ -134,30 +145,28 @@
         }
 
         .board-cell {
-            background: var(--felt-color);
+            background: transparent;
+            border: 1px solid #fff;
             display: flex;
-            align-items: center;
             justify-content: center;
-            font-weight: 900;
+            align-items: center;
             font-size: 1.2rem;
+            font-weight: 700;
             color: #fff;
-            border: 1px solid rgba(255,255,255,0.3);
             cursor: pointer;
-            transition: 0.2s;
             position: relative;
+            transition: background 0.2s;
         }
-
         .board-cell:hover {
-            filter: brightness(1.3);
-            transform: scale(0.98);
+            background: rgba(255,255,255,0.2);
         }
 
-        /* Zero */
         .zero-cell {
             grid-row: 1 / 4;
             grid-column: 1;
-            background: #27ae60;
-            border-radius: 5px 0 0 5px;
+            background: var(--felt-color); /* Verde mesa */
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
         }
 
         /* Numbers 1-36 are placed via nth-child mostly, but we can assign colors via classes */
@@ -208,63 +217,81 @@
         .out-odd { grid-column: 10 / 12; }
         .out-19-36 { grid-column: 12 / 14; }
 
-        /* Chips */
+        /* --- Controles Inferiores (Estilo Dark Bar) --- */
+        .game-controls {
+            background: #111;
+            border-top: 2px solid #555;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.5);
+            z-index: 100;
+        }
+        
+        .chip-selector {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            align-items: flex-end;
+        }
+        
         .chip {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
+            font-size: 14px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 900;
-            font-size: 12px;
-            color: #fff;
-            box-shadow: inset 0 0 0 4px rgba(255,255,255,0.2), 0 3px 6px rgba(0,0,0,0.5);
-            border: 2px dashed rgba(255,255,255,0.5);
+            font-weight: bold;
+            color: #111;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4), inset 0 0 5px rgba(255,255,255,0.5);
             cursor: pointer;
-            transition: 0.2s;
+            transition: transform 0.2s;
+            /* Patrón de líneas simulando la ficha */
+            border: 4px dashed rgba(255,255,255,0.7);
         }
-        .chip:hover { transform: scale(1.1); }
-        .chip.selected { transform: scale(1.1); border-color: var(--gold-accent); box-shadow: 0 0 15px var(--gold-accent); }
-        .chip-10 { background: #3498db; }
-        .chip-50 { background: #e74c3c; }
-        .chip-100 { background: #2c3e50; }
-        .chip-500 { background: #9b59b6; }
-
-        /* Controles Inferiores */
-        .game-controls {
-            background: #111;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 2px solid #333;
-            z-index: 100;
+        .chip.selected {
+            transform: translateY(-10px);
+            border-color: #00FF88;
+            box-shadow: 0 10px 15px rgba(0,255,136,0.3);
         }
 
-        .chip-selector {
-            display: flex;
-            gap: 10px;
-        }
+        .chip-10 { background-color: #b0c4de; }
+        .chip-50 { background-color: #98fb98; }
+        .chip-100 { background-color: #ffb6c1; }
+        .chip-500 { background-color: #fff; }
 
         .action-buttons {
             display: flex;
-            gap: 10px;
+            gap: 5px;
         }
-
+        
         .btn-action {
-            padding: 10px 20px;
-            border-radius: 8px;
+            background: transparent;
+            color: #aaa;
             border: none;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.4);
+            padding: 8px 15px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            cursor: pointer;
         }
-        .btn-action:active { transform: translateY(4px); box-shadow: none; }
-        .btn-clear { background: #7f8c8d; color: #fff; }
-        .btn-spin { background: var(--gold-accent); color: #000; font-size: 1.1rem; padding: 12px 25px;}
+        .btn-action:hover {
+            color: #fff;
+        }
+        .btn-spin {
+            border: 1px solid #fff;
+            border-radius: 5px;
+            color: #fff;
+        }
+        .btn-spin:hover {
+            background: rgba(255,255,255,0.1);
+        }
 
         /* CHIP ON BOARD MOCK */
         .placed-chip {
@@ -280,8 +307,8 @@
             .roulette-container {
                 flex-direction: row;
                 align-items: center;
-                justify-content: space-between;
-                padding: 40px 60px;
+                justify-content: space-around;
+                padding: 40px 20px;
             }
             .wheel-wrapper {
                 flex: 1;
@@ -293,29 +320,34 @@
                 border-width: 25px;
             }
             .wheel::after {
-                width: 280px;
-                height: 280px;
-                border-width: 8px;
+                width: 160px;
+                height: 160px;
             }
             .board-wrapper {
-                flex: 2;
+                flex: 1.5;
                 margin-top: 0;
                 justify-content: flex-end;
             }
             .betting-board {
                 max-width: 100%;
-                grid-template-rows: repeat(3, 140px) 70px 70px;
+                grid-template-rows: repeat(3, 110px) 60px 60px;
+                border-radius: 10px;
             }
             .board-cell {
-                font-size: 2rem; /* Números grandes */
-            }
-            .chip {
-                width: 60px;
-                height: 60px;
-                font-size: 16px;
+                font-size: 1.8rem;
+                border: 1px solid #fff;
             }
             .dozen-cell, .outside-cell {
-                font-size: 1.5rem;
+                font-size: 1.2rem;
+            }
+            .col-bet-1 { border-top-right-radius: 8px; }
+            .col-bet-3 { border-bottom-right-radius: 8px; }
+            .out-19-36 { border-bottom-right-radius: 8px; }
+            
+            .btn-action {
+                font-size: 1rem;
+                padding: 12px 25px;
+                margin-left: 10px;
             }
         }
 
@@ -438,19 +470,20 @@
 
     <div class="game-controls">
         <div class="chip-selector">
-            <div class="chip chip-10 selected">10</div>
-            <div class="chip chip-50">50</div>
-            <div class="chip chip-100">100</div>
-            <div class="chip chip-500">500</div>
+            <div class="chip chip-10 selected">0.10</div>
+            <div class="chip chip-50">0.50</div>
+            <div class="chip chip-100">1</div>
+            <div class="chip chip-500">5</div>
+            <div class="chip chip-100" style="background-color:#555">25</div>
+            <div class="chip chip-500" style="background-color:#fff">100</div>
         </div>
         
         <div class="action-buttons">
-            <button class="btn-action btn-clear" onclick="alert('Limpia la última apuesta')">
-                <i class="bi bi-arrow-counterclockwise"></i> DESHACER
-            </button>
-            <button class="btn-action btn-spin" onclick="alert('¡Inicia el giro de la ruleta!')">
-                <i class="bi bi-arrow-repeat"></i> GIRAR
-            </button>
+            <button class="btn-action" onclick="alert('Eliminar')">ELIMINAR</button>
+            <button class="btn-action" onclick="alert('Deshacer')">DESHACER</button>
+            <button class="btn-action btn-spin" onclick="alert('Girar!')">GIRAR</button>
+            <button class="btn-action" onclick="alert('Doblar')">DOBLAR</button>
+            <button class="btn-action" onclick="alert('Reapostar')">REAPOSTAR</button>
         </div>
     </div>
 
