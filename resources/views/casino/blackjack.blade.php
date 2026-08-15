@@ -15,6 +15,10 @@
             background: #0d1a13; color: #fff; font-family: 'Inter', sans-serif;
             margin: 0; padding: 0; overflow: hidden;
             height: 100dvh;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: manipulation;
         }
         
         /* Casino Table Felt Background */
@@ -244,6 +248,40 @@
             border: 6px dashed rgba(0,0,0,0.3);
             margin: 20px auto;
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        /* Responsive Mobile Ajustes */
+        @media (max-width: 768px) {
+            .btn-casino {
+                padding: 10px 15px;
+                font-size: 0.85rem;
+            }
+            .controls-area {
+                padding: 10px;
+                gap: 5px;
+                flex-wrap: wrap; /* En caso de que aún así no entren */
+            }
+            #controls-betting {
+                padding: 10px 0 !important;
+            }
+            .chip {
+                width: 45px;
+                height: 45px;
+                font-size: 0.85rem;
+                margin: 0 3px;
+            }
+            .current-bet {
+                margin: 5px auto;
+                width: 65px;
+                height: 65px;
+                font-size: 1rem;
+            }
+            .dealer-area, .player-area {
+                min-height: 140px;
+            }
+            .game-area {
+                padding: 10px;
+            }
         }
 
     </style>
