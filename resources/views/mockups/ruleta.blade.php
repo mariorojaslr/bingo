@@ -53,7 +53,6 @@
             font-size: 1.1rem;
         }
 
-        /* --- Mesa de Juego --- */
         .roulette-container {
             flex-grow: 1;
             background: radial-gradient(ellipse at center, #11572c 0%, var(--felt-color) 100%);
@@ -278,20 +277,45 @@
 
         /* --- Responsive Adjustments --- */
         @media (min-width: 901px) {
+            .roulette-container {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                padding: 40px 60px;
+            }
+            .wheel-wrapper {
+                flex: 1;
+                margin-bottom: 0;
+            }
             .wheel {
-                width: 350px;
-                height: 350px;
+                width: 450px;
+                height: 450px;
+                border-width: 25px;
             }
             .wheel::after {
-                width: 220px;
-                height: 220px;
+                width: 280px;
+                height: 280px;
+                border-width: 8px;
             }
             .board-wrapper {
-                margin-top: 50px;
+                flex: 2;
+                margin-top: 0;
+                justify-content: flex-end;
             }
             .betting-board {
-                max-width: 1100px;
-                grid-template-rows: repeat(3, 90px) 60px 60px;
+                max-width: 100%;
+                grid-template-rows: repeat(3, 140px) 70px 70px;
+            }
+            .board-cell {
+                font-size: 2rem; /* Números grandes */
+            }
+            .chip {
+                width: 60px;
+                height: 60px;
+                font-size: 16px;
+            }
+            .dozen-cell, .outside-cell {
+                font-size: 1.5rem;
             }
         }
 
