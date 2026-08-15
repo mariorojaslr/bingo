@@ -154,6 +154,75 @@
             </div>
         </div>
     </div>
+
+    <!-- AUDITORÍA FINANCIERA -->
+    <div class="row mt-4 mb-5">
+        <div class="col-12">
+            <div class="glass-panel rounded-4 p-4" style="background: rgba(25, 28, 36, 0.8); border: 1px solid #333;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="text-white-50 m-0"><i class="bi bi-shield-check me-2"></i> Auditoría Financiera: Recargas Manuales Pendientes</h4>
+                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">{{ $transaccionesPendientes->count() }} transacciones pendientes</span>
+                </div>
+                
+                @if(session('success'))
+                    <div class="alert alert-success bg-success text-white border-0 py-2"><i class="bi bi-check-circle me-2"></i> {{ session('success') }}</div>
+                @endif
+                @if(session('error'))
+                    <div class="alert alert-danger bg-danger text-white border-0 py-2"><i class="bi bi-x-circle me-2"></i> {{ session('error') }}</div>
+                @endif
+
+                @if($transaccionesPendientes->isEmpty())
+                    <div class="alert alert-dark text-center py-4 border-0" style="background: rgba(0,0,0,0.3);">
+                        <i class="bi bi-check2-all fs-1 text-success opacity-50"></i>
+                        <p class="mt-2 text-white-50 m-0">No hay transacciones manuales pendientes de revisión. ¡Todo al día!</p>
+                    </div>
+                @else
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle">
+                            <thead>
+                                <tr class="text-white-50">
+                                    <th>FECHA</th>
+                                    <th>JUGADOR / TELÉFONO</th>
+                                    <th>MÉTODO</th>
+                                    <th>MONTO ($)</th>
+                                    <th>FICHAS A ENTREGAR</th>
+                                    <th>ESTADO</th>
+                                    <th class="text-end">ACCIÓN</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($transaccionesPendientes as $tx)
+                                <tr>
+                                    <td>{{ $tx->created_at->format('d/m/Y H:i') }}</td>
+                                    <td>
+                                        <div class="fw-bold text-white">{{ $tx->participante->nombre ?? 'Desconocido' }}</div>
+                                        <small class="text-info">{{ $tx->participante->telefono }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary text-uppercase">{{ str_replace('_', ' ', $tx->metodo_pago) }}</span>
+                                    </td>
+                                    <td class="fw-bold">${{ number_format($tx->monto_fiat, 2) }}</td>
+                                    <td class="fw-bold text-warning"><i class="bi bi-gem"></i> {{ number_format($tx->fichas, 0) }}</td>
+                                    <td><span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split"></i> Pendiente</span></td>
+                                    <td class="text-end">
+                                        <form action="{{ route('demo.owner.transacciones.aprobar', $tx->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-success fw-bold px-3"><i class="bi bi-check-lg"></i> Aprobar</button>
+                                        </form>
+                                        <form action="{{ route('demo.owner.transacciones.rechazar', $tx->id) }}" method="POST" class="d-inline ms-1">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-danger px-3"><i class="bi bi-x-lg"></i> Rechazar</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- MODAL NUEVA EMPRESA -->

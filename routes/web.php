@@ -82,6 +82,9 @@ Route::get('/tienda/logout/now', [\App\Http\Controllers\UserStoreController::cla
 Route::get('/cajero', [\App\Http\Controllers\UserStoreController::class, 'cajeroShow'])->name('cajero.show');
 Route::post('/cajero/procesar', [\App\Http\Controllers\UserStoreController::class, 'cajeroProcesar'])->name('cajero.procesar');
 Route::get('/cajero/mp/success', [\App\Http\Controllers\UserStoreController::class, 'mpSuccess'])->name('cajero.mp_success');
+
+// Casino Games
+Route::get('/casino/blackjack', [\App\Http\Controllers\BlackjackController::class, 'index'])->name('casino.blackjack');
 Route::get('/cajero/mp/failure', [\App\Http\Controllers\UserStoreController::class, 'mpFailure'])->name('cajero.mp_failure');
 Route::post('/api/webhooks/mercadopago', [\App\Http\Controllers\UserStoreController::class, 'mpWebhook'])->name('cajero.mp_webhook');
 
@@ -92,11 +95,14 @@ Route::get('demo/visor', [App\Http\Controllers\CartonController::class, 'demoVis
 Route::get('demo/monitor-tv', [App\Http\Controllers\CartonController::class, 'demoMonitorTV'])->name('demo.monitor_tv');
 Route::get('demo/monitor-comun', [App\Http\Controllers\CartonController::class, 'demoMonitorComun'])->name('demo.monitor_comun');
 Route::get('demo/sorteador', [App\Http\Controllers\CartonController::class, 'demoSorteador'])->name('demo.sorteador');
-Route::get('demo/owner', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'index'])->name('demo.owner');
-Route::post('demo/owner/tarifas', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'storeTarifa']);
-Route::post('demo/owner/empresas', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'storeEmpresa']);
-Route::get('demo/owner/impersonate/{empresa}', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'impersonate'])->name('demo.owner.impersonate');
-Route::get('demo/owner/stop-impersonate', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'stopImpersonate'])->name('demo.owner.stop_impersonate');
+// Owner Global Dashboard
+Route::get('/demo/owner', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'index'])->name('demo.owner');
+Route::post('/demo/owner/tarifas', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'storeTarifa']);
+Route::post('/demo/owner/empresas', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'storeEmpresa']);
+Route::get('/demo/owner/impersonate/{empresa}', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'impersonate'])->name('demo.owner.impersonate');
+Route::get('/demo/owner/stop-impersonate', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'stopImpersonate'])->name('demo.owner.stop_impersonate');
+Route::post('/demo/owner/transacciones/{id}/aprobar', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'aprobarTransaccion'])->name('demo.owner.transacciones.aprobar');
+Route::post('/demo/owner/transacciones/{id}/rechazar', [\App\Http\Controllers\Admin\OwnerDashboardController::class, 'rechazarTransaccion'])->name('demo.owner.transacciones.rechazar');
 Route::get('demo/empresa/{id}', [\App\Http\Controllers\Admin\EmpresaDashboardController::class, 'index'])->name('demo.empresa');
 Route::post('demo/empresa/{id}/toggle-prueba', [\App\Http\Controllers\Admin\EmpresaDashboardController::class, 'togglePrueba'])->name('demo.empresa.toggle');
 Route::get('/demo/mockups', function() {

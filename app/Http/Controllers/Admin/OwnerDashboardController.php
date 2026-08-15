@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\TransaccionCajero;
+use App\Models\PruebaParticipante;
 
 class OwnerDashboardController extends Controller
 {
@@ -29,7 +31,43 @@ class OwnerDashboardController extends Controller
 
         $tarifas = DB::table('tarifas')->get();
 
-        return view('admin.owner.dashboard', compact('metricas', 'empresas', 'tarifas'));
+        // Obtener transacciones pendientes
+        $transaccionesPendientes = TransaccionCajero::with('participante')
+            ->where('estado', 'pendiente')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.owner.dashboard', compact('metricas', 'empresas', 'tarifas', 'transaccionesPendientes'));
+    }
+
+    public function aprobarTransaccion($id, Request $request)
+    {
+        $transaccion = TransaccionCajero::findOrFail($id);
+        if ($transaccion->estado !== 'pendiente') {
+            return back()->with('error', 'La transacción ya fue procesada.');
+        }
+
+        $transaccion->estado = 'aprobado';
+        $transaccion->save();
+
+        $participante = PruebaParticipante::findOrFail($transaccion->participante_id);
+        $participante->saldo_fichas += $transaccion->fichas;
+        $participante->save();
+
+        return back()->with('success', "Transacción aprobada. Se han acreditado {$transaccion->fichas} fichas a {$participante->nombre}.");
+    }
+
+    public function rechazarTransaccion($id, Request $request)
+    {
+        $transaccion = TransaccionCajero::findOrFail($id);
+        if ($transaccion->estado !== 'pendiente') {
+            return back()->with('error', 'La transacción ya fue procesada.');
+        }
+
+        $transaccion->estado = 'rechazado';
+        $transaccion->save();
+
+        return back()->with('success', "Transacción rechazada.");
     }
 
     public function storeTarifa(Request $request)
