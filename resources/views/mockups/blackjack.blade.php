@@ -248,8 +248,8 @@
         }
 
         .btn-action {
-            width: 80px;
-            height: 80px;
+            width: 65px;
+            height: 65px;
             border-radius: 50%;
             border: none;
             display: flex;
@@ -257,6 +257,7 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            font-size: 0.75rem;
             color: #000;
             box-shadow: 0 4px 0 rgba(0,0,0,0.4);
             transition: all 0.1s;
@@ -293,9 +294,14 @@
 
         .bet-selector {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            flex-wrap: wrap;
             justify-content: center;
+            gap: 10px;
+            background: rgba(0,0,0,0.6);
+            padding: 10px 20px;
+            border-radius: 30px;
+            margin-top: 15px;
+            z-index: 50;
             display: none; /* hidden when playing */
         }
 
