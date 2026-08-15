@@ -96,6 +96,14 @@ Route::get('/tienda/gracias/{token}', [\App\Http\Controllers\UserStoreController
 
 // Casino Games
 Route::get('/casino/blackjack', [\App\Http\Controllers\BlackjackController::class, 'index'])->name('casino.blackjack');
+Route::get('/casino/ruleta', function(\Illuminate\Http\Request $request) {
+    $participanteLogueado = null;
+    $token = $request->cookie('participante_token');
+    if ($token) {
+        $participanteLogueado = \App\Models\PruebaParticipante::where('token', $token)->first();
+    }
+    return view('mockups.ruleta', compact('participanteLogueado'));
+})->name('casino.ruleta');
 
 // Public Marketing / Demo Routes
 Route::get('demo/visor', [App\Http\Controllers\CartonController::class, 'demoVisor'])->name('demo.visor');

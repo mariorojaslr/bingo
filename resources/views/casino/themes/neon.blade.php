@@ -154,12 +154,12 @@
             </div>
 
             <div class="col-6 col-md-4 col-lg-3">
-                <a href="#" class="game-card text-center p-4" onclick="alert('Ruleta en mantenimiento. ¡Próximamente versión final!'); return false;">
+                <a href="{{ route('casino.ruleta') }}" class="game-card text-center p-4">
                     <div class="mx-auto mb-3" style="border: 4px dashed #fff; border-radius: 50%; width: 60px; height: 60px; display:flex; align-items:center; justify-content:center;">
                         <i class="bi bi-circle-fill fs-2 text-danger"></i>
                     </div>
                     <h3 class="text-light fs-5">Ruleta Europea</h3>
-                    <p class="text-white-50 small mb-0">Próximamente</p>
+                    <p class="text-white-50 small mb-0">Disfruta ahora</p>
                 </a>
             </div>
         </div>

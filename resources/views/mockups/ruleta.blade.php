@@ -297,12 +297,18 @@
 <body>
 
     <header class="game-header">
-        <a href="javascript:history.back()" class="text-white text-decoration-none">
+        <a href="{{ route('tienda.show', 1) }}" class="text-white text-decoration-none">
             <i class="bi bi-chevron-left"></i> Lobby
         </a>
-        <div class="fw-bold" style="letter-spacing: 2px; color: var(--gold-accent);">INFINITY CASINO</div>
+        <div class="fw-bold" style="letter-spacing: 2px; color: var(--gold-accent);">
+            @if(isset($participanteLogueado))
+                {{ $participanteLogueado->nombre }}
+            @else
+                INFINITY CASINO
+            @endif
+        </div>
         <div class="balance-box">
-            $<span id="balanceDisplay">4500</span>
+            <i class="bi bi-gem"></i> <span id="balanceDisplay">{{ isset($participanteLogueado) ? number_format($participanteLogueado->saldo_fichas, 0) : 'DEMO' }}</span>
         </div>
     </header>
 
