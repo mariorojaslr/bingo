@@ -339,20 +339,73 @@
         }
 
         @media (max-width: 900px) {
-            .betting-board {
-                transform: rotate(-90deg) scale(0.85);
-                transform-origin: center center;
-                margin-top: 220px;
-                margin-bottom: 220px;
-            }
             .roulette-container {
+                flex-direction: column;
                 align-items: center;
-                justify-content: flex-start;
+                justify-content: center;
+                padding: 10px;
+                overflow: hidden; /* Evitar scroll clipping roto */
             }
-            .board-cell { transform: rotate(90deg); } /* Rotar texto de vuelta */
-            .wheel { width: 220px; height: 220px; }
-            .wheel::after { width: 130px; height: 130px; }
-            .board-wrapper { width: 100%; display: flex; justify-content: center; }
+            
+            /* Ocultar la rueda en móvil por ahora, mostrar solo el tapete */
+            .wheel-wrapper {
+                display: none; 
+            }
+
+            .board-wrapper { 
+                width: 100%; 
+                height: 100%;
+                display: flex; 
+                justify-content: center; 
+                align-items: center;
+                position: relative;
+            }
+
+            /* Truco matemático: Intercambiamos viewport width (vw) y height (vh) 
+               para que al rotar 90 grados encaje perfecto en pantallas portrait */
+            .betting-board {
+                width: 75vh;
+                height: 85vw;
+                max-width: 800px;
+                max-height: 300px;
+                grid-template-rows: repeat(3, 1fr) 40px 40px;
+                transform: rotate(-90deg);
+                /* Forzamos el origen de transformación al centro absoluto del viewport si es necesario */
+            }
+            
+            .board-cell { 
+                transform: rotate(90deg); /* Textos rectos */
+                font-size: 1.2rem;
+            }
+            
+            .dozen-cell, .outside-cell {
+                font-size: 0.8rem;
+                padding: 0 5px;
+            }
+
+            /* Controles inferiores en móvil (apilados) */
+            .game-controls {
+                flex-direction: column;
+                padding: 10px;
+                gap: 10px;
+            }
+            .chip-selector {
+                width: 100%;
+                justify-content: center;
+            }
+            .chip {
+                width: 40px; height: 40px; font-size: 12px;
+            }
+            .action-buttons {
+                width: 100%;
+                overflow-x: auto;
+                justify-content: flex-start;
+                padding-bottom: 5px;
+            }
+            .btn-action {
+                font-size: 0.75rem;
+                padding: 8px 12px;
+            }
         }
     </style>
 </head>
