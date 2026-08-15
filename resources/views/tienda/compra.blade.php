@@ -78,10 +78,9 @@
                         <p class="mb-1 text-info fw-bold"><i class="bi bi-person-circle"></i> ¡Hola de nuevo, {{ $participanteLogueado->nombre }}!</p>
                         <small class="text-white-50">Tu saldo actual: <strong class="text-warning">{{ number_format($participanteLogueado->saldo_fichas, 0) }} Fichas</strong></small>
                     </div>
-                    <form action="{{ route('tienda.cerrar_sesion') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-outline-secondary btn-sm" title="Cambiar usuario"><i class="bi bi-box-arrow-right"></i></button>
-                    </form>
+                    <a href="{{ route('tienda.cerrar_sesion') }}" class="btn btn-outline-secondary btn-sm" title="Cambiar usuario">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </a>
                 </div>
             </div>
         @endif

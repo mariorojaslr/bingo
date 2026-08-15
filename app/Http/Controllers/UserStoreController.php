@@ -38,7 +38,11 @@ class UserStoreController extends Controller
 
     public function cerrarSesion()
     {
-        return redirect()->route('tienda.show', 1)->withCookie(cookie('participante_token', '', -1));
+        \Cookie::queue(\Cookie::forget('participante_token'));
+        return redirect()->route('tienda.show', 1)
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 
     public function procesarCompra(Request $request, $jugadaId)
