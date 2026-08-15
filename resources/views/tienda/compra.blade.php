@@ -101,7 +101,7 @@
                 <div class="mb-4">
                     <label class="form-label text-white-50 small text-uppercase fw-bold">Tu Teléfono (Billetera)</label>
                     <div class="input-group input-group-lg">
-                        <select name="prefijo" class="form-select bg-dark text-white border-secondary text-center" style="max-width: 120px;" required>
+                        <select name="prefijo" class="form-select bg-dark text-white border-secondary text-center px-2" style="width: 130px; flex: 0 0 auto;" required>
                             <option value="54" selected>🇦🇷 +54</option>
                             <option value="56">🇨🇱 +56</option>
                             <option value="598">🇺🇾 +598</option>
@@ -149,7 +149,7 @@
                     <button type="submit" class="btn btn-warning btn-sm text-nowrap fw-bold"><i class="bi bi-cart"></i> Comprar Fichas para {{ $participanteLogueado->nombre }}</button>
                 @else
                     <div class="input-group input-group-sm">
-                        <select name="prefijo" class="form-select bg-dark text-white border-secondary text-center" style="max-width: 90px;" required>
+                        <select name="prefijo" class="form-select bg-dark text-white border-secondary text-center px-1" style="width: 110px; flex: 0 0 auto;" required>
                             <option value="54" selected>🇦🇷 +54</option>
                             <option value="56">🇨🇱 +56</option>
                             <option value="598">🇺🇾 +598</option>
