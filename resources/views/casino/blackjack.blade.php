@@ -13,7 +13,8 @@
     <style>
         body { 
             background: #0d1a13; color: #fff; font-family: 'Inter', sans-serif;
-            margin: 0; padding: 0; overflow-x: hidden;
+            margin: 0; padding: 0; overflow: hidden;
+            height: 100dvh;
         }
         
         /* Casino Table Felt Background */
@@ -22,7 +23,7 @@
             background-image: 
                 radial-gradient(circle at 50% -20%, #157345 0%, transparent 60%),
                 radial-gradient(circle at 50% 120%, #06311a 0%, transparent 70%);
-            min-height: 100vh;
+            height: 100%;
             display: flex;
             flex-direction: column;
             border-top: 10px solid #231611; /* Madera del borde */

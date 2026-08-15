@@ -265,7 +265,7 @@
         }
         .btn-action:active { transform: translateY(4px); box-shadow: none; }
         .btn-clear { background: #7f8c8d; color: #fff; }
-        .btn-spin { background: var(--gold-accent); color: #000; font-size: 1.1rem;}
+        .btn-spin { background: var(--gold-accent); color: #000; font-size: 1.1rem; padding: 12px 25px;}
 
         /* CHIP ON BOARD MOCK */
         .placed-chip {
@@ -277,20 +277,38 @@
         }
 
         /* --- Responsive Adjustments --- */
+        @media (min-width: 901px) {
+            .wheel {
+                width: 350px;
+                height: 350px;
+            }
+            .wheel::after {
+                width: 220px;
+                height: 220px;
+            }
+            .board-wrapper {
+                margin-top: 50px;
+            }
+            .betting-board {
+                max-width: 1100px;
+            }
+        }
+
         @media (max-width: 900px) {
             .betting-board {
                 transform: rotate(-90deg) scale(0.85);
                 transform-origin: center center;
-                margin-top: 150px;
-                margin-bottom: 150px;
+                margin-top: 220px;
+                margin-bottom: 220px;
             }
             .roulette-container {
                 align-items: center;
                 justify-content: flex-start;
             }
             .board-cell { transform: rotate(90deg); } /* Rotar texto de vuelta */
-            .wheel { width: 200px; height: 200px; }
-            .wheel::after { width: 120px; height: 120px; }
+            .wheel { width: 220px; height: 220px; }
+            .wheel::after { width: 130px; height: 130px; }
+            .board-wrapper { width: 100%; display: flex; justify-content: center; }
         }
     </style>
 </head>
@@ -402,11 +420,11 @@
         </div>
         
         <div class="action-buttons">
-            <button class="btn-action btn-clear">
-                <i class="bi bi-trash"></i> <span class="d-none d-md-inline">UNDO</span>
+            <button class="btn-action btn-clear" onclick="alert('Limpia la última apuesta')">
+                <i class="bi bi-arrow-counterclockwise"></i> DESHACER
             </button>
-            <button class="btn-action btn-spin">
-                <i class="bi bi-arrow-repeat"></i> <span class="d-none d-md-inline">SPIN</span>
+            <button class="btn-action btn-spin" onclick="alert('¡Inicia el giro de la ruleta!')">
+                <i class="bi bi-arrow-repeat"></i> GIRAR
             </button>
         </div>
     </div>
