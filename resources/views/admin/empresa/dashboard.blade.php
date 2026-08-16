@@ -118,6 +118,14 @@
                 <p class="text-white-50 mb-0">La grilla gigante de 90 números para proyectar en clubes y estadios.</p>
             </a>
         </div>
+
+        <div class="col-md-4">
+            <a href="{{ route('jugadores.index') }}" class="glass-panel p-4 rounded-4 module-card h-100 text-white" style="background: rgba(138,43,226,0.05); border-color: rgba(138,43,226,0.3);">
+                <i class="bi bi-people-fill fs-1 mb-3" style="color: #8a2be2;"></i>
+                <h4 class="fw-bold">Gestión de Jugadores</h4>
+                <p class="text-white-50 mb-0">Nómina en vivo. Controla límites de juego responsable y bloqueos (baneos).</p>
+            </a>
+        </div>
     </div>
 </div>
 
