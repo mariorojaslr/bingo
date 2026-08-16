@@ -198,6 +198,14 @@
                     <i class="bi bi-people"></i> Padrón Participantes
                 </a>
             </li>
+
+            <div class="section-title">Clientes y Jugadores</div>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('jugadores.index') }}">
+                    <i class="bi bi-person-badge"></i> Gestión de Jugadores
+                </a>
+            </li>
             
             <div class="section-title">Terminal</div>
             <li class="nav-item">

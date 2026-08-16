@@ -135,6 +135,10 @@ Route::middleware('auth')->group(function() {
 */
 Route::prefix('admin')->group(function () {
 
+    Route::resource('jugadores', \App\Http\Controllers\Admin\JugadorController::class)->only(['index', 'show']);
+    Route::post('jugadores/{jugador}/toggle-ban', [\App\Http\Controllers\Admin\JugadorController::class, 'toggleBan'])->name('jugadores.toggle_ban');
+    Route::post('jugadores/{jugador}/limits', [\App\Http\Controllers\Admin\JugadorController::class, 'updateLimits'])->name('jugadores.limits');
+    
     // La ruta base de /admin redirige automáticamente vía el enrutado de arriba a /admin/dashboard
 
     // Organizadores
