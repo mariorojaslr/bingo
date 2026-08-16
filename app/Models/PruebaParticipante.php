@@ -27,6 +27,9 @@ class PruebaParticipante extends Model
 
     protected $casts = [
         'activo' => 'boolean',
+        'es_prueba' => 'boolean',
+        'is_banned' => 'boolean',
+        'last_activity_at' => 'datetime',
     ];
 
     /**
