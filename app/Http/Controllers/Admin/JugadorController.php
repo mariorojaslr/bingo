@@ -11,8 +11,38 @@ class JugadorController extends Controller
 {
     public function index(Request $request)
     {
-        // En un futuro multiempresa, filtraremos por empresa_id
-        $jugadores = PruebaParticipante::orderBy('last_activity_at', 'desc')->get();
+        $query = PruebaParticipante::query();
+
+        // Búsqueda por texto (nombre, apellido, dni, telefono)
+        if ($search = $request->get('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%")
+                  ->orWhere('apellido', 'like', "%{$search}%")
+                  ->orWhere('dni', 'like', "%{$search}%")
+                  ->orWhere('telefono', 'like', "%{$search}%");
+            });
+        }
+
+        // Filtro por Estado (Online / Offline)
+        if ($estado = $request->get('estado')) {
+            if ($estado === 'online') {
+                $query->where('last_activity_at', '>=', now()->subMinutes(10));
+            } elseif ($estado === 'offline') {
+                $query->where(function($q) {
+                    $q->whereNull('last_activity_at')
+                      ->orWhere('last_activity_at', '<', now()->subMinutes(10));
+                });
+            }
+        }
+
+        // Filtro por Juego
+        if ($juego = $request->get('juego')) {
+            $query->where('current_game', $juego);
+        }
+
+        // Paginación de 15 elementos
+        $jugadores = $query->orderBy('last_activity_at', 'desc')->paginate(15)->withQueryString();
+
         return view('admin.jugadores.index', compact('jugadores'));
     }
 

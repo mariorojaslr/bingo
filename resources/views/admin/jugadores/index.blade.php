@@ -12,9 +12,43 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
+    <!-- Buscador y Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <form action="{{ route('jugadores.index') }}" method="GET" class="row gx-3 gy-2 align-items-center">
+                <!-- Buscador Principal -->
+                <div class="col-sm-6 col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark text-white border-secondary"><i class="bi bi-search"></i></span>
+                        <input type="text" name="search" class="form-control bg-dark text-white border-secondary" placeholder="Buscar por nombre, DNI o teléfono..." value="{{ request('search') }}">
+                    </div>
+                </div>
+
+                <!-- Filtros (Botones) -->
+                <div class="col-sm-6 col-md-8 d-flex justify-content-md-end gap-2 flex-wrap">
+                    <select name="estado" class="form-select bg-dark text-white border-secondary w-auto" onchange="this.form.submit()">
+                        <option value="">Todos los Estados</option>
+                        <option value="online" {{ request('estado') === 'online' ? 'selected' : '' }}>En Línea</option>
+                        <option value="offline" {{ request('estado') === 'offline' ? 'selected' : '' }}>Desconectados</option>
+                    </select>
+
+                    <select name="juego" class="form-select bg-dark text-white border-secondary w-auto" onchange="this.form.submit()">
+                        <option value="">Todos los Juegos</option>
+                        <option value="Ruleta" {{ request('juego') === 'Ruleta' ? 'selected' : '' }}>Ruleta</option>
+                        <option value="Blackjack" {{ request('juego') === 'Blackjack' ? 'selected' : '' }}>Blackjack</option>
+                        <option value="Lobby" {{ request('juego') === 'Lobby' ? 'selected' : '' }}>Lobby</option>
+                    </select>
+                    
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> Filtrar</button>
+                    <a href="{{ route('jugadores.index') }}" class="btn btn-outline-secondary">Limpiar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Nómina Activa</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Nómina Activa ({{ $jugadores->total() }} registros)</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -32,7 +66,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($jugadores as $jugador)
+                        @forelse($jugadores as $jugador)
                         @php
                             $isOnline = $jugador->last_activity_at && $jugador->last_activity_at->diffInMinutes(now()) < 10;
                             $defaultLimit = 4; // Por ahora fijo, después hereda
@@ -78,9 +112,18 @@
                                 </form>
                             </td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">No se encontraron jugadores que coincidan con los filtros.</td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
+            </div>
+            
+            <!-- Paginador -->
+            <div class="mt-4 d-flex justify-content-center">
+                {{ $jugadores->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </div>
