@@ -112,6 +112,10 @@ Route::get('/casino/mega-sorteo', [\App\Http\Controllers\MegaSorteoController::c
 Route::post('/casino/mega-sorteo/buy/{id}', [\App\Http\Controllers\MegaSorteoController::class, 'buyTicket'])->name('casino.megasorteo.buy');
 Route::get('/casino/mega-sorteo/mis-tickets', [\App\Http\Controllers\MegaSorteoController::class, 'myTickets'])->name('casino.megasorteo.mytickets');
 
+Route::get('/casino/bingo-virtual', [\App\Http\Controllers\VirtualBingoController::class, 'index'])->name('casino.bingo_virtual.index');
+Route::get('/casino/bingo-virtual/sala/{id}', [\App\Http\Controllers\VirtualBingoController::class, 'show'])->name('casino.bingo_virtual.show');
+Route::post('/casino/bingo-virtual/comprar/{id}', [\App\Http\Controllers\VirtualBingoController::class, 'comprar'])->name('casino.bingo_virtual.comprar');
+
 // Public Marketing / Demo Routes
 Route::get('demo/visor', [App\Http\Controllers\CartonController::class, 'demoVisor'])->name('demo.visor');
 Route::get('demo/monitor-tv', [App\Http\Controllers\CartonController::class, 'demoMonitorTV'])->name('demo.monitor_tv');

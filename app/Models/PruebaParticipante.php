@@ -22,7 +22,9 @@ class PruebaParticipante extends Model
         'avatar',
         'activo',
         'jugada_id',
-        'saldo_fichas'
+        'saldo_fichas',
+        'alias_pago_1',
+        'alias_pago_2'
     ];
 
     protected $casts = [

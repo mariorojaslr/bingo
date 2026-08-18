@@ -35,7 +35,11 @@ class Jugada extends Model
         'streaming_server',
         'streaming_key',
         'bunny_library_id',
-        'bunny_live_stream_id'
+        'bunny_live_stream_id',
+        'empresa_id',
+        'plantilla_sala_virtual_id',
+        'pozo_acumulado',
+        'limite_bolilla_pozo'
     ];
 
     public function organizador()
