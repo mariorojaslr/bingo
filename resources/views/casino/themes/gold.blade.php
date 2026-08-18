@@ -42,9 +42,19 @@
                 <option value="pt_BRL">🇧🇷 BRL (R$)</option>
             </select>
             
-            <div class="px-3 py-1 rounded text-dark fw-bold" style="background: var(--color-primario);">
-                $0.00
+            @if($participanteLogueado)
+            <div class="d-flex flex-column text-end">
+                <span class="text-white-50" style="font-size: 0.7rem; margin-bottom: -5px;">{{ $participanteLogueado->nombre }}</span>
+                <a href="{{ route('cajero.show') }}?t={{ $participanteLogueado->telefono }}" class="px-3 py-1 rounded text-dark fw-bold mt-1 text-decoration-none d-flex align-items-center gap-1" style="background: var(--color-primario);" title="Cargar Fichas">
+                    <i class="bi bi-gem"></i> {{ number_format($participanteLogueado->saldo_fichas, 0) }}
+                    <span class="bg-dark text-warning rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 18px; height: 18px; font-size: 0.7rem;"><i class="bi bi-plus-lg"></i></span>
+                </a>
             </div>
+            @else
+            <a href="{{ route('cajero.show') }}" class="px-3 py-1 rounded text-dark text-decoration-none d-flex align-items-center gap-1 fw-bold" style="background: var(--color-primario);">
+                <i class="bi bi-wallet2"></i> Cargar Fichas
+            </a>
+            @endif
         </div>
     </div>
     
@@ -100,6 +110,13 @@
                 <a href="/demo/mockups/ruleta" class="game-card p-4 text-center">
                     <i class="bi bi-circle-fill fs-1 mb-3 d-block text-danger"></i>
                     <h3 class="fs-5">RULETA</h3>
+                </a>
+            </div>
+            <div class="col-6 col-md-4">
+                <a href="{{ route('casino.megasorteo.index') }}" class="game-card p-4 text-center">
+                    <i class="bi bi-ticket-perforated fs-1 mb-3 d-block text-warning"></i>
+                    <h3 class="fs-5">MEGA SORTEO</h3>
+                    <p class="text-white-50 small mb-0">Pozo Acumulado</p>
                 </a>
             </div>
         </div>

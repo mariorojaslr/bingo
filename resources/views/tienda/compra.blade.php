@@ -73,15 +73,46 @@
 
         @if($participanteLogueado)
             <div class="alert alert-info border-0 rounded-4 mb-4 text-start shadow-sm" style="background-color: rgba(13, 202, 240, 0.1);">
-                <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <p class="mb-1 text-info fw-bold"><i class="bi bi-person-circle"></i> ¡Hola de nuevo, {{ $participanteLogueado->nombre }}!</p>
-                        <small class="text-white-50">Tu saldo actual: <strong class="text-warning">{{ number_format($participanteLogueado->saldo_fichas, 0) }} Fichas</strong></small>
+                        <small class="text-white-50">Tu saldo actual: <strong class="text-warning fs-5">{{ number_format($participanteLogueado->saldo_fichas, 0) }} Fichas</strong></small>
                     </div>
                     <a href="{{ route('tienda.cerrar_sesion') }}" class="btn btn-outline-secondary btn-sm" title="Cambiar usuario">
-                        <i class="bi bi-box-arrow-right"></i>
+                        <i class="bi bi-box-arrow-right"></i> Salir
                     </a>
                 </div>
+                
+                <div class="p-3 rounded bg-dark border border-secondary">
+                    <h6 class="text-white-50 text-uppercase fw-bold mb-3"><i class="bi bi-wallet2"></i> Billetera & Cajero</h6>
+                    <form action="{{ route('cajero.show') }}" method="GET">
+                        <input type="hidden" name="t" value="{{ $participanteLogueado->telefono }}">
+                        <button type="submit" class="btn btn-warning w-100 fw-bold shadow"><i class="bi bi-cart-plus-fill me-2"></i> Cargar Fichas</button>
+                    </form>
+                    <div class="small text-muted mt-2 text-center">MercadoPago, Prex, ARQ o Airtm.</div>
+                </div>
+            </div>
+        @else
+            <div class="alert alert-dark border-secondary rounded-4 mb-4 shadow-sm">
+                <h6 class="text-white-50 text-uppercase fw-bold mb-3"><i class="bi bi-wallet2"></i> Cajero Rápido</h6>
+                <form action="{{ route('cajero.show') }}" method="GET" class="d-flex flex-column gap-2">
+                    <div class="input-group">
+                        <select name="prefijo" class="form-select bg-dark text-white border-secondary text-center px-1" style="width: 100px; flex: 0 0 auto;" required>
+                            <option value="54" selected>🇦🇷 +54</option>
+                            <option value="56">🇨🇱 +56</option>
+                            <option value="598">🇺🇾 +598</option>
+                            <option value="51">🇵🇪 +51</option>
+                            <option value="52">🇲🇽 +52</option>
+                            <option value="57">🇨🇴 +57</option>
+                            <option value="55">🇧🇷 +55</option>
+                            <option value="1">🇺🇸 +1</option>
+                            <option value="34">🇪🇸 +34</option>
+                        </select>
+                        <input type="tel" name="t" class="form-control bg-dark text-white border-secondary" placeholder="Tu Teléfono" required>
+                        <button type="submit" class="btn btn-warning fw-bold"><i class="bi bi-cart"></i> Cargar</button>
+                    </div>
+                </form>
+                <div class="small text-muted mt-2 text-center">Inicia sesión comprando fichas con tu número telefónico.</div>
             </div>
         @endif
 
@@ -153,31 +184,43 @@
         </form>
 
         <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
-            <h6 class="text-white-50 text-uppercase fw-bold mb-3"><i class="bi bi-wallet2"></i> Cajero de Fichas Infinity</h6>
-            <form action="{{ route('cajero.show') }}" method="GET" class="d-flex flex-column gap-2">
-                @if($participanteLogueado)
-                    <input type="hidden" name="t" value="{{ $participanteLogueado->telefono }}">
-                    <button type="submit" class="btn btn-warning btn-sm text-nowrap fw-bold"><i class="bi bi-cart"></i> Comprar Fichas para {{ $participanteLogueado->nombre }}</button>
-                @else
-                    <div class="input-group input-group-sm">
-                        <select name="prefijo" class="form-select bg-dark text-white border-secondary text-center px-1" style="width: 110px; flex: 0 0 auto;" required>
-                            <option value="54" selected>🇦🇷 +54</option>
-                            <option value="56">🇨🇱 +56</option>
-                            <option value="598">🇺🇾 +598</option>
-                            <option value="51">🇵🇪 +51</option>
-                            <option value="52">🇲🇽 +52</option>
-                            <option value="57">🇨🇴 +57</option>
-                            <option value="55">🇧🇷 +55</option>
-                            <option value="1">🇺🇸 +1</option>
-                            <option value="34">🇪🇸 +34</option>
-                        </select>
-                        <input type="tel" name="t" class="form-control bg-dark text-white border-secondary" placeholder="Tu Teléfono (para identificarte)" required>
-                        <button type="submit" class="btn btn-warning fw-bold"><i class="bi bi-cart"></i> Comprar Fichas</button>
+            <h6 class="text-white-50 text-uppercase fw-bold mb-3"><i class="bi bi-dice-5"></i> Juegos de Casino</h6>
+            <div class="d-flex flex-column gap-2">
+                <a href="{{ route('casino.ruleta') }}" class="btn btn-outline-light d-flex align-items-center justify-content-between p-3 rounded-4" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1);">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-circle-half text-danger fs-3"></i>
+                        <div class="text-start">
+                            <h6 class="m-0 fw-bold">Ruleta Premium</h6>
+                            <small class="text-white-50">Juega y multiplica tus fichas</small>
+                        </div>
                     </div>
-                @endif
-            </form>
-            <div class="small text-muted mt-2">Accede al cajero para comprar fichas con MercadoPago, Prex, ARQ o Airtm.</div>
+                    <i class="bi bi-chevron-right text-white-50"></i>
+                </a>
+
+                <a href="{{ route('casino.megasorteo.index') }}" class="btn btn-outline-light d-flex align-items-center justify-content-between p-3 rounded-4" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1);">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-ticket-perforated text-warning fs-3"></i>
+                        <div class="text-start">
+                            <h6 class="m-0 fw-bold text-warning">Mega Sorteo</h6>
+                            <small class="text-white-50">Gana el pozo acumulado</small>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-right text-white-50"></i>
+                </a>
+
+                <a href="{{ route('casino.blackjack') }}" class="btn btn-outline-light d-flex align-items-center justify-content-between p-3 rounded-4" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1);">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-suit-spade-fill text-info fs-3"></i>
+                        <div class="text-start">
+                            <h6 class="m-0 fw-bold text-info">Blackjack Multijugador</h6>
+                            <small class="text-white-50">Juega contra la casa con otros jugadores</small>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-right text-white-50"></i>
+                </a>
+            </div>
         </div>
+
     </div>
 </div>
 

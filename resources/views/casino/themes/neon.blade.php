@@ -91,14 +91,15 @@
             @if($participanteLogueado)
             <div class="d-flex flex-column text-end">
                 <span class="text-white-50" style="font-size: 0.7rem; margin-bottom: -5px;">{{ $participanteLogueado->nombre }}</span>
-                <div class="bg-dark px-3 py-1 rounded-pill border border-secondary text-warning fw-bold mt-1">
+                <a href="{{ route('cajero.show') }}?t={{ $participanteLogueado->telefono }}" class="bg-dark px-3 py-1 rounded-pill border border-warning text-warning fw-bold mt-1 text-decoration-none d-flex align-items-center gap-1" title="Cargar Fichas">
                     <i class="bi bi-gem"></i> {{ number_format($participanteLogueado->saldo_fichas, 0) }}
-                </div>
+                    <span class="bg-warning text-dark rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 18px; height: 18px; font-size: 0.7rem;"><i class="bi bi-plus-lg"></i></span>
+                </a>
             </div>
             @else
-            <div class="bg-dark px-3 py-1 rounded-pill border border-secondary text-info">
-                <i class="bi bi-wallet2"></i> Invitado
-            </div>
+            <a href="{{ route('cajero.show') }}" class="bg-dark px-3 py-1 rounded-pill border border-secondary text-info text-decoration-none d-flex align-items-center gap-1">
+                <i class="bi bi-wallet2"></i> Cargar Fichas
+            </a>
             @endif
         </div>
     </div>
@@ -160,6 +161,14 @@
                     </div>
                     <h3 class="text-light fs-5">Ruleta Europea</h3>
                     <p class="text-white-50 small mb-0">Disfruta ahora</p>
+                </a>
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{{ route('casino.megasorteo.index') }}" class="game-card text-center p-4">
+                    <i class="bi bi-ticket-perforated fs-1 mb-3 d-block text-warning"></i>
+                    <h3 class="text-light fs-5">Mega Sorteo</h3>
+                    <p class="text-white-50 small mb-0">Pozo Acumulado</p>
                 </a>
             </div>
         </div>

@@ -96,14 +96,21 @@ Route::get('/tienda/gracias/{token}', [\App\Http\Controllers\UserStoreController
 
 // Casino Games
 Route::get('/casino/blackjack', [\App\Http\Controllers\BlackjackController::class, 'index'])->name('casino.blackjack');
-Route::get('/casino/ruleta', function(\Illuminate\Http\Request $request) {
-    $participanteLogueado = null;
-    $token = $request->cookie('participante_token');
-    if ($token) {
-        $participanteLogueado = \App\Models\PruebaParticipante::where('token', $token)->first();
-    }
-    return view('mockups.ruleta', compact('participanteLogueado'));
-})->name('casino.ruleta');
+Route::get('/casino/blackjack/state/{table}', [\App\Http\Controllers\BlackjackController::class, 'state']);
+Route::post('/casino/blackjack/sit/{table}/{seat}', [\App\Http\Controllers\BlackjackController::class, 'sit']);
+Route::post('/casino/blackjack/leave/{table}', [\App\Http\Controllers\BlackjackController::class, 'leave']);
+Route::post('/casino/blackjack/bet/{table}', [\App\Http\Controllers\BlackjackController::class, 'bet']);
+Route::post('/casino/blackjack/deal/{table}', [\App\Http\Controllers\BlackjackController::class, 'deal']);
+Route::post('/casino/blackjack/hit/{table}', [\App\Http\Controllers\BlackjackController::class, 'hit']);
+Route::post('/casino/blackjack/stand/{table}', [\App\Http\Controllers\BlackjackController::class, 'stand']);
+Route::post('/casino/blackjack/clear/{table}', [\App\Http\Controllers\BlackjackController::class, 'clear']);
+
+Route::get('/casino/ruleta', [\App\Http\Controllers\RouletteController::class, 'index'])->name('casino.ruleta');
+Route::post('/casino/ruleta/spin', [\App\Http\Controllers\RouletteController::class, 'spin'])->name('casino.ruleta.spin');
+
+Route::get('/casino/mega-sorteo', [\App\Http\Controllers\MegaSorteoController::class, 'index'])->name('casino.megasorteo.index');
+Route::post('/casino/mega-sorteo/buy/{id}', [\App\Http\Controllers\MegaSorteoController::class, 'buyTicket'])->name('casino.megasorteo.buy');
+Route::get('/casino/mega-sorteo/mis-tickets', [\App\Http\Controllers\MegaSorteoController::class, 'myTickets'])->name('casino.megasorteo.mytickets');
 
 // Public Marketing / Demo Routes
 Route::get('demo/visor', [App\Http\Controllers\CartonController::class, 'demoVisor'])->name('demo.visor');

@@ -57,9 +57,19 @@
                 <option value="pt_BRL">🇧🇷 BRL (R$)</option>
             </select>
             
-            <div class="px-3 py-1 rounded text-white fw-bold" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
-                $0.00
+            @if($participanteLogueado)
+            <div class="d-flex flex-column text-end">
+                <span class="text-white-50" style="font-size: 0.7rem; margin-bottom: -5px;">{{ $participanteLogueado->nombre }}</span>
+                <a href="{{ route('cajero.show') }}?t={{ $participanteLogueado->telefono }}" class="px-3 py-1 rounded text-white fw-bold mt-1 text-decoration-none d-flex align-items-center gap-1" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);" title="Cargar Fichas">
+                    <i class="bi bi-gem"></i> {{ number_format($participanteLogueado->saldo_fichas, 0) }}
+                    <span class="bg-info text-dark rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 18px; height: 18px; font-size: 0.7rem;"><i class="bi bi-plus-lg"></i></span>
+                </a>
             </div>
+            @else
+            <a href="{{ route('cajero.show') }}" class="px-3 py-1 rounded text-info text-decoration-none d-flex align-items-center gap-1" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                <i class="bi bi-wallet2"></i> Cargar Fichas
+            </a>
+            @endif
         </div>
     </div>
     
@@ -111,6 +121,13 @@
                 <a href="/demo/mockups/ruleta" class="game-card text-center p-4">
                     <i class="bi bi-circle-fill text-danger mb-3 d-block" style="font-size: 3rem;"></i>
                     <h3 class="fs-4">Ruleta</h3>
+                </a>
+            </div>
+            <div class="col-6 col-md-4">
+                <a href="{{ route('casino.megasorteo.index') }}" class="game-card text-center p-4">
+                    <i class="bi bi-ticket-perforated text-warning mb-3 d-block" style="font-size: 3rem;"></i>
+                    <h3 class="fs-4">Mega Sorteo</h3>
+                    <p class="text-white-50 small mb-0">Pozo Acumulado</p>
                 </a>
             </div>
         </div>
