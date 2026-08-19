@@ -44,12 +44,16 @@ class GenerarSalasVirtualesCommand extends Command
                     $proximaFechaHora = $now->copy();
                 }
 
+                // Buscar un organizador e institucion válidos por defecto
+                $organizador = \App\Models\Organizador::first();
+                $institucion = \App\Models\Institucion::first();
+
                 // Creamos la Jugada (Sala)
                 $jugada = Jugada::create([
                     'empresa_id' => $plantilla->empresa_id,
                     'plantilla_sala_virtual_id' => $plantilla->id,
-                    'organizador_id' => 1, // Fix: Necesitamos defaults válidos si no hay o hacerlos nullable
-                    'institucion_id' => 1, // Fix: Ídem
+                    'organizador_id' => $organizador ? $organizador->id : 1, 
+                    'institucion_id' => $institucion ? $institucion->id : 1, 
                     'nombre_jugada' => $plantilla->nombre . ' - ' . $proximaFechaHora->format('H:i'),
                     'fecha_evento' => $proximaFechaHora->toDateString(),
                     'hora_evento' => $proximaFechaHora->toTimeString(),
