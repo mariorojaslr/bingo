@@ -1,6 +1,18 @@
-@extends('layouts.app')
-
-@section('content')
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ $sala->nombre_jugada }} - Bingo Virtual</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #121212; color: #f8f9fa; }
+        .card { background-color: #1e1e1e; color: #f8f9fa; }
+        .bg-light { background-color: #2a2a2a !important; color: #f8f9fa !important; }
+        .text-dark { color: #f8f9fa !important; }
+    </style>
+</head>
+<body>
 <div class="container py-4">
     
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -156,4 +168,5 @@
         const pollingInterval = setInterval(pollEstado, 3000);
     });
 </script>
-@endsection
+</body>
+</html>
