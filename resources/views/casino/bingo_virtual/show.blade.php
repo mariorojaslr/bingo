@@ -45,6 +45,28 @@
         </div>
     </div>
 
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-dark">
+                <div class="card-header bg-dark text-white d-flex justify-content-between">
+                    <h5 class="mb-0">Bolillas Sorteadas</h5>
+                    <span id="estado-sala-badge" class="badge bg-{{ $sala->estado == 'creada' ? 'success' : 'danger' }}">{{ strtoupper($sala->estado) }}</span>
+                </div>
+                <div class="card-body">
+                    <div id="bolillas-container" class="d-flex flex-wrap gap-2">
+                        @if($sala->sorteo && $sala->sorteo->getBolillas())
+                            @foreach($sala->sorteo->getBolillas() as $b)
+                                <div class="bolilla rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold fs-4" style="width:50px; height:50px;">{{ $b }}</div>
+                            @endforeach
+                        @else
+                            <p class="text-muted w-100 text-center mb-0" id="sin-bolillas">El sorteo aún no ha comenzado.</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <h3 class="mb-3">Tus Cartones</h3>
     <div class="row">
         @forelse($cartonesJugador as $pc)
@@ -85,4 +107,53 @@
         @endforelse
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const salaId = {{ $sala->id }};
+        const estadoUrl = "{{ route('casino.bingo_virtual.estado', $sala->id) }}";
+        
+        function pollEstado() {
+            fetch(estadoUrl)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.estado_jugada === 'en_curso' || data.estado_sorteo === 'en_curso') {
+                        // Ocultar formulario de compra
+                        const formContainer = document.querySelector('.card.border-warning');
+                        if (formContainer) {
+                            formContainer.innerHTML = '<div class="card-body text-center"><h5 class="text-danger fw-bold">Juego en Curso</h5><p>¡Atento a las bolillas!</p></div>';
+                        }
+                        
+                        // Actualizar bolillas
+                        const container = document.getElementById('bolillas-container');
+                        if (data.bolillas && data.bolillas.length > 0) {
+                            const noBolillasText = document.getElementById('sin-bolillas');
+                            if (noBolillasText) noBolillasText.remove();
+
+                            // Reconstruir html de bolillas si la cantidad es diferente
+                            const currentCount = container.querySelectorAll('.bolilla').length;
+                            if (data.bolillas.length > currentCount) {
+                                let html = '';
+                                data.bolillas.forEach(b => {
+                                    html += `<div class="bolilla rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold fs-4" style="width:50px; height:50px;">${b}</div>`;
+                                });
+                                container.innerHTML = html;
+                            }
+                        }
+                    }
+
+                    if (data.estado_sorteo === 'finalizado') {
+                        document.getElementById('estado-sala-badge').innerText = 'FINALIZADO';
+                        document.getElementById('estado-sala-badge').className = 'badge bg-dark';
+                        // Detener el polling
+                        clearInterval(pollingInterval);
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+
+        // Consultar cada 3 segundos
+        const pollingInterval = setInterval(pollEstado, 3000);
+    });
+</script>
 @endsection

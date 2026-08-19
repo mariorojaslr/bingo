@@ -115,6 +115,7 @@ Route::get('/casino/mega-sorteo/mis-tickets', [\App\Http\Controllers\MegaSorteoC
 Route::get('/casino/bingo-virtual', [\App\Http\Controllers\VirtualBingoController::class, 'index'])->name('casino.bingo_virtual.index');
 Route::get('/casino/bingo-virtual/sala/{id}', [\App\Http\Controllers\VirtualBingoController::class, 'show'])->name('casino.bingo_virtual.show');
 Route::post('/casino/bingo-virtual/comprar/{id}', [\App\Http\Controllers\VirtualBingoController::class, 'comprar'])->name('casino.bingo_virtual.comprar');
+Route::get('/casino/bingo-virtual/estado/{id}', [\App\Http\Controllers\VirtualBingoController::class, 'estado'])->name('casino.bingo_virtual.estado');
 
 // Public Marketing / Demo Routes
 Route::get('demo/visor', [App\Http\Controllers\CartonController::class, 'demoVisor'])->name('demo.visor');

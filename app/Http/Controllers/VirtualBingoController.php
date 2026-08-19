@@ -105,4 +105,26 @@ class VirtualBingoController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
+
+    public function estado($id)
+    {
+        $sala = Jugada::with('sorteo')->findOrFail($id);
+        
+        $estado = [
+            'estado_jugada' => $sala->estado,
+            'estado_sorteo' => $sala->sorteo ? $sala->sorteo->estado : 'pendiente',
+            'bolillas' => $sala->sorteo ? $sala->sorteo->getBolillas() : [],
+            'bolilla_actual' => $sala->sorteo ? $sala->sorteo->bolilla_actual : null,
+            'ganadores' => []
+        ];
+
+        // Podemos buscar ganadores en SorteoGanador si existe la tabla, 
+        // o si Sorteo maneja los ganadores al final.
+        // Simulamos un array de ganadores
+        if ($sala->sorteo && $sala->sorteo->estado == 'finalizado') {
+             // Opcional: Cargar nombre de ganadores
+        }
+
+        return response()->json($estado);
+    }
 }
